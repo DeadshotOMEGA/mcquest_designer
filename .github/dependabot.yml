@@ -12,16 +12,20 @@ updates:
       time: "09:00"
     open-pull-requests-limit: 10
     reviewers:
-      - "YOUR_GITHUB_USERNAME"
+      - "DeadshotOMEGA"
     assignees:
-      - "YOUR_GITHUB_USERNAME"
+      - "DeadshotOMEGA"
     labels:
       - "dependencies"
       - "automerge"
     commit-message:
       prefix: "chore"
       include: "scope"
-    # Group updates for better PR organization
+    # Ignore major versions - upgrade manually when ready
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    # Group minor/patch updates for better PR organization
     groups:
       production-dependencies:
         dependency-type: "production"
@@ -43,10 +47,14 @@ updates:
       time: "09:00"
     open-pull-requests-limit: 5
     reviewers:
-      - "YOUR_GITHUB_USERNAME"
+      - "DeadshotOMEGA"
     labels:
       - "dependencies"
       - "github-actions"
     commit-message:
       prefix: "chore"
       include: "scope"
+    # Ignore major versions - upgrade manually when ready
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
