@@ -1,0 +1,1 @@
+{id:6L,title:"First Smelt",subtitle:"",description:"Smelt iron in a furnace.",x:4,y:0,shape:"square",icon:{id:"minecraft:furnace"},dependencies:[5L],tasks:[{id:"7176b81a-e602-4756-b8c2-efc1a35fde10",type:"item",item:"minecraft:iron_ingot",count:4}],rewards:[{id:"7d7f8249-30ac-4ea3-b1ea-4d944747aaf5",type:"item",item:"minecraft:iron_pickaxe",count:1}]}
