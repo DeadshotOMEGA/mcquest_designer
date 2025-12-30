@@ -14,7 +14,7 @@
     "@clerk/nextjs": "^6.36.5",
     "@mcquest/export": "workspace:*",
     "@mcquest/schema": "workspace:*",
-    "@prisma/client": "6.9.0",
+    "@prisma/client": "7.2.0",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-slot": "^1.2.4",
