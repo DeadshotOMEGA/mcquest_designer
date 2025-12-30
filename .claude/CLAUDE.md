@@ -56,8 +56,13 @@ ProjectSnapshot (JSONB) → Compiler → ExportModel → SNBT files → ZIP
 
 ### Backend
 - Next.js Route Handlers
-- Auth.js (NextAuth) with OAuth
-- Prisma + PostgreSQL (JSONB snapshots)
+- Clerk (managed auth with OAuth)
+- Prisma + Neon PostgreSQL (JSONB snapshots)
+
+### Testing
+- Vitest (unit/integration)
+- Playwright (E2E)
+- Golden exports (compiler validation)
 
 ## Invariants (Must Not Break)
 

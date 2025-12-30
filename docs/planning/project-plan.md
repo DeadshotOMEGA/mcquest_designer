@@ -104,8 +104,10 @@ Each node visually represents:
 - TypeScript end-to-end
 
 ### 5.2 Authentication
-- Auth.js (NextAuth)
-- OAuth providers (GitHub, Discord, Google)
+- Clerk (managed auth service)
+- OAuth providers handled by Clerk (GitHub, Discord, Google)
+- Built-in user management dashboard
+- Free tier: 10,000 MAU
 
 ### 5.3 Authorization Model
 - ProjectMember roles:
@@ -275,15 +277,25 @@ Rationale:
 
 ## 12. Deployment & Infrastructure
 
-### 12.1 Hosting
-- App + API: Vercel or Railway
-- Database: Neon / Supabase / Railway Postgres
-- Optional Redis: Upstash
+### 12.1 Hosting (Free Tier Stack)
+- **App + API**: Vercel (free tier)
+- **Database**: Neon PostgreSQL (free tier: 0.5GB storage)
+- **Auth**: Clerk (free tier: 10,000 MAU)
+- **Error Tracking**: Sentry (free tier: 5K errors/month)
 
 ### 12.2 Environments
-- Local
-- Staging
-- Production
+- Local (SQLite or local Postgres via Docker)
+- Production (Vercel + Neon)
+
+### 12.3 Monorepo Structure
+```
+/apps/web/           # Next.js App Router
+/packages/schema/    # Shared Zod schemas
+/packages/export/    # SNBT compiler
+/testdata/ftbq/1.21/ # Golden exports
+```
+
+Managed with **pnpm workspaces**.
 
 ---
 
@@ -296,32 +308,67 @@ Rationale:
 
 ---
 
-## 14. MVP Delivery Milestones
+## 14. Testing Strategy
+
+### 14.1 Unit & Integration Tests (Vitest)
+- Zod schema validation
+- Export compiler transforms
+- ID mapping determinism
+- API route handlers
+
+### 14.2 E2E Tests (Playwright)
+- Auth flow (Clerk)
+- Project creation and editing
+- Graph editor interactions
+- Export verification
+
+### 14.3 Golden Export Testing
+- Compare compiler output against golden files from real FTB Quests
+- Manual verification in Minecraft 1.21.x periodically
+
+---
+
+## 15. Observability
+
+### 15.1 Error Tracking
+- Sentry for unhandled exceptions and export failures
+- Context: projectId, action type
+
+### 15.2 Logging
+- Structured logging (pino)
+- Key events: export started/completed/failed, auth events
+
+---
+
+## 16. MVP Delivery Milestones
 
 ### Milestone 1 – Foundation
-- Auth
+- Clerk auth integration
 - Project CRUD
-- Snapshot persistence
+- Snapshot persistence (Prisma + Neon)
 
 ### Milestone 2 – Editor
-- Graph editor
-- Quest inspector
-- Autosave
+- React Flow graph editor
+- Quest inspector panel
+- Autosave (optimistic + debounce)
+- Undo/redo
 
 ### Milestone 3 – Versioning
 - Version creation
-- Restore
+- Version restore
 
 ### Milestone 4 – Export
-- SNBT generation
+- SNBT compiler
+- Golden export validation
 - ZIP download
 
 ### Milestone 5 – Sharing
 - Read-only share links
+- Share token management
 
 ---
 
-## 15. Post-MVP Expansion Ideas
+## 17. Post-MVP Expansion Ideas
 
 - Template gallery
 - Import existing questbooks
@@ -331,7 +378,7 @@ Rationale:
 
 ---
 
-## 16. Definition of Success
+## 18. Definition of Success
 
 - Users can design full questbooks without launching Minecraft
 - Exported files load cleanly in FTB Quests
