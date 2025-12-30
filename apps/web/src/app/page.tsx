@@ -1,8 +1,13 @@
 import { SCHEMA_VERSION } from '@mcquest/schema'
 import { EXPORT_VERSION, SUPPORTED_VERSIONS } from '@mcquest/export'
 import { Button } from '@/components/ui/button'
+import { getAuthOrNull } from '@/lib/auth'
+import Link from 'next/link'
 
-export default function Home() {
+export default async function Home() {
+  // Check auth status without throwing
+  const userId = await getAuthOrNull()
+
   return (
     <main className="min-h-screen p-8">
       <div className="max-w-2xl mx-auto">
@@ -12,9 +17,21 @@ export default function Home() {
         </p>
 
         <div className="flex gap-4 mb-8">
-          <Button>Get Started</Button>
-          <Button variant="outline">Documentation</Button>
-          <Button variant="secondary">Settings</Button>
+          {userId ? (
+            <Button asChild>
+              <Link href="/dashboard">Go to Dashboard</Link>
+            </Button>
+          ) : (
+            <>
+              <Button asChild>
+                <Link href="/sign-up">Get Started</Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link href="/sign-in">Sign In</Link>
+              </Button>
+            </>
+          )}
+          <Button variant="secondary">Documentation</Button>
         </div>
 
         <div className="rounded-lg border bg-card p-6">
