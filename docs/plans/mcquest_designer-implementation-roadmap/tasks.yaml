@@ -1,0 +1,1631 @@
+# MCQuest Designer - Implementation Tasks
+# Generated: 2025-12-30
+# Total Tasks: 65
+# Estimated Hours: 130-260
+
+metadata:
+  project: mcquest_designer
+  plan_version: "1.0"
+  generated_at: "2025-12-30"
+  total_tasks: 65
+  milestones: 5
+
+milestones:
+  - id: M1
+    name: Foundation
+    description: "Auth, Project CRUD, Prisma/Neon setup, basic UI shell"
+    task_count: 17
+    estimated_hours: "34-68"
+
+  - id: M2
+    name: Editor
+    description: "React Flow canvas, inspector panels, Zustand store, autosave, validation"
+    task_count: 20
+    estimated_hours: "40-80"
+
+  - id: M3
+    name: Versioning
+    description: "Version creation, list, restore APIs and UI"
+    task_count: 8
+    estimated_hours: "16-32"
+
+  - id: M4
+    name: Export
+    description: "SNBT compiler, ZIP packaging, golden export tests"
+    task_count: 14
+    estimated_hours: "28-56"
+
+  - id: M5
+    name: Sharing
+    description: "ShareToken API, read-only viewer mode"
+    task_count: 6
+    estimated_hours: "12-24"
+
+tasks:
+  # =============================================================================
+  # MILESTONE 1: Foundation
+  # =============================================================================
+
+  - id: M1-01
+    milestone: M1
+    title: "Initialize pnpm monorepo structure"
+    description: "Set up root workspace configuration with pnpm workspaces for apps/web, packages/schema, packages/export"
+    agent: architect
+    depends_on: []
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "package.json"
+        action: create
+        description: "Root workspace config"
+      - path: "pnpm-workspace.yaml"
+        action: create
+        description: "Workspace definitions"
+      - path: ".npmrc"
+        action: create
+        description: "pnpm settings"
+      - path: "turbo.json"
+        action: create
+        description: "(optional) Build orchestration"
+    acceptance_criteria:
+      - "`pnpm install` runs successfully"
+      - "Workspace structure: /apps/web, /packages/schema, /packages/export"
+      - "Each package has its own package.json"
+    labels:
+      - "type:infra"
+      - "priority:p0"
+
+  - id: M1-02
+    milestone: M1
+    title: "Configure TypeScript for monorepo"
+    description: "Set up TypeScript with strict mode, base config, and package-specific configs with cross-package imports"
+    agent: programmer
+    depends_on: [M1-01]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "tsconfig.json"
+        action: create
+        description: "Base config with strict mode"
+      - path: "apps/web/tsconfig.json"
+        action: create
+        description: "Extends base, Next.js settings"
+      - path: "packages/schema/tsconfig.json"
+        action: create
+        description: "Extends base, lib settings"
+      - path: "packages/export/tsconfig.json"
+        action: create
+        description: "Extends base, lib settings"
+    acceptance_criteria:
+      - "`pnpm typecheck` runs across all packages"
+      - "`strict: true` enabled"
+      - "Path aliases configured for cross-package imports"
+    labels:
+      - "type:infra"
+      - "priority:p0"
+
+  - id: M1-03
+    milestone: M1
+    title: "Configure ESLint and Prettier"
+    description: "Set up shared linting rules and formatting configuration with no-any enforcement"
+    agent: junior-engineer
+    depends_on: [M1-02]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: ".eslintrc.js"
+        action: create
+        description: "Shared lint rules"
+      - path: ".prettierrc"
+        action: create
+        description: "Formatting config"
+      - path: "apps/web/.eslintrc.js"
+        action: create
+        description: "Next.js specific rules"
+    acceptance_criteria:
+      - "`pnpm lint` runs without errors on empty project"
+      - "Prettier formats on save (editor config)"
+      - "No `any` allowed (ESLint rule)"
+    labels:
+      - "type:infra"
+      - "priority:p0"
+
+  - id: M1-04
+    milestone: M1
+    title: "Set up Next.js 14 App Router skeleton"
+    description: "Initialize Next.js with App Router, TypeScript, and basic page structure"
+    agent: programmer
+    depends_on: [M1-02]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "apps/web/package.json"
+        action: create
+        description: "Next.js dependencies"
+      - path: "apps/web/next.config.js"
+        action: create
+        description: "Next.js config"
+      - path: "apps/web/app/layout.tsx"
+        action: create
+        description: "Root layout"
+      - path: "apps/web/app/page.tsx"
+        action: create
+        description: "Landing page placeholder"
+      - path: "apps/web/app/globals.css"
+        action: create
+        description: "Base styles"
+    acceptance_criteria:
+      - "`pnpm --filter web dev` starts dev server"
+      - "Root page renders at localhost:3000"
+      - "App Router structure in place"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M1-05
+    milestone: M1
+    title: "Initialize shadcn/ui and Tailwind CSS"
+    description: "Configure Tailwind CSS with shadcn/ui component system and dark mode support"
+    agent: junior-engineer
+    depends_on: [M1-04]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/tailwind.config.ts"
+        action: create
+        description: "Tailwind config"
+      - path: "apps/web/postcss.config.js"
+        action: create
+        description: "PostCSS config"
+      - path: "apps/web/components.json"
+        action: create
+        description: "shadcn config"
+      - path: "apps/web/lib/utils.ts"
+        action: create
+        description: "cn utility"
+    acceptance_criteria:
+      - "Tailwind classes work in components"
+      - "`npx shadcn-ui add button` installs successfully"
+      - "Dark mode support configured"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M1-06
+    milestone: M1
+    title: "Set up Clerk authentication"
+    description: "Configure Clerk auth with middleware, sign-in/sign-up pages, and environment setup"
+    agent: programmer
+    depends_on: [M1-04]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "apps/web/middleware.ts"
+        action: create
+        description: "Clerk middleware"
+      - path: "apps/web/app/sign-in/[[...sign-in]]/page.tsx"
+        action: create
+        description: "Sign-in page"
+      - path: "apps/web/app/sign-up/[[...sign-up]]/page.tsx"
+        action: create
+        description: "Sign-up page"
+      - path: "apps/web/.env.local.example"
+        action: create
+        description: "Env template"
+    acceptance_criteria:
+      - "Sign in/up pages render Clerk components"
+      - "Middleware protects /dashboard routes"
+      - "Environment variables documented"
+    labels:
+      - "type:backend"
+      - "priority:p0"
+
+  - id: M1-07
+    milestone: M1
+    title: "Create Clerk auth provider and hooks"
+    description: "Set up ClerkProvider wrapper and auth helper functions for client and server components"
+    agent: programmer
+    depends_on: [M1-06]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/app/providers.tsx"
+        action: create
+        description: "ClerkProvider wrapper"
+      - path: "apps/web/lib/auth.ts"
+        action: create
+        description: "Auth helper functions"
+      - path: "apps/web/app/layout.tsx"
+        action: modify
+        description: "Wrap with providers"
+    acceptance_criteria:
+      - "`useUser()` hook works in client components"
+      - "`auth()` works in server components"
+      - "User info accessible after sign-in"
+    labels:
+      - "type:backend"
+      - "priority:p0"
+
+  - id: M1-08
+    milestone: M1
+    title: "Initialize Prisma with Neon PostgreSQL"
+    description: "Set up Prisma ORM with Neon PostgreSQL connection and client singleton"
+    agent: programmer
+    depends_on: [M1-01]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/prisma/schema.prisma"
+        action: create
+        description: "Prisma schema"
+      - path: "apps/web/lib/prisma.ts"
+        action: create
+        description: "Prisma client singleton"
+      - path: "apps/web/.env.local.example"
+        action: modify
+        description: "Add DATABASE_URL"
+    acceptance_criteria:
+      - "Prisma client instantiates without error"
+      - "Connection to Neon works in dev"
+      - "Schema contains placeholder model"
+    labels:
+      - "type:backend"
+      - "type:infra"
+      - "priority:p0"
+
+  - id: M1-09
+    milestone: M1
+    title: "Create core Prisma models (Project, Member, Version)"
+    description: "Define Project, ProjectMember, and ProjectVersion models with JSONB snapshot storage"
+    agent: programmer
+    depends_on: [M1-08]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/prisma/schema.prisma"
+        action: modify
+        description: "Add Project, ProjectMember, ProjectVersion models"
+    acceptance_criteria:
+      - "Project model with: id, name, ownerId, latestSnapshot (Json), createdAt, updatedAt"
+      - "ProjectMember model with: projectId, userId, role (OWNER/EDITOR/VIEWER)"
+      - "ProjectVersion model with: id, projectId, versionNumber, snapshot (Json), message, createdAt"
+      - "Relations defined correctly"
+    labels:
+      - "type:backend"
+      - "priority:p0"
+
+  - id: M1-10
+    milestone: M1
+    title: "Create ShareToken Prisma model"
+    description: "Add ShareToken model for read-only project sharing"
+    agent: junior-engineer
+    depends_on: [M1-09]
+    estimated_hours: 1
+    status: pending
+    files:
+      - path: "apps/web/prisma/schema.prisma"
+        action: modify
+        description: "Add ShareToken model"
+    acceptance_criteria:
+      - "ShareToken model with: id, token, projectId, permission, expiresAt, createdAt"
+      - "Token field has unique index"
+      - "Relation to Project defined"
+    labels:
+      - "type:backend"
+      - "priority:p1"
+
+  - id: M1-11
+    milestone: M1
+    title: "Run initial Prisma migration"
+    description: "Execute first migration to create database tables in Neon"
+    agent: junior-engineer
+    depends_on: [M1-10]
+    estimated_hours: 1
+    status: pending
+    files:
+      - path: "apps/web/prisma/migrations/"
+        action: create
+        description: "Initial migration"
+    acceptance_criteria:
+      - "`pnpm --filter web prisma migrate dev` succeeds"
+      - "Tables created in Neon database"
+      - "Prisma client regenerated"
+    labels:
+      - "type:backend"
+      - "type:infra"
+      - "priority:p0"
+
+  - id: M1-12
+    milestone: M1
+    title: "Create packages/schema with Zod schemas"
+    description: "Set up shared schema package with ProjectSnapshot Zod schemas from platform examples"
+    agent: programmer
+    depends_on: [M1-02]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "packages/schema/package.json"
+        action: create
+        description: "Package config"
+      - path: "packages/schema/src/index.ts"
+        action: create
+        description: "Exports"
+      - path: "packages/schema/src/snapshot.ts"
+        action: create
+        description: "Copy from docs/platform_examples"
+      - path: "packages/schema/src/types.ts"
+        action: create
+        description: "TypeScript type exports"
+    acceptance_criteria:
+      - "`ProjectSnapshot` schema validates example JSON"
+      - "Types exported and importable from other packages"
+      - "`pnpm --filter schema build` produces dist/"
+    references:
+      - "docs/platform_examples/packages/schema/src/snapshot.ts"
+      - "docs/platform_examples/examples/snapshot_v1.json"
+    labels:
+      - "type:backend"
+      - "priority:p0"
+
+  - id: M1-13
+    milestone: M1
+    title: "Create Project CRUD API - POST /api/projects"
+    description: "Implement project creation endpoint with auth and initial snapshot"
+    agent: programmer
+    depends_on: [M1-07, M1-11, M1-12]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/app/api/projects/route.ts"
+        action: create
+        description: "POST handler"
+    acceptance_criteria:
+      - "Creates project with authenticated user as OWNER"
+      - "Initializes empty snapshot with metadata"
+      - "Returns created project with id"
+      - "Validates request body with Zod"
+    labels:
+      - "type:backend"
+      - "priority:p0"
+
+  - id: M1-14
+    milestone: M1
+    title: "Create Project CRUD API - GET /api/projects"
+    description: "Implement project list endpoint returning user's projects with roles"
+    agent: junior-engineer
+    depends_on: [M1-13]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/app/api/projects/route.ts"
+        action: modify
+        description: "Add GET handler"
+    acceptance_criteria:
+      - "Returns list of projects user is member of"
+      - "Includes role in response"
+      - "Sorted by updatedAt descending"
+    labels:
+      - "type:backend"
+      - "priority:p0"
+
+  - id: M1-15
+    milestone: M1
+    title: "Create Project CRUD API - GET/PATCH /api/projects/[id]"
+    description: "Implement single project read and update endpoints with authorization"
+    agent: programmer
+    depends_on: [M1-13]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "apps/web/app/api/projects/[id]/route.ts"
+        action: create
+        description: "GET, PATCH handlers"
+    acceptance_criteria:
+      - "GET returns project if user is member"
+      - "PATCH updates name and/or snapshot"
+      - "403 if not member, 404 if not found"
+      - "Validates PATCH body with Zod"
+    labels:
+      - "type:backend"
+      - "priority:p0"
+
+  - id: M1-16
+    milestone: M1
+    title: "Create basic UI shell (layout, navigation)"
+    description: "Implement dashboard layout with sidebar navigation and user menu"
+    agent: programmer
+    depends_on: [M1-05, M1-07]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "apps/web/app/(dashboard)/layout.tsx"
+        action: create
+        description: "Dashboard layout"
+      - path: "apps/web/components/nav/sidebar.tsx"
+        action: create
+        description: "Navigation sidebar"
+      - path: "apps/web/components/nav/header.tsx"
+        action: create
+        description: "Top header with user menu"
+      - path: "apps/web/app/(dashboard)/page.tsx"
+        action: create
+        description: "Dashboard home"
+    acceptance_criteria:
+      - "Dashboard layout with sidebar navigation"
+      - "User avatar/menu from Clerk"
+      - "Responsive design (collapsible sidebar)"
+      - "Links to: Projects, Settings"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M1-17
+    milestone: M1
+    title: "Set up CI pipeline (GitHub Actions)"
+    description: "Configure GitHub Actions workflow for lint, typecheck, test, and build"
+    agent: junior-engineer
+    depends_on: [M1-03, M1-12]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: ".github/workflows/ci.yml"
+        action: create
+        description: "CI workflow"
+    acceptance_criteria:
+      - "Runs on PR to main"
+      - "Steps: install, lint, typecheck, test, build"
+      - "Caches pnpm store"
+      - "Fails on any step failure"
+    labels:
+      - "type:infra"
+      - "priority:p0"
+
+  # =============================================================================
+  # MILESTONE 2: Editor
+  # =============================================================================
+
+  - id: M2-01
+    milestone: M2
+    title: "Install and configure React Flow"
+    description: "Add React Flow dependency and configure styles for graph editor"
+    agent: programmer
+    depends_on: [M1-04]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/package.json"
+        action: modify
+        description: "Add @xyflow/react"
+      - path: "apps/web/app/globals.css"
+        action: modify
+        description: "Add React Flow styles"
+    acceptance_criteria:
+      - "React Flow renders empty canvas"
+      - "Pan and zoom work"
+      - "No console errors"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M2-02
+    milestone: M2
+    title: "Create QuestNode React Flow component"
+    description: "Implement custom React Flow node for quests with title, icon, and validation display"
+    agent: programmer
+    depends_on: [M2-01, M1-12]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "apps/web/components/editor/nodes/quest-node.tsx"
+        action: create
+        description: "Custom node"
+      - path: "apps/web/components/editor/nodes/types.ts"
+        action: create
+        description: "QuestNodeData type"
+    acceptance_criteria:
+      - "Renders quest title, icon reference, shape indicator"
+      - "Supports validation state (error/warning border)"
+      - "Handles selection state visually"
+      - "Matches QuestFlowNode type from contracts"
+    references:
+      - "docs/platform_examples/12_REACTFLOW_CONTRACTS.md"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M2-03
+    milestone: M2
+    title: "Create DependencyEdge React Flow component"
+    description: "Implement custom React Flow edge for quest dependencies"
+    agent: junior-engineer
+    depends_on: [M2-01]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/components/editor/edges/dependency-edge.tsx"
+        action: create
+        description: "Custom edge"
+      - path: "apps/web/components/editor/edges/types.ts"
+        action: create
+        description: "DependencyEdgeData type"
+    acceptance_criteria:
+      - "Renders arrow from source to target"
+      - "Visual distinction for AND vs OR dependency types"
+      - "Supports validation state"
+    references:
+      - "docs/platform_examples/12_REACTFLOW_CONTRACTS.md"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M2-04
+    milestone: M2
+    title: "Create snapshot-to-ReactFlow mapper"
+    description: "Transform ProjectSnapshot quests and dependencies to React Flow nodes and edges"
+    agent: programmer
+    depends_on: [M2-02, M2-03, M1-12]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/lib/editor/snapshot-mapper.ts"
+        action: create
+        description: "mapSnapshotToFlow function"
+    acceptance_criteria:
+      - "Converts ProjectSnapshot.quests to React Flow nodes"
+      - "Converts ProjectSnapshot.dependencies to React Flow edges"
+      - "Filters by activeChapterId"
+      - "node.id === quest.id (UUID)"
+      - "edge.id follows `${from}-->${to}` pattern"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M2-05
+    milestone: M2
+    title: "Create ReactFlow-to-snapshot mapper"
+    description: "Transform React Flow state changes back to ProjectSnapshot updates"
+    agent: programmer
+    depends_on: [M2-04]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/lib/editor/snapshot-mapper.ts"
+        action: modify
+        description: "Add mapFlowToSnapshot function"
+    acceptance_criteria:
+      - "Updates quest positions from node positions"
+      - "Handles dependency changes (add/remove edges)"
+      - "Preserves all other quest data"
+      - "Validates output with Zod schema"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M2-06
+    milestone: M2
+    title: "Create Zustand editor store - core structure"
+    description: "Set up Zustand store for editor state with snapshot, dirty flag, and sync status"
+    agent: programmer
+    depends_on: [M1-12]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "apps/web/lib/store/editor-store.ts"
+        action: create
+        description: "Zustand store"
+      - path: "apps/web/lib/store/types.ts"
+        action: create
+        description: "Store types"
+    acceptance_criteria:
+      - "Store contains: snapshot, isDirty, syncStatus"
+      - "Actions: setSnapshot, updateQuest, updateDependencies"
+      - "Uses immer middleware for immutable updates"
+      - "TypeScript types for all state and actions"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M2-07
+    milestone: M2
+    title: "Create Zustand editor store - selection state"
+    description: "Add selection state management to editor store"
+    agent: junior-engineer
+    depends_on: [M2-06]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/lib/store/editor-store.ts"
+        action: modify
+        description: "Add selection state"
+    acceptance_criteria:
+      - "State: selectedQuestId, selectedChapterId"
+      - "Actions: selectQuest, selectChapter, clearSelection"
+      - "Selection changes update uiState in snapshot"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M2-08
+    milestone: M2
+    title: "Create Zustand editor store - undo/redo"
+    description: "Implement snapshot-based undo/redo functionality"
+    agent: programmer
+    depends_on: [M2-06]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "apps/web/lib/store/editor-store.ts"
+        action: modify
+        description: "Add undo/redo"
+      - path: "apps/web/lib/store/history.ts"
+        action: create
+        description: "History helper"
+    acceptance_criteria:
+      - "State: undoStack, redoStack (snapshot arrays)"
+      - "Actions: pushUndoPoint, undo, redo"
+      - "Max history size (e.g., 50)"
+      - "Clear redo on new change"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M2-09
+    milestone: M2
+    title: "Create main Editor canvas component"
+    description: "Assemble React Flow canvas with custom nodes/edges connected to Zustand store"
+    agent: programmer
+    depends_on: [M2-04, M2-05, M2-06]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "apps/web/components/editor/canvas.tsx"
+        action: create
+        description: "Main editor canvas"
+    acceptance_criteria:
+      - "Renders React Flow with nodes/edges from store"
+      - "Syncs selection to store"
+      - "Handles node drag (updates positions)"
+      - "Snap to grid enabled (16x16)"
+      - "Registers custom node/edge types"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M2-10
+    milestone: M2
+    title: "Create Chapter selector panel"
+    description: "Implement chapter list panel with add/delete and active chapter switching"
+    agent: programmer
+    depends_on: [M2-06, M1-12]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "apps/web/components/editor/panels/chapter-panel.tsx"
+        action: create
+        description: "Chapter list"
+      - path: "apps/web/components/editor/panels/chapter-item.tsx"
+        action: create
+        description: "Single chapter row"
+    acceptance_criteria:
+      - "Lists chapters sorted by order"
+      - "Active chapter highlighted"
+      - "Click switches active chapter"
+      - "Add chapter button (creates new chapter)"
+      - "Delete chapter (with confirmation)"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M2-11
+    milestone: M2
+    title: "Create Quest inspector panel - metadata form"
+    description: "Implement inspector panel container and quest metadata editing form"
+    agent: programmer
+    depends_on: [M2-06, M1-05]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "apps/web/components/editor/panels/inspector/quest-inspector.tsx"
+        action: create
+        description: "Inspector container"
+      - path: "apps/web/components/editor/panels/inspector/metadata-form.tsx"
+        action: create
+        description: "Title/subtitle/description form"
+    acceptance_criteria:
+      - "Shows selected quest details"
+      - "Editable fields: title, subtitle, description"
+      - "Updates store on blur/change"
+      - "Pushes undo point on save"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M2-12
+    milestone: M2
+    title: "Create Quest inspector panel - icon selector"
+    description: "Implement icon reference input for quest icons"
+    agent: junior-engineer
+    depends_on: [M2-11]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/components/editor/panels/inspector/icon-selector.tsx"
+        action: create
+        description: "Icon input"
+    acceptance_criteria:
+      - "Text input for item ID (e.g., 'minecraft:book')"
+      - "Dropdown with common vanilla items (optional)"
+      - "Updates quest icon in store"
+      - "Shows current icon reference"
+    labels:
+      - "type:frontend"
+      - "priority:p1"
+
+  - id: M2-13
+    milestone: M2
+    title: "Create Quest inspector panel - settings form"
+    description: "Implement quest settings checkboxes (repeatable, hidden, etc.)"
+    agent: junior-engineer
+    depends_on: [M2-11]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/components/editor/panels/inspector/settings-form.tsx"
+        action: create
+        description: "Quest settings form"
+    acceptance_criteria:
+      - "Checkboxes for: repeatable, hidden, optional, ignoreDependencies"
+      - "Updates quest.settings in store"
+      - "Collapsible section"
+    labels:
+      - "type:frontend"
+      - "priority:p1"
+
+  - id: M2-14
+    milestone: M2
+    title: "Create Quest inspector panel - tasks list"
+    description: "Implement task list with ITEM and CHECKBOX task type forms"
+    agent: programmer
+    depends_on: [M2-11]
+    estimated_hours: 4
+    status: pending
+    files:
+      - path: "apps/web/components/editor/panels/inspector/tasks-list.tsx"
+        action: create
+        description: "Task list"
+      - path: "apps/web/components/editor/panels/inspector/task-item-form.tsx"
+        action: create
+        description: "ITEM task form"
+      - path: "apps/web/components/editor/panels/inspector/task-checkbox-form.tsx"
+        action: create
+        description: "CHECKBOX task form"
+    acceptance_criteria:
+      - "Lists tasks with type indicator"
+      - "Add task button (type selector)"
+      - "Edit inline or in modal"
+      - "Delete task button"
+      - "Reorder tasks (drag or up/down)"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M2-15
+    milestone: M2
+    title: "Create Quest inspector panel - rewards list"
+    description: "Implement reward list with ITEM, XP, and COMMAND reward type forms"
+    agent: programmer
+    depends_on: [M2-11]
+    estimated_hours: 4
+    status: pending
+    files:
+      - path: "apps/web/components/editor/panels/inspector/rewards-list.tsx"
+        action: create
+        description: "Reward list"
+      - path: "apps/web/components/editor/panels/inspector/reward-item-form.tsx"
+        action: create
+        description: "ITEM reward form"
+      - path: "apps/web/components/editor/panels/inspector/reward-xp-form.tsx"
+        action: create
+        description: "XP reward form"
+      - path: "apps/web/components/editor/panels/inspector/reward-command-form.tsx"
+        action: create
+        description: "COMMAND reward form"
+    acceptance_criteria:
+      - "Lists rewards with type indicator"
+      - "Add reward button (type selector)"
+      - "Edit inline or in modal"
+      - "Delete reward button"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M2-16
+    milestone: M2
+    title: "Implement autosave with debounce"
+    description: "Create autosave system that debounces changes and syncs to server"
+    agent: programmer
+    depends_on: [M2-06, M1-15]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "apps/web/lib/store/autosave.ts"
+        action: create
+        description: "Autosave hook"
+      - path: "apps/web/components/editor/autosave-provider.tsx"
+        action: create
+        description: "Provider component"
+    acceptance_criteria:
+      - "Debounce delay: 2 seconds"
+      - "Calls PATCH /api/projects/[id] with snapshot"
+      - "Updates syncStatus in store (saving, saved, error)"
+      - "Shows sync indicator in UI"
+    labels:
+      - "type:frontend"
+      - "type:backend"
+      - "priority:p0"
+
+  - id: M2-17
+    milestone: M2
+    title: "Create sync status indicator"
+    description: "Implement visual sync status display showing save state"
+    agent: junior-engineer
+    depends_on: [M2-16]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/components/editor/sync-indicator.tsx"
+        action: create
+        description: "Status display"
+    acceptance_criteria:
+      - "Shows: 'Saving...', 'Saved', 'Error' states"
+      - "Timestamp of last save"
+      - "Error retry button"
+    labels:
+      - "type:frontend"
+      - "priority:p1"
+
+  - id: M2-18
+    milestone: M2
+    title: "Create validation engine - core"
+    description: "Implement snapshot validation with blocking errors and warnings"
+    agent: programmer
+    depends_on: [M1-12]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "packages/schema/src/validation/validator.ts"
+        action: create
+        description: "Validation engine"
+      - path: "packages/schema/src/validation/rules.ts"
+        action: create
+        description: "Rule definitions"
+      - path: "packages/schema/src/validation/types.ts"
+        action: create
+        description: "Problem type"
+    acceptance_criteria:
+      - "`validateSnapshot(snapshot): Problem[]`"
+      - "Problem type: { severity, code, message, entity? }"
+      - "Rules: missing title, orphan quests, circular dependencies"
+      - "Blocking vs warning severity"
+    labels:
+      - "type:backend"
+      - "priority:p0"
+
+  - id: M2-19
+    milestone: M2
+    title: "Create validation engine - dependency cycle detection"
+    description: "Implement circular dependency detection algorithm"
+    agent: programmer
+    depends_on: [M2-18]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "packages/schema/src/validation/rules.ts"
+        action: modify
+        description: "Add cycle detection"
+    acceptance_criteria:
+      - "Detects circular dependencies (A -> B -> C -> A)"
+      - "Reports all quests in cycle"
+      - "Blocking error severity"
+    labels:
+      - "type:backend"
+      - "priority:p0"
+
+  - id: M2-20
+    milestone: M2
+    title: "Create validation panel UI"
+    description: "Implement validation problems display panel with click-to-select"
+    agent: programmer
+    depends_on: [M2-18, M2-06]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/components/editor/panels/validation-panel.tsx"
+        action: create
+        description: "Validation display"
+      - path: "apps/web/lib/store/editor-store.ts"
+        action: modify
+        description: "Add validationProblems state"
+    acceptance_criteria:
+      - "Lists all problems grouped by severity"
+      - "Click problem selects affected entity"
+      - "Updates on snapshot change (debounced)"
+      - "Collapsible by severity"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  # =============================================================================
+  # MILESTONE 3: Versioning
+  # =============================================================================
+
+  - id: M3-01
+    milestone: M3
+    title: "Create Version API - POST /api/projects/[id]/versions"
+    description: "Implement version creation endpoint from current snapshot"
+    agent: programmer
+    depends_on: [M1-15]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/app/api/projects/[id]/versions/route.ts"
+        action: create
+        description: "POST handler"
+    acceptance_criteria:
+      - "Creates new ProjectVersion from latestSnapshot"
+      - "Auto-increments versionNumber"
+      - "Accepts optional message"
+      - "Returns created version"
+    labels:
+      - "type:backend"
+      - "priority:p1"
+
+  - id: M3-02
+    milestone: M3
+    title: "Create Version API - GET /api/projects/[id]/versions"
+    description: "Implement version list endpoint without snapshot blob"
+    agent: junior-engineer
+    depends_on: [M3-01]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/app/api/projects/[id]/versions/route.ts"
+        action: modify
+        description: "Add GET handler"
+    acceptance_criteria:
+      - "Returns list of versions for project"
+      - "Sorted by versionNumber descending"
+      - "Includes: id, versionNumber, message, createdAt"
+      - "Excludes snapshot blob (too large for list)"
+    labels:
+      - "type:backend"
+      - "priority:p1"
+
+  - id: M3-03
+    milestone: M3
+    title: "Create Version API - GET /api/projects/[id]/versions/[versionId]"
+    description: "Implement single version fetch with full snapshot"
+    agent: junior-engineer
+    depends_on: [M3-01]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/app/api/projects/[id]/versions/[versionId]/route.ts"
+        action: create
+        description: "GET handler"
+    acceptance_criteria:
+      - "Returns full version including snapshot"
+      - "404 if version not found"
+      - "Validates user has project access"
+    labels:
+      - "type:backend"
+      - "priority:p1"
+
+  - id: M3-04
+    milestone: M3
+    title: "Create Version restore API - POST /api/projects/[id]/versions/[versionId]/restore"
+    description: "Implement version restore to overwrite current snapshot"
+    agent: programmer
+    depends_on: [M3-03]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/app/api/projects/[id]/versions/[versionId]/restore/route.ts"
+        action: create
+        description: "POST handler"
+    acceptance_criteria:
+      - "Copies version snapshot to project.latestSnapshot"
+      - "Updates project.updatedAt"
+      - "Returns updated project"
+      - "Requires EDITOR or OWNER role"
+    labels:
+      - "type:backend"
+      - "priority:p1"
+
+  - id: M3-05
+    milestone: M3
+    title: "Create Version list UI component"
+    description: "Implement version history list with TanStack Query"
+    agent: programmer
+    depends_on: [M3-02]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/components/versions/version-list.tsx"
+        action: create
+        description: "Version list"
+      - path: "apps/web/components/versions/version-item.tsx"
+        action: create
+        description: "Single version row"
+    acceptance_criteria:
+      - "Fetches versions with TanStack Query"
+      - "Shows version number, message, date"
+      - "Loading and empty states"
+      - "Links to version detail/restore"
+    labels:
+      - "type:frontend"
+      - "priority:p1"
+
+  - id: M3-06
+    milestone: M3
+    title: "Create Version creation dialog"
+    description: "Implement modal for creating new version with message"
+    agent: junior-engineer
+    depends_on: [M3-01, M1-05]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/components/versions/create-version-dialog.tsx"
+        action: create
+        description: "Dialog"
+    acceptance_criteria:
+      - "Modal dialog with message input"
+      - "Submit creates version via API"
+      - "Success toast and list refresh"
+      - "Accessible (focus trap, escape to close)"
+    labels:
+      - "type:frontend"
+      - "priority:p1"
+
+  - id: M3-07
+    milestone: M3
+    title: "Create Version restore confirmation"
+    description: "Implement confirmation dialog for version restore"
+    agent: junior-engineer
+    depends_on: [M3-04, M3-05]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/components/versions/restore-dialog.tsx"
+        action: create
+        description: "Confirmation dialog"
+    acceptance_criteria:
+      - "Warning about overwriting current work"
+      - "Shows version info being restored"
+      - "Calls restore API on confirm"
+      - "Refreshes editor state after restore"
+    labels:
+      - "type:frontend"
+      - "priority:p1"
+
+  - id: M3-08
+    milestone: M3
+    title: "Integrate version UI into editor"
+    description: "Add version controls to editor header with save/history buttons"
+    agent: programmer
+    depends_on: [M3-05, M3-06, M3-07, M2-09]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/components/editor/header.tsx"
+        action: create
+        description: "Editor header"
+      - path: "apps/web/app/(dashboard)/projects/[id]/editor/page.tsx"
+        action: modify
+        description: "Add version button"
+    acceptance_criteria:
+      - "'Save Version' button in editor header"
+      - "'Version History' dropdown/panel"
+      - "Version restore updates editor store"
+      - "Current version indicator (if viewing old version)"
+    labels:
+      - "type:frontend"
+      - "priority:p1"
+
+  # =============================================================================
+  # MILESTONE 4: Export
+  # =============================================================================
+
+  - id: M4-01
+    milestone: M4
+    title: "Create packages/export structure"
+    description: "Set up export package with basic type definitions"
+    agent: junior-engineer
+    depends_on: [M1-01, M1-12]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "packages/export/package.json"
+        action: create
+        description: "Package config"
+      - path: "packages/export/src/index.ts"
+        action: create
+        description: "Exports"
+      - path: "packages/export/src/types.ts"
+        action: create
+        description: "ExportModel types"
+    acceptance_criteria:
+      - "Package builds successfully"
+      - "Imports from @mcquest/schema work"
+      - "Basic type definitions for ExportModel"
+    labels:
+      - "type:export"
+      - "priority:p0"
+
+  - id: M4-02
+    milestone: M4
+    title: "Create ExportModel type definitions"
+    description: "Define complete ExportModel types matching SNBT structure"
+    agent: programmer
+    depends_on: [M4-01]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "packages/export/src/types.ts"
+        action: modify
+        description: "Complete ExportModel types"
+    acceptance_criteria:
+      - "ExportChapter: numeric id, title, description, questIds"
+      - "ExportQuest: numeric id, title, position, shape, icon, tasks, rewards, dependencies"
+      - "ExportConfig: version target, locale"
+      - "Types match SNBT output structure"
+    references:
+      - "docs/platform_examples/reference_export/"
+    labels:
+      - "type:export"
+      - "priority:p0"
+
+  - id: M4-03
+    milestone: M4
+    title: "Create snapshot-to-ExportModel transformer"
+    description: "Transform ProjectSnapshot to ExportModel for SNBT generation"
+    agent: programmer
+    depends_on: [M4-02, M1-12]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "packages/export/src/transform/snapshot-to-export.ts"
+        action: create
+        description: "Main transformer"
+    acceptance_criteria:
+      - "`transformSnapshot(snapshot, config): ExportModel`"
+      - "Converts all chapters and quests"
+      - "Preserves relationships"
+      - "Handles missing optional fields"
+    labels:
+      - "type:export"
+      - "priority:p0"
+
+  - id: M4-04
+    milestone: M4
+    title: "Create deterministic ID mapper"
+    description: "Implement stable UUID to numeric ID mapping with defined sort order"
+    agent: programmer
+    depends_on: [M4-03]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "packages/export/src/transform/id-mapper.ts"
+        action: create
+        description: "UUID to numeric mapping"
+    acceptance_criteria:
+      - "Maps UUIDs to sequential numeric IDs"
+      - "Sorting key: chapter.order, quest.position.y, quest.position.x, quest.id"
+      - "Same input always produces same mapping"
+      - "Chapter IDs start at 10, Quest IDs at 1"
+    references:
+      - ".claude/rules/20_export_compiler.md"
+    labels:
+      - "type:export"
+      - "priority:p0"
+
+  - id: M4-05
+    milestone: M4
+    title: "Create SNBT serializer - core"
+    description: "Implement SNBT string builder with proper escaping"
+    agent: programmer
+    depends_on: [M4-02]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "packages/export/src/snbt/serializer.ts"
+        action: create
+        description: "SNBT string builder"
+      - path: "packages/export/src/snbt/escape.ts"
+        action: create
+        description: "String escaping"
+    acceptance_criteria:
+      - "Handles: objects, arrays, strings, numbers, booleans"
+      - "Long integers with `L` suffix (e.g., `1L`)"
+      - "Proper string escaping (quotes, backslashes)"
+      - "Matches FTB Quests SNBT format"
+    references:
+      - "docs/platform_examples/reference_export/"
+    labels:
+      - "type:export"
+      - "priority:p0"
+
+  - id: M4-06
+    milestone: M4
+    title: "Create SNBT serializer - formatting"
+    description: "Add deterministic formatting options to SNBT serializer"
+    agent: junior-engineer
+    depends_on: [M4-05]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "packages/export/src/snbt/serializer.ts"
+        action: modify
+        description: "Add formatting options"
+    acceptance_criteria:
+      - "Compact format (single line for small objects)"
+      - "Consistent key ordering (alphabetical or defined)"
+      - "Deterministic output"
+    labels:
+      - "type:export"
+      - "priority:p0"
+
+  - id: M4-07
+    milestone: M4
+    title: "Create chapter file generator"
+    description: "Generate chapter SNBT files from ExportModel"
+    agent: programmer
+    depends_on: [M4-04, M4-05]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "packages/export/src/generators/chapter-generator.ts"
+        action: create
+        description: "Chapter SNBT generator"
+    acceptance_criteria:
+      - "Generates `chapter_{id}.snbt` content"
+      - "Includes: id, title, description, quests array"
+      - "Matches reference export format"
+      - "Tests against docs/platform_examples/reference_export/chapters/"
+    references:
+      - "docs/platform_examples/reference_export/config/ftbquests/quests/chapters/"
+    labels:
+      - "type:export"
+      - "priority:p0"
+
+  - id: M4-08
+    milestone: M4
+    title: "Create quest file generator"
+    description: "Generate quest SNBT files with all fields and type mappings"
+    agent: programmer
+    depends_on: [M4-04, M4-05]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "packages/export/src/generators/quest-generator.ts"
+        action: create
+        description: "Quest SNBT generator"
+    acceptance_criteria:
+      - "Generates `quest_{id}.snbt` content"
+      - "Includes all quest fields: id, title, position, shape, icon, tasks, rewards, dependencies"
+      - "Task type mapping (ITEM -> item, CHECKBOX -> checkbox)"
+      - "Reward type mapping"
+      - "Matches reference export format"
+    references:
+      - "docs/platform_examples/reference_export/config/ftbquests/quests/quests/"
+    labels:
+      - "type:export"
+      - "priority:p0"
+
+  - id: M4-09
+    milestone: M4
+    title: "Create ZIP packager"
+    description: "Package generated SNBT files into ZIP with correct folder structure"
+    agent: programmer
+    depends_on: [M4-07, M4-08]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "packages/export/src/packager.ts"
+        action: create
+        description: "ZIP builder"
+      - path: "packages/export/package.json"
+        action: modify
+        description: "Add archiver dependency"
+    acceptance_criteria:
+      - "Creates ZIP with folder structure: config/ftbquests/quests/chapters/, config/ftbquests/quests/quests/"
+      - "Each chapter and quest as separate .snbt file"
+      - "Returns ZIP as Buffer or stream"
+    labels:
+      - "type:export"
+      - "priority:p0"
+
+  - id: M4-10
+    milestone: M4
+    title: "Create main export function"
+    description: "Orchestrate full export pipeline with validation"
+    agent: programmer
+    depends_on: [M4-03, M4-09, M2-18]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "packages/export/src/export.ts"
+        action: create
+        description: "Main export entry"
+    acceptance_criteria:
+      - "`exportProject(snapshot, config): Promise<{ zip: Buffer, problems: Problem[] }>`"
+      - "Validates snapshot before export"
+      - "Returns blocking errors without ZIP"
+      - "Returns warnings with ZIP"
+    labels:
+      - "type:export"
+      - "priority:p0"
+
+  - id: M4-11
+    milestone: M4
+    title: "Create Export API endpoint"
+    description: "Implement export API that returns ZIP file"
+    agent: programmer
+    depends_on: [M4-10, M1-15]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/app/api/projects/[id]/export/route.ts"
+        action: create
+        description: "POST handler"
+    acceptance_criteria:
+      - "Validates user has project access"
+      - "Calls exportProject with project snapshot"
+      - "Returns ZIP file with proper headers"
+      - "Returns 400 with errors if validation fails"
+      - "Rate limiting consideration (TODO for M5)"
+    labels:
+      - "type:export"
+      - "type:backend"
+      - "priority:p0"
+
+  - id: M4-12
+    milestone: M4
+    title: "Create Export UI - button and trigger"
+    description: "Add export button to editor with validation awareness"
+    agent: junior-engineer
+    depends_on: [M4-11, M2-09]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/components/editor/export-button.tsx"
+        action: create
+        description: "Export button"
+    acceptance_criteria:
+      - "Export button in editor header"
+      - "Disabled if blocking validation errors"
+      - "Tooltip shows error count if disabled"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M4-13
+    milestone: M4
+    title: "Create Export UI - progress and download"
+    description: "Implement export dialog with progress and auto-download"
+    agent: programmer
+    depends_on: [M4-12]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/components/editor/export-dialog.tsx"
+        action: create
+        description: "Export dialog"
+    acceptance_criteria:
+      - "Shows export progress (or spinner for small exports)"
+      - "Displays any warnings from export"
+      - "Auto-downloads ZIP on success"
+      - "Error state with retry button"
+    labels:
+      - "type:frontend"
+      - "priority:p0"
+
+  - id: M4-14
+    milestone: M4
+    title: "Set up golden export test infrastructure"
+    description: "Create golden export test framework with micro fixture"
+    agent: programmer
+    depends_on: [M4-10]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "packages/export/src/__tests__/golden.test.ts"
+        action: create
+        description: "Golden test"
+      - path: "testdata/ftbq/1.21/micro/"
+        action: create
+        description: "Test fixture directory"
+      - path: "testdata/ftbq/1.21/micro/snapshot.json"
+        action: create
+        description: "Input snapshot"
+      - path: "testdata/ftbq/1.21/micro/expected/"
+        action: create
+        description: "Expected output files"
+    acceptance_criteria:
+      - "Test exports snapshot and compares to expected/"
+      - "File-by-file comparison"
+      - "Clear diff output on failure"
+      - "CI runs golden tests"
+    references:
+      - ".claude/rules/30_testing_golden_exports.md"
+    labels:
+      - "type:export"
+      - "priority:p0"
+
+  # =============================================================================
+  # MILESTONE 5: Sharing
+  # =============================================================================
+
+  - id: M5-01
+    milestone: M5
+    title: "Create ShareToken API - POST /api/projects/[id]/share"
+    description: "Implement share token creation with secure token generation"
+    agent: programmer
+    depends_on: [M1-10, M1-15]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/app/api/projects/[id]/share/route.ts"
+        action: create
+        description: "POST handler"
+      - path: "apps/web/lib/share-token.ts"
+        action: create
+        description: "Token generation utility"
+    acceptance_criteria:
+      - "Generates cryptographically secure token (128+ bits)"
+      - "Creates ShareToken record with expiration (optional)"
+      - "Returns shareable URL"
+      - "Requires OWNER or EDITOR role"
+    references:
+      - ".claude/rules/80_security_and_abuse_prevention.md"
+    labels:
+      - "type:backend"
+      - "priority:p1"
+
+  - id: M5-02
+    milestone: M5
+    title: "Create ShareToken API - GET/DELETE"
+    description: "Implement share token list and revocation endpoints"
+    agent: junior-engineer
+    depends_on: [M5-01]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/app/api/projects/[id]/share/route.ts"
+        action: modify
+        description: "Add GET, DELETE handlers"
+    acceptance_criteria:
+      - "GET returns list of active share tokens for project"
+      - "DELETE revokes specific token"
+      - "Only OWNER can delete tokens"
+    labels:
+      - "type:backend"
+      - "priority:p1"
+
+  - id: M5-03
+    milestone: M5
+    title: "Create share token access route"
+    description: "Implement public share route that validates tokens and displays viewer"
+    agent: programmer
+    depends_on: [M5-01]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/app/share/[token]/route.ts"
+        action: create
+        description: "Token validation"
+      - path: "apps/web/app/share/[token]/page.tsx"
+        action: create
+        description: "Shared view page"
+    acceptance_criteria:
+      - "Validates token exists and not expired"
+      - "Redirects to viewer with token context"
+      - "404 for invalid/expired tokens"
+    labels:
+      - "type:backend"
+      - "type:frontend"
+      - "priority:p1"
+
+  - id: M5-04
+    milestone: M5
+    title: "Create Share link generation UI"
+    description: "Implement share dialog with token management"
+    agent: junior-engineer
+    depends_on: [M5-01, M5-02]
+    estimated_hours: 2
+    status: pending
+    files:
+      - path: "apps/web/components/share/share-dialog.tsx"
+        action: create
+        description: "Share dialog"
+      - path: "apps/web/components/share/token-list.tsx"
+        action: create
+        description: "Active tokens list"
+    acceptance_criteria:
+      - "Button to generate new share link"
+      - "Copy link to clipboard"
+      - "List active tokens with revoke button"
+      - "Expiration date display"
+    labels:
+      - "type:frontend"
+      - "priority:p1"
+
+  - id: M5-05
+    milestone: M5
+    title: "Create read-only viewer mode"
+    description: "Implement non-editable graph viewer for shared projects"
+    agent: programmer
+    depends_on: [M5-03, M2-09]
+    estimated_hours: 3
+    status: pending
+    files:
+      - path: "apps/web/components/editor/viewer.tsx"
+        action: create
+        description: "Read-only canvas"
+      - path: "apps/web/lib/store/viewer-store.ts"
+        action: create
+        description: "Viewer-specific store"
+    acceptance_criteria:
+      - "Renders graph without edit capabilities"
+      - "No drag, no connection, no inspector edits"
+      - "Can still pan/zoom and view quest details"
+      - "'Read-only' banner displayed"
+    labels:
+      - "type:frontend"
+      - "priority:p1"
+
+  - id: M5-06
+    milestone: M5
+    title: "Create read-only viewer banner"
+    description: "Implement sticky banner for shared project view"
+    agent: junior-engineer
+    depends_on: [M5-05]
+    estimated_hours: 1
+    status: pending
+    files:
+      - path: "apps/web/components/share/readonly-banner.tsx"
+        action: create
+        description: "Banner component"
+    acceptance_criteria:
+      - "Sticky banner at top"
+      - "Shows 'You are viewing a shared project (read-only)'"
+      - "Link to sign up/create own project"
+      - "Dismissible but reappears on page reload"
+    labels:
+      - "type:frontend"
+      - "priority:p1"
+
+# =============================================================================
+# Dependency Graph Summary
+# =============================================================================
+#
+# M1-01 (monorepo)
+#   ├── M1-02 (typescript)
+#   │     ├── M1-03 (eslint)
+#   │     ├── M1-04 (nextjs)
+#   │     │     ├── M1-05 (shadcn)
+#   │     │     ├── M1-06 (clerk)
+#   │     │     │     └── M1-07 (clerk provider)
+#   │     │     └── M2-01 (react flow)
+#   │     └── M1-12 (schema)
+#   │           ├── M1-13 (api projects post)
+#   │           │     ├── M1-14 (api projects get)
+#   │           │     └── M1-15 (api projects id)
+#   │           ├── M2-02 (quest node)
+#   │           ├── M2-06 (zustand)
+#   │           ├── M2-18 (validation)
+#   │           └── M4-03 (export transform)
+#   └── M1-08 (prisma)
+#         └── M1-09 (models)
+#               └── M1-10 (share token model)
+#                     └── M1-11 (migration)
