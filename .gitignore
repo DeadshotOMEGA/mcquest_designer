@@ -1,7 +1,8 @@
 node_modules/
+.claude/statusline/
 .pnpm-store/
 .env
 .env.*
 dist/
 .next/
-*.Zone.Identifier
+*Zone.Identifier*
