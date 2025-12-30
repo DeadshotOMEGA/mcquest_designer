@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "description": "Skill configuration for MCQuest Designer project",
+  "skills": {
+    "writing-typescript": {
+      "domain": "writing",
+      "when": "Writing TypeScript code, complex types, or type-safe APIs",
+      "priority": 1,
+      "why": "Core language for this project"
+    },
+    "writing-react": {
+      "domain": "writing",
+      "when": "Building React components, managing state, or React patterns",
+      "priority": 1,
+      "why": "Frontend uses React with React Flow"
+    },
+    "testing-playwright": {
+      "domain": "testing",
+      "when": "Writing E2E tests or browser automation",
+      "priority": 2,
+      "why": "Used for E2E testing"
+    },
+    "writing-tailwind": {
+      "domain": "writing",
+      "when": "Styling components with utility classes",
+      "priority": 2,
+      "why": "UI uses Tailwind CSS"
+    },
+    "applying-testing-patterns": {
+      "domain": "testing",
+      "when": "Implementing test suites or test infrastructure",
+      "priority": 2,
+      "why": "Project uses Vitest for unit/integration tests"
+    },
+    "writing-shell-scripts": {
+      "domain": "writing",
+      "when": "Writing automation scripts or deployment tools",
+      "priority": 3,
+      "why": "Build and deployment automation"
+    },
+    "designing-databases": {
+      "domain": "reference",
+      "when": "Database schema design or data modeling",
+      "priority": 2,
+      "why": "Project uses Prisma with PostgreSQL"
+    }
+  }
+}
