@@ -65,8 +65,9 @@ export async function GET(request: Request) {
     const hasMore = projects.length > query.limit
     const items = hasMore ? projects.slice(0, -1) : projects
 
-    // Format response
-    const formattedProjects = items.map((project) => ({
+    // Format response - define the project type from findMany result
+    type ProjectWithMembers = (typeof projects)[number]
+    const formattedProjects = items.map((project: ProjectWithMembers) => ({
       id: project.id,
       name: project.name,
       description: project.description,

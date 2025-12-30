@@ -4,13 +4,13 @@ This project uses **Git Flow** for branch management.
 
 ## Branch Structure
 
-| Branch | Purpose | Protected |
-|--------|---------|-----------|
-| `main` | Production releases | Yes |
-| `develop` | Integration branch, default for PRs | Yes |
-| `feature/*` | New features | No |
-| `release/*` | Release preparation | No |
-| `hotfix/*` | Emergency production fixes | No |
+| Branch      | Purpose                             | Protected |
+| ----------- | ----------------------------------- | --------- |
+| `main`      | Production releases                 | Yes       |
+| `develop`   | Integration branch, default for PRs | Yes       |
+| `feature/*` | New features                        | No        |
+| `release/*` | Release preparation                 | No        |
+| `hotfix/*`  | Emergency production fixes          | No        |
 
 ## Branch Diagram
 
@@ -133,15 +133,15 @@ type(scope): description
 
 ### Types
 
-| Type | Description |
-|------|-------------|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `docs` | Documentation changes |
-| `style` | Code style (formatting, no logic change) |
-| `refactor` | Code refactoring |
-| `test` | Adding/updating tests |
-| `chore` | Maintenance tasks |
+| Type       | Description                              |
+| ---------- | ---------------------------------------- |
+| `feat`     | New feature                              |
+| `fix`      | Bug fix                                  |
+| `docs`     | Documentation changes                    |
+| `style`    | Code style (formatting, no logic change) |
+| `refactor` | Code refactoring                         |
+| `test`     | Adding/updating tests                    |
+| `chore`    | Maintenance tasks                        |
 
 ### Examples
 
@@ -167,11 +167,13 @@ chore: update dependencies
 Configure these rules on GitHub:
 
 ### `main` branch
+
 - Require PR reviews
 - Require status checks to pass
 - No direct pushes
 - No force pushes
 
 ### `develop` branch
+
 - Require status checks to pass
 - Allow squash merging only

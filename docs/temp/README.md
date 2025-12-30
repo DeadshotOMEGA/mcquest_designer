@@ -10,8 +10,10 @@
 ## Documents Included
 
 ### 1. QUICK_REFERENCE.md (363 lines) - START HERE
+
 **Audience:** Anyone wanting a 5-minute overview
 **Contains:**
+
 - What's done vs missing (table format)
 - Critical blockers identified
 - Quick install commands
@@ -26,8 +28,10 @@
 ---
 
 ### 2. AUDIT_SUMMARY.md (387 lines) - CONTEXT & OVERVIEW
+
 **Audience:** Project leads, team members
 **Contains:**
+
 - Executive summary with status
 - What works right now (specific capabilities)
 - What you cannot do yet (specific blockers)
@@ -49,8 +53,10 @@
 ---
 
 ### 3. M1_FOUNDATION_AUDIT.md (704 lines) - DETAILED TECHNICAL AUDIT
+
 **Audience:** Developers, architects, technical reviewers
 **Contains:**
+
 - Executive summary with completion percentage
 - What's implemented (6 sections with details):
   1. Monorepo infrastructure
@@ -87,8 +93,10 @@
 ---
 
 ### 4. M1_IMPLEMENTATION_CHECKLIST.md (885 lines) - STEP-BY-STEP IMPLEMENTATION GUIDE
+
 **Audience:** Developers implementing M1
 **Contains:**
+
 - 6 implementation phases with detailed checklists:
   1. Database Foundation (1-2 days)
   2. Authentication (1-2 days)
@@ -119,21 +127,25 @@
 ## How to Use These Documents
 
 ### For Quick Understanding (15 minutes)
+
 1. Read **QUICK_REFERENCE.md** (the TL;DR)
 2. Scan the **Critical Blockers** section
 3. Review the file checklist
 
 ### For Context (30 minutes)
+
 1. Read **QUICK_REFERENCE.md**
 2. Read **AUDIT_SUMMARY.md**
 3. Review the **Next Steps** section
 
 ### For Deep Dive (45-60 minutes)
+
 1. Read all three above
 2. Read **M1_FOUNDATION_AUDIT.md** in detail
 3. Take notes on missing components
 
 ### For Implementation (ongoing)
+
 1. Keep **M1_IMPLEMENTATION_CHECKLIST.md** open
 2. Follow each phase sequentially
 3. Copy code examples directly
@@ -144,15 +156,15 @@
 
 ## Key Findings Summary
 
-| Metric | Value |
-|--------|-------|
-| **Current Completion** | 15% (Foundation only) |
-| **M1 Critical Blockers** | 4 (Database, Auth, API, Authorization) |
-| **Estimated M1 Duration** | 6-8 working days |
-| **Code Quality** | 8/10 (Strict TS, Excellent docs) |
-| **Implementation Status** | 3/10 (Scaffolding only) |
-| **Priority Path** | Prisma → Clerk → API → Auth |
-| **Total Lines Documented** | 2,339 |
+| Metric                     | Value                                  |
+| -------------------------- | -------------------------------------- |
+| **Current Completion**     | 15% (Foundation only)                  |
+| **M1 Critical Blockers**   | 4 (Database, Auth, API, Authorization) |
+| **Estimated M1 Duration**  | 6-8 working days                       |
+| **Code Quality**           | 8/10 (Strict TS, Excellent docs)       |
+| **Implementation Status**  | 3/10 (Scaffolding only)                |
+| **Priority Path**          | Prisma → Clerk → API → Auth            |
+| **Total Lines Documented** | 2,339                                  |
 
 ---
 
@@ -197,36 +209,37 @@ QUICK_REFERENCE.md
 
 ## What Each Document Answers
 
-| Question | Document |
-|----------|----------|
-| "What's the status?" | QUICK_REFERENCE or AUDIT_SUMMARY |
-| "What's blocking M1?" | AUDIT_SUMMARY or M1_FOUNDATION_AUDIT |
-| "How long will M1 take?" | QUICK_REFERENCE or M1_FOUNDATION_AUDIT |
-| "What files do I need to create?" | M1_IMPLEMENTATION_CHECKLIST |
-| "Show me code examples" | M1_IMPLEMENTATION_CHECKLIST |
-| "What's the detailed architecture?" | M1_FOUNDATION_AUDIT |
-| "How should I organize work?" | M1_IMPLEMENTATION_CHECKLIST (PR strategy) |
-| "What are success criteria?" | M1_IMPLEMENTATION_CHECKLIST (bottom section) |
-| "What could go wrong?" | M1_IMPLEMENTATION_CHECKLIST (unblocking strategy) |
-| "What's already working?" | AUDIT_SUMMARY |
+| Question                            | Document                                          |
+| ----------------------------------- | ------------------------------------------------- |
+| "What's the status?"                | QUICK_REFERENCE or AUDIT_SUMMARY                  |
+| "What's blocking M1?"               | AUDIT_SUMMARY or M1_FOUNDATION_AUDIT              |
+| "How long will M1 take?"            | QUICK_REFERENCE or M1_FOUNDATION_AUDIT            |
+| "What files do I need to create?"   | M1_IMPLEMENTATION_CHECKLIST                       |
+| "Show me code examples"             | M1_IMPLEMENTATION_CHECKLIST                       |
+| "What's the detailed architecture?" | M1_FOUNDATION_AUDIT                               |
+| "How should I organize work?"       | M1_IMPLEMENTATION_CHECKLIST (PR strategy)         |
+| "What are success criteria?"        | M1_IMPLEMENTATION_CHECKLIST (bottom section)      |
+| "What could go wrong?"              | M1_IMPLEMENTATION_CHECKLIST (unblocking strategy) |
+| "What's already working?"           | AUDIT_SUMMARY                                     |
 
 ---
 
 ## File Statistics
 
-| Document | Lines | Sections | Tables | Code Examples |
-|----------|-------|----------|--------|----------------|
-| QUICK_REFERENCE.md | 363 | 12 | 8 | 5 |
-| AUDIT_SUMMARY.md | 387 | 15 | 6 | 3 |
-| M1_FOUNDATION_AUDIT.md | 704 | 25 | 10 | 2 |
-| M1_IMPLEMENTATION_CHECKLIST.md | 885 | 20 | 8 | 15+ |
-| **Total** | **2,339** | **72** | **32** | **25+** |
+| Document                       | Lines     | Sections | Tables | Code Examples |
+| ------------------------------ | --------- | -------- | ------ | ------------- |
+| QUICK_REFERENCE.md             | 363       | 12       | 8      | 5             |
+| AUDIT_SUMMARY.md               | 387       | 15       | 6      | 3             |
+| M1_FOUNDATION_AUDIT.md         | 704       | 25       | 10     | 2             |
+| M1_IMPLEMENTATION_CHECKLIST.md | 885       | 20       | 8      | 15+           |
+| **Total**                      | **2,339** | **72**   | **32** | **25+**       |
 
 ---
 
 ## Quick Access Links
 
 **Inside the repo:**
+
 - Project plan: `/docs/planning/project-plan.md`
 - API specs: `/docs/reference/03_API_ENDPOINTS.md`
 - Schema spec: `/docs/reference/01_INTERNAL_PROJECT_SCHEMA.md`
@@ -241,12 +254,14 @@ QUICK_REFERENCE.md
 ## Recommendations for Next Steps
 
 ### Immediate (Today)
+
 1. **Read QUICK_REFERENCE.md** (10 min)
 2. **Read AUDIT_SUMMARY.md** (15 min)
 3. **Set up Neon PostgreSQL account** (15 min)
 4. **Create Clerk account** (15 min)
 
 ### Short-term (This Week)
+
 1. **Follow Phase 1** in M1_IMPLEMENTATION_CHECKLIST.md
    - Install Prisma
    - Create schema.prisma
@@ -263,6 +278,7 @@ QUICK_REFERENCE.md
    - Add tests
 
 ### Quality Gates
+
 - [ ] TypeScript compiles (`pnpm typecheck`)
 - [ ] ESLint passes (`pnpm lint`)
 - [ ] All tests pass (`pnpm test`)
@@ -276,18 +292,22 @@ QUICK_REFERENCE.md
 ## Contact / Support
 
 **Got stuck?**
+
 1. Check **M1_IMPLEMENTATION_CHECKLIST.md** → "Unblocking Strategy" section
 2. Review the **code examples** in that document (copy-paste ready)
 3. Consult project **rules in `.claude/rules/`** for code standards
 4. Reference the **architecture docs in `/docs/`** for context
 
 **Need to understand the big picture?**
+
 - Read `/docs/planning/project-plan.md` (350+ lines, comprehensive)
 
 **Need API endpoint details?**
+
 - Read `/docs/reference/03_API_ENDPOINTS.md`
 
 **Need to know the data model?**
+
 - Read `/docs/reference/01_INTERNAL_PROJECT_SCHEMA.md`
 
 ---
@@ -316,4 +336,4 @@ Then implement: `M1_IMPLEMENTATION_CHECKLIST.md` (keep open while coding)
 
 ---
 
-*All documents are in `/docs/temp/` and intended as temporary analysis files. Delete after implementing M1.*
+_All documents are in `/docs/temp/` and intended as temporary analysis files. Delete after implementing M1._

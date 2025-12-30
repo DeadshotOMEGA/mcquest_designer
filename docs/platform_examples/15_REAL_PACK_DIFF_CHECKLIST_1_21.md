@@ -1,8 +1,9 @@
 # Real-Pack Diff Checklist (Minecraft 1.21.x / FTB Quests 1.21+)
 
-This checklist is the **bridge** between your platform’s internal snapshot model and *actual* FTB Quests files produced by Minecraft **1.21.x** versions of the mod.
+This checklist is the **bridge** between your platform’s internal snapshot model and _actual_ FTB Quests files produced by Minecraft **1.21.x** versions of the mod.
 
 The goal is simple:
+
 - Export a tiny questbook from a real 1.21.x instance,
 - Diff it against your platform’s **reference_export/**,
 - Update your compiler mapping until exports match the real-world structure.
@@ -18,14 +19,17 @@ The goal is simple:
 - Open the quest editor in-game and make a micro questbook.
 
 ### Build a micro questbook for testing
-Create *exactly* this content so diffs are consistent:
+
+Create _exactly_ this content so diffs are consistent:
 
 **Chapter: Getting Started**
+
 - Quest A: “Welcome” (Checkbox task) → Reward: Item (torches)
 - Quest B: “Punch a Tree” (Item task: oak_log x16)
 - Dependency: A → B
 
 **(Optional but recommended)** add translations:
+
 - Put a non-default title/description (so lang output is non-empty)
 
 ---
@@ -81,14 +85,15 @@ In your golden export folder, list:
 
 Create a short inventory table in your dev notes:
 
-| Path | What it seems to represent | Required? |
-|------|----------------------------|-----------|
-| quests/chapters/*.snbt | chapter definitions | yes |
-| quests/quests/*.snbt | quest definitions | yes |
-| quests/lang/*.snbt | translations (1.21+) | depends |
-| ??? | global settings / indices | investigate |
+| Path                    | What it seems to represent | Required?   |
+| ----------------------- | -------------------------- | ----------- |
+| quests/chapters/\*.snbt | chapter definitions        | yes         |
+| quests/quests/\*.snbt   | quest definitions          | yes         |
+| quests/lang/\*.snbt     | translations (1.21+)       | depends     |
+| ???                     | global settings / indices  | investigate |
 
 **Action:** for each mysterious file, open it and write down:
+
 - the top-level keys
 - what IDs it references
 - whether it looks like an index pointing at other files
@@ -105,10 +110,11 @@ ftbq_platform_examples/reference_export/config/ftbquests/quests/
 
 Do a file-level diff:
 
-- What files exist in golden export that your platform does *not* generate?
+- What files exist in golden export that your platform does _not_ generate?
 - What files does your platform generate that Minecraft does not?
 
 ### Expected differences (common)
+
 - 1.21+ may include additional indices or grouping files.
 - 1.21+ uses SNBT for language data under `quests/lang/*.snbt`.
 
@@ -119,20 +125,26 @@ Do a file-level diff:
 For each real file type (chapter file, quest file, global file):
 
 ### 5.1 Chapters
+
 Record:
+
 - required keys
 - how the chapter references quests (IDs? file names? internal lists?)
 - how chapter ordering is represented
 
 ### 5.2 Quests
+
 Record:
+
 - how IDs are represented (numeric long? UUID? string?)
 - how dependencies are represented
 - how x/y and sizing is represented
 - where icon is stored and how it’s encoded
 
 ### 5.3 Tasks & Rewards
+
 For each task/reward type you support (Item, Checkbox, XP, Command):
+
 - the key names used by real SNBT
 - any nested structure (`tasks:{...}` vs `tasks:[...]`)
 - whether each entry has an ID and what that ID format is
@@ -144,6 +156,7 @@ For each task/reward type you support (Item, Checkbox, XP, Command):
 Your platform needs stable internal UUIDs.
 
 But FTB Quests may use:
+
 - long numeric IDs (`1L`, `2L`, ...),
 - UUID strings, or
 - compound identifiers.
@@ -151,6 +164,7 @@ But FTB Quests may use:
 **Action:** determine what the golden export uses.
 
 ### If the golden export uses numeric long IDs
+
 Implement a deterministic mapping:
 
 - Sort quests in a stable way (e.g., by chapter order, then by position, then by UUID)
@@ -158,6 +172,7 @@ Implement a deterministic mapping:
 - Store mapping in memory during compilation
 
 Add a unit test that asserts:
+
 - same snapshot produces same IDs across runs
 - reordering quests does not cause chaotic ID churn unless necessary
 
@@ -172,12 +187,14 @@ config/ftbquests/quests/lang/<locale>.snbt
 ```
 
 **Action:** open the lang SNBT and answer:
+
 - Does it store literal strings or translation keys?
 - Does it reference quest IDs, chapter IDs, or both?
 - Is it required or optional?
 
 ### Platform recommendation (v1)
-- Export *literal text* in quest files if possible.
+
+- Export _literal text_ in quest files if possible.
 - If 1.21 requires the lang SNBT file, export that too.
 
 > Your platform can still keep internal snapshots in plain English text; compilation can emit either inline text or lang file content as required.
@@ -189,11 +206,13 @@ config/ftbquests/quests/lang/<locale>.snbt
 Add a test suite for your compiler.
 
 ### 8.1 Snapshot → Export folder structure
+
 - Given `examples/snapshot_v1.json`
 - Generate an in-memory filesystem
 - Assert paths match expected output for 1.21
 
 ### 8.2 Golden export diff tests
+
 - Load `testdata/ftbq/1.21/golden_export_1_21/`
 - Generate export from a matching snapshot
 - Diff:
@@ -202,10 +221,12 @@ Add a test suite for your compiler.
   - critical values match (IDs, dependencies, layout)
 
 ### 8.3 Determinism tests
+
 - Run export twice
 - Ensure byte-identical outputs (or normalized equivalence)
 
 ### 8.4 Backward compatibility tests (later)
+
 - Keep additional golden exports for minor versions
 
 ---
@@ -260,4 +281,3 @@ Recommended structure:
 /packages
   schema/
 ```
-

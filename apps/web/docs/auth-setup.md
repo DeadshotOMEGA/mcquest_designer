@@ -16,6 +16,7 @@ While middleware provides route-level protection, it is **not sufficient** for s
 ### Why Both Layers?
 
 Middleware can be bypassed in certain edge cases. Always verify authentication in:
+
 - Server Components using `requireAuth()` or `requireUser()`
 - Route Handlers using `requireAuth()`
 - Server Actions using `requireAuth()`
@@ -65,6 +66,7 @@ pnpm --filter web dev
 ```
 
 Navigate to:
+
 - `/sign-up` - Create account with OAuth
 - `/sign-in` - Sign in with OAuth
 - `/dashboard` - Protected page (requires auth)
@@ -157,7 +159,7 @@ export async function updateProject(projectId: string) {
 
   // Fetch user's role for this project
   const member = await db.projectMember.findUnique({
-    where: { projectId_userId: { projectId, userId } }
+    where: { projectId_userId: { projectId, userId } },
   })
 
   if (!member || member.role === ProjectRole.VIEWER) {
@@ -195,7 +197,7 @@ export async function createShareToken(projectId: string, userId: string) {
       createdBy: userId,
       expiresAt: null, // Optional
       revoked: false,
-    }
+    },
   })
 }
 ```
@@ -219,10 +221,7 @@ export async function GET() {
 
   const { success } = await ratelimit.limit(userId)
   if (!success) {
-    return NextResponse.json(
-      { error: 'Rate limit exceeded' },
-      { status: 429 }
-    )
+    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 })
   }
 
   // Handle request

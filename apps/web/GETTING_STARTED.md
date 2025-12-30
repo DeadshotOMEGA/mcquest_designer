@@ -205,6 +205,7 @@ We implement **defense-in-depth** authentication (CVE-2025-29927 mitigation):
 ## Need Help?
 
 Check the documentation:
+
 - `apps/web/README.md` - Package overview
 - `apps/web/docs/auth-setup.md` - Comprehensive auth guide
 - `apps/web/docs/auth-patterns.md` - Code pattern reference

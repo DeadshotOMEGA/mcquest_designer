@@ -10,6 +10,7 @@
 ## Executive Summary
 
 The MCQuest Designer project has established **baseline infrastructure** but is still in **early scaffolding phase**. M1 Foundation requires:
+
 - Auth integration (Clerk)
 - Project CRUD endpoints
 - Prisma schema and database migrations
@@ -24,12 +25,14 @@ The MCQuest Designer project has established **baseline infrastructure** but is 
 ### 1. Monorepo & Build Infrastructure ✅
 
 **Files:**
+
 - `/package.json` - Root workspace with Turbo orchestration
 - `tsconfig.base.json` - Strict TypeScript config (ES2022, `strict: true`)
 - `turbo.json` - Build pipeline
 - `pnpm-workspace.yaml` - Package management
 
 **Details:**
+
 - Turbo-enabled for parallel builds across packages
 - Strict TypeScript with declaration maps
 - Build scripts: `build`, `dev`, `test`, `lint`, `typecheck`, `clean`
@@ -43,6 +46,7 @@ The MCQuest Designer project has established **baseline infrastructure** but is 
 ### 2. Web App (Next.js 15) ✅
 
 **Files:**
+
 - `/apps/web/` - Complete Next.js App Router structure
 - `src/app/layout.tsx` - Root layout with metadata, font setup
 - `src/app/page.tsx` - Home page (displays version info, buttons)
@@ -55,6 +59,7 @@ The MCQuest Designer project has established **baseline infrastructure** but is 
 - `components.json` - shadcn/ui config
 
 **Stack:**
+
 - Next.js 15.1.3 (App Router, React 19)
 - TypeScript 5.7.2
 - Tailwind CSS 4.1.18
@@ -68,10 +73,12 @@ The MCQuest Designer project has established **baseline infrastructure** but is 
 ### 3. Schema Package (@mcquest/schema) ✅
 
 **Files:**
+
 - `/packages/schema/src/index.ts` - Placeholder schemas only
 - `/packages/schema/package.json` - Published as workspace package
 
 **Exports:**
+
 - `SCHEMA_VERSION = '0.1.0'`
 - `QuestSchema` - Zod schema (id: UUID, title: string, description?: string)
 - `ProjectSnapshotSchema` - Placeholder (version, chapters: unknown[], quests[])
@@ -86,10 +93,12 @@ The MCQuest Designer project has established **baseline infrastructure** but is 
 ### 4. Export Package (@mcquest/export) ✅
 
 **Files:**
+
 - `/packages/export/src/index.ts` - Stub implementation
 - `/packages/export/package.json` - Published as workspace package
 
 **Exports:**
+
 - `EXPORT_VERSION = '0.1.0'`
 - `SUPPORTED_VERSIONS = ['1.21', '1.21.1']`
 - `ExportResult` interface (files: Map, warnings: string[])
@@ -104,11 +113,13 @@ The MCQuest Designer project has established **baseline infrastructure** but is 
 ### 5. Linting & Formatting ✅
 
 **Files:**
+
 - `eslint.config.mjs` - ESLint 9 configuration
 - `.prettierrc` - Prettier config
 - `.prettierignore` - Ignore patterns
 
 **Setup:**
+
 - ESLint + TypeScript plugin
 - Prettier integration (no conflicts)
 - Workspace-wide linting via Turbo
@@ -120,6 +131,7 @@ The MCQuest Designer project has established **baseline infrastructure** but is 
 ### 6. Documentation ✅
 
 **Established docs:**
+
 - `docs/planning/project-plan.md` - Complete architecture blueprint (350+ lines)
 - `docs/planning/08_MILESTONES_AND_GITHUB_ISSUES.md` - Issue templates
 - `docs/reference/01_INTERNAL_PROJECT_SCHEMA.md` - ProjectSnapshot spec
@@ -138,6 +150,7 @@ The MCQuest Designer project has established **baseline infrastructure** but is 
 ### 1. Authentication (Clerk) ❌
 
 **What's missing:**
+
 - No `@clerk/nextjs` dependency installed
 - No Clerk middleware configured
 - No auth routes (`/sign-in`, `/sign-up`)
@@ -146,11 +159,13 @@ The MCQuest Designer project has established **baseline infrastructure** but is 
 - No environment variables (NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, etc.)
 
 **Required:**
+
 ```
 @clerk/nextjs@latest
 ```
 
 **Work needed:**
+
 - Install Clerk SDK
 - Configure middleware for route protection
 - Add sign-in/sign-up pages
@@ -158,6 +173,7 @@ The MCQuest Designer project has established **baseline infrastructure** but is 
 - Add `.env.local` template with Clerk keys
 
 **Files to create:**
+
 - `/apps/web/src/middleware.ts` - Clerk auth middleware
 - `/apps/web/src/app/sign-in/[[...sign-in]]/page.tsx` - Clerk UI
 - `/apps/web/src/app/sign-up/[[...sign-up]]/page.tsx` - Clerk UI
@@ -167,6 +183,7 @@ The MCQuest Designer project has established **baseline infrastructure** but is 
 ### 2. Prisma & Database ❌
 
 **What's missing:**
+
 - No `@prisma/client` dependency
 - No `prisma` CLI installed
 - No `schema.prisma` file
@@ -175,12 +192,14 @@ The MCQuest Designer project has established **baseline infrastructure** but is 
 - No `.env.local` with DATABASE_URL
 
 **Required:**
+
 ```
 @prisma/client
 prisma (devDependency)
 ```
 
 **Database schema needed** (from docs/reference/02_PRISMA_SCHEMA.md):
+
 - `User` - Clerk integration
 - `Project` - Projects table with latestSnapshot (JSONB)
 - `ProjectMember` - Role-based access (OWNER/EDITOR/VIEWER)
@@ -188,12 +207,14 @@ prisma (devDependency)
 - `ShareToken` - Read-only access tokens (M5, future)
 
 **Work needed:**
+
 - Create `schema.prisma`
 - Run `prisma generate` and `prisma migrate dev`
 - Add Prisma client initialization
 - Create database seed script
 
 **Files to create:**
+
 - `/apps/web/prisma/schema.prisma` - Schema definition
 - `/apps/web/prisma/seed.ts` - Optional seed script
 - `/apps/web/src/lib/db.ts` - Prisma client instance
@@ -203,6 +224,7 @@ prisma (devDependency)
 ### 3. Project CRUD API Routes ❌
 
 **What's missing:**
+
 - No `/app/api/projects/` route structure
 - No POST /projects (create)
 - No GET /projects/:id (read)
@@ -212,6 +234,7 @@ prisma (devDependency)
 - No snapshot validation
 
 **Routes to implement:**
+
 ```
 POST   /api/projects
 GET    /api/projects/:id
@@ -221,6 +244,7 @@ DELETE /api/projects/:id
 ```
 
 **Work needed:**
+
 - Create route handlers in `src/app/api/projects/`
 - Add Zod validation for request bodies
 - Implement Prisma queries
@@ -228,6 +252,7 @@ DELETE /api/projects/:id
 - Return proper HTTP status codes (201, 400, 403, 404)
 
 **Files to create:**
+
 - `/apps/web/src/app/api/projects/route.ts` - POST/GET list
 - `/apps/web/src/app/api/projects/[id]/route.ts` - GET/PATCH/DELETE
 
@@ -236,18 +261,21 @@ DELETE /api/projects/:id
 ### 4. Authorization Layer ❌
 
 **What's missing:**
+
 - No auth middleware for API routes
 - No role-based access control (RBAC) enforcement
 - No membership validation
 - No share token handling
 
 **Work needed:**
+
 - Create auth utilities (get current user, check membership)
 - Add middleware for protected routes
 - Implement role checks (OWNER, EDITOR, VIEWER)
 - Return 403 Forbidden for unauthorized access
 
 **Files to create:**
+
 - `/apps/web/src/lib/auth.ts` - Auth utilities
 - `/apps/web/src/middleware.ts` - Route protection
 
@@ -256,12 +284,14 @@ DELETE /api/projects/:id
 ### 5. Environment Configuration ❌
 
 **What's missing:**
+
 - No `.env.example` template
 - No `.env.local` (local development)
 - No environment setup documentation
 - No validation schema for env vars
 
 **Required env vars:**
+
 ```
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 CLERK_SECRET_KEY
@@ -270,11 +300,13 @@ NODE_ENV
 ```
 
 **Work needed:**
+
 - Create `.env.example` file
 - Add environment validation (zod)
 - Document setup in DEVELOPER_ONBOARDING.md
 
 **Files to create:**
+
 - `.env.example` - Template
 - `/apps/web/src/lib/env.ts` - Environment validation
 
@@ -282,22 +314,22 @@ NODE_ENV
 
 ## Configuration Gaps
 
-| Area | Status | Details |
-|------|--------|---------|
-| TypeScript | ✅ | Strict mode, declaration maps enabled |
-| Build System | ✅ | Turbo + pnpm configured |
-| Linting | ✅ | ESLint 9 + TypeScript plugin |
-| Formatting | ✅ | Prettier configured |
-| Next.js | ✅ | App Router, v15 |
-| Tailwind | ✅ | v4 with PostCSS |
-| UI Components | ⚠️ | Only Button, no full shadcn/ui library |
-| Authentication | ❌ | No Clerk integration |
-| Database | ❌ | No Prisma setup |
-| API Routes | ❌ | No route handlers |
-| Testing | ⚠️ | Vitest installed, no tests written |
-| E2E Tests | ❌ | Playwright not installed |
-| CI/CD | ❌ | No GitHub Actions workflows |
-| Observability | ❌ | No Sentry, logging, or tracing |
+| Area           | Status | Details                                |
+| -------------- | ------ | -------------------------------------- |
+| TypeScript     | ✅     | Strict mode, declaration maps enabled  |
+| Build System   | ✅     | Turbo + pnpm configured                |
+| Linting        | ✅     | ESLint 9 + TypeScript plugin           |
+| Formatting     | ✅     | Prettier configured                    |
+| Next.js        | ✅     | App Router, v15                        |
+| Tailwind       | ✅     | v4 with PostCSS                        |
+| UI Components  | ⚠️     | Only Button, no full shadcn/ui library |
+| Authentication | ❌     | No Clerk integration                   |
+| Database       | ❌     | No Prisma setup                        |
+| API Routes     | ❌     | No route handlers                      |
+| Testing        | ⚠️     | Vitest installed, no tests written     |
+| E2E Tests      | ❌     | Playwright not installed               |
+| CI/CD          | ❌     | No GitHub Actions workflows            |
+| Observability  | ❌     | No Sentry, logging, or tracing         |
 
 ---
 
@@ -362,11 +394,13 @@ NODE_ENV
 ```
 
 **Web-specific (tsconfig.json):**
+
 - ✅ Path aliases (`@/*`, `@mcquest/*`)
 - ✅ JSX preservation (Next.js handled)
 - ✅ Plugin for Next.js types
 
 **Schema package (tsconfig.json):**
+
 - ✅ Minimal, declaration only
 
 ---
@@ -376,23 +410,27 @@ NODE_ENV
 ### Root Package.json
 
 **DevDependencies:** ✅ Present
+
 - TypeScript 5.7.2
 - ESLint 9.17.0 + typescript-eslint 8.19.0
 - Prettier 3.4.2
 - Turbo 2.3.3
 
 **Notable absences:**
+
 - No test frameworks at root (expected per workspace pattern)
 
 ### Web App (apps/web)
 
 **Dependencies:** ✅ Present
+
 - Next.js 15.1.3
 - React 19.0.0
 - Tailwind CSS 4.1.18
 - shadcn/ui components (clsx, class-variance-authority)
 
 **Missing for M1:**
+
 - ❌ `@clerk/nextjs` - Auth
 - ❌ `@prisma/client` - Database ORM
 - ⚠️ Full shadcn/ui library (only Button imported)
@@ -400,6 +438,7 @@ NODE_ENV
 ### Schema Package
 
 **Dependencies:** ✅ Present
+
 - zod 3.24.1
 
 **Status:** ✅ Ready for expansion
@@ -407,9 +446,11 @@ NODE_ENV
 ### Export Package
 
 **Dependencies:** ✅ Present
+
 - Vitest 2.1.8 (dev)
 
 **Missing:**
+
 - No ZIP handling library (jszip, archiver, etc.)
 - No SNBT parser/generator
 
@@ -424,6 +465,7 @@ pnpm install  # ✅ All packages installed (lock file present)
 **Lock file:** ✅ `pnpm-lock.yaml` present (155KB, healthy)
 
 **Next steps:**
+
 ```bash
 pnpm add -w @clerk/nextjs @prisma/client
 pnpm add -w -D prisma
@@ -434,15 +476,16 @@ pnpm add -w jszip  # for export (M4)
 
 ## Testing Infrastructure
 
-| Framework | Status | Files |
-|-----------|--------|-------|
-| Vitest | ✅ Installed | In export package only |
-| Playwright | ❌ Missing | Needed for E2E (M2+) |
-| Unit Tests | ❌ None | Should be under `*.test.ts` |
-| Integration Tests | ❌ None | API route tests needed |
-| Golden Exports | ❌ None | Test fixtures at `/testdata/ftbq/1.21/` |
+| Framework         | Status       | Files                                   |
+| ----------------- | ------------ | --------------------------------------- |
+| Vitest            | ✅ Installed | In export package only                  |
+| Playwright        | ❌ Missing   | Needed for E2E (M2+)                    |
+| Unit Tests        | ❌ None      | Should be under `*.test.ts`             |
+| Integration Tests | ❌ None      | API route tests needed                  |
+| Golden Exports    | ❌ None      | Test fixtures at `/testdata/ftbq/1.21/` |
 
 **Work needed:**
+
 - Write API route tests
 - Write schema validation tests
 - Write export compiler tests
@@ -455,6 +498,7 @@ pnpm add -w jszip  # for export (M4)
 **Current state:** ❌ Not initialized
 
 **Planned (from docs):**
+
 ```prisma
 // Not yet created
 model User { ... }
@@ -464,6 +508,7 @@ model ProjectVersion { ... }
 ```
 
 **Setup steps needed:**
+
 1. Install Prisma CLI
 2. Create `schema.prisma` with User, Project, ProjectMember, ProjectVersion models
 3. Connect to Neon PostgreSQL or local Docker Postgres
@@ -471,6 +516,7 @@ model ProjectVersion { ... }
 5. Generate Prisma client: `prisma generate`
 
 **Local development option:**
+
 - Docker PostgreSQL with `docker-compose.yml` (not present)
 
 ---
@@ -498,17 +544,17 @@ GET    /api/projects/share/:token       # Access via share token (M5)
 
 ## Security Checklist (M1)
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Route protection | ❌ | Need Clerk middleware |
-| Role enforcement | ❌ | Need RBAC checks |
-| Snapshot validation | ❌ | Need Zod parsing |
-| Rate limiting | ❌ | Not in M1 scope |
-| CORS | ❌ | Not configured |
-| CSRF protection | ⚠️ | Comes with Next.js |
-| Input sanitization | ❌ | Need Zod schemas |
-| Auth token handling | ❌ | Clerk to handle |
-| Environment isolation | ❌ | No .env validation |
+| Check                 | Status | Notes                 |
+| --------------------- | ------ | --------------------- |
+| Route protection      | ❌     | Need Clerk middleware |
+| Role enforcement      | ❌     | Need RBAC checks      |
+| Snapshot validation   | ❌     | Need Zod parsing      |
+| Rate limiting         | ❌     | Not in M1 scope       |
+| CORS                  | ❌     | Not configured        |
+| CSRF protection       | ⚠️     | Comes with Next.js    |
+| Input sanitization    | ❌     | Need Zod schemas      |
+| Auth token handling   | ❌     | Clerk to handle       |
+| Environment isolation | ❌     | No .env validation    |
 
 ---
 
@@ -518,6 +564,7 @@ GET    /api/projects/share/:token       # Access via share token (M5)
 **Last commit:** `c193b0f chore: remove Zone.Identifier and statusline files from tracking`
 
 **Recent commits:**
+
 - ✅ Removed unused files
 - ✅ Added .claude rules infrastructure
 - ✅ Added implementation roadmap (deleted plans/)
@@ -533,6 +580,7 @@ GET    /api/projects/share/:token       # Access via share token (M5)
 **Priority: CRITICAL**
 
 1. **Install Prisma**
+
    ```bash
    pnpm add -w @prisma/client
    pnpm add -w -D prisma
@@ -561,6 +609,7 @@ GET    /api/projects/share/:token       # Access via share token (M5)
 **Priority: CRITICAL**
 
 1. **Set up Clerk**
+
    ```bash
    pnpm add -w @clerk/nextjs
    ```
@@ -646,14 +695,14 @@ GET    /api/projects/share/:token       # Access via share token (M5)
 
 ## Quality Assessment
 
-| Dimension | Score | Notes |
-|-----------|-------|-------|
-| **Architecture** | 9/10 | Well-documented, follows best practices |
-| **Code Quality** | 8/10 | Strict TypeScript, Prettier configured |
-| **Testing** | 2/10 | Vitest installed, zero tests |
-| **Documentation** | 10/10 | Exceptional (350+ pages) |
-| **Implementation** | 3/10 | Scaffolding only, no features |
-| **Overall Completeness** | 3/10 | 15% done (foundation only) |
+| Dimension                | Score | Notes                                   |
+| ------------------------ | ----- | --------------------------------------- |
+| **Architecture**         | 9/10  | Well-documented, follows best practices |
+| **Code Quality**         | 8/10  | Strict TypeScript, Prettier configured  |
+| **Testing**              | 2/10  | Vitest installed, zero tests            |
+| **Documentation**        | 10/10 | Exceptional (350+ pages)                |
+| **Implementation**       | 3/10  | Scaffolding only, no features           |
+| **Overall Completeness** | 3/10  | 15% done (foundation only)              |
 
 ---
 
@@ -670,19 +719,19 @@ GET    /api/projects/share/:token       # Access via share token (M5)
 
 ## Summary Table
 
-| Component | Status | Effort | Blocker |
-|-----------|--------|--------|---------|
-| Monorepo setup | ✅ Complete | - | No |
-| Next.js app | ✅ Complete | - | No |
-| Tailwind/UI | ✅ Partial | 1-2h | No |
-| Schema package | ⚠️ Stub | 2-3h | No |
-| Export package | ⚠️ Stub | 2-3h | No |
-| **Prisma/DB** | ❌ Missing | 1-2d | **YES** |
-| **Clerk Auth** | ❌ Missing | 1-2d | **YES** |
-| **Project CRUD** | ❌ Missing | 2-3d | **YES** |
-| **RBAC/Auth utils** | ❌ Missing | 1d | **YES** |
-| Testing | ⚠️ Installed | 2-3d | No |
-| CI/CD | ❌ Missing | 1d | No |
+| Component           | Status        | Effort        | Blocker      |
+| ------------------- | ------------- | ------------- | ------------ |
+| Monorepo setup      | ✅ Complete   | -             | No           |
+| Next.js app         | ✅ Complete   | -             | No           |
+| Tailwind/UI         | ✅ Partial    | 1-2h          | No           |
+| Schema package      | ⚠️ Stub       | 2-3h          | No           |
+| Export package      | ⚠️ Stub       | 2-3h          | No           |
+| **Prisma/DB**       | ❌ Missing    | 1-2d          | **YES**      |
+| **Clerk Auth**      | ❌ Missing    | 1-2d          | **YES**      |
+| **Project CRUD**    | ❌ Missing    | 2-3d          | **YES**      |
+| **RBAC/Auth utils** | ❌ Missing    | 1d            | **YES**      |
+| Testing             | ⚠️ Installed  | 2-3d          | No           |
+| CI/CD               | ❌ Missing    | 1d            | No           |
 | **Total M1 Effort** | **~15% done** | **~6-8 days** | **Start DB** |
 
 ---
@@ -690,12 +739,14 @@ GET    /api/projects/share/:token       # Access via share token (M5)
 ## Conclusion
 
 **MCQuest Designer has excellent architectural documentation and build infrastructure, but critically lacks**:
+
 1. Authentication system (Clerk)
 2. Database setup (Prisma + PostgreSQL)
 3. API routes (Project CRUD)
 4. Authorization layer
 
 **To complete M1 Foundation, prioritize in this order:**
+
 1. Prisma schema + migrations
 2. Clerk authentication
 3. Project CRUD endpoints

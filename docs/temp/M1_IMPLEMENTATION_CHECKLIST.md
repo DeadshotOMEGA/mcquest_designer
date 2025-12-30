@@ -11,18 +11,21 @@
 ### Task: Install and Configure Prisma
 
 - [ ] Install packages:
+
   ```bash
   pnpm add -w @prisma/client
   pnpm add -w -D prisma
   ```
 
 - [ ] Initialize Prisma:
+
   ```bash
   cd apps/web
   npx prisma init
   ```
 
 - [ ] Create `.env.local`:
+
   ```env
   DATABASE_URL="postgresql://user:password@host:5432/mcquest_dev"
   DIRECT_URL="postgresql://user:password@host:5432/mcquest_dev"  # For migrations
@@ -43,7 +46,7 @@
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: mcquest_dev
         ports:
-          - "5432:5432"
+          - '5432:5432'
     ```
 
 ### Task: Create Prisma Schema
@@ -137,12 +140,14 @@ enum ProjectRole {
 ```
 
 - [ ] Create migration:
+
   ```bash
   cd apps/web
   npx prisma migrate dev --name init
   ```
 
 - [ ] Verify Prisma client generation:
+
   ```bash
   npx prisma generate
   ```
@@ -172,6 +177,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 ### Task: Install and Configure Clerk
 
 - [ ] Install Clerk:
+
   ```bash
   pnpm add -w @clerk/nextjs
   ```
@@ -213,11 +219,7 @@ NODE_ENV=development
 ```typescript
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-const isPublicRoute = createRouteMatcher([
-  '/',
-  '/sign-in(.*)',
-  '/sign-up(.*)',
-])
+const isPublicRoute = createRouteMatcher(['/', '/sign-in(.*)', '/sign-up(.*)'])
 
 export default clerkMiddleware((auth, request) => {
   if (!isPublicRoute(request)) {
@@ -442,10 +444,7 @@ const UpdateProjectSchema = z.object({
  * GET /api/projects/:id
  * Get project and latest snapshot
  */
-export async function GET(
-  _: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
   try {
     await checkProjectAccess(params.id, 'VIEWER')
 
@@ -468,10 +467,7 @@ export async function GET(
  * PATCH /api/projects/:id
  * Update project or snapshot
  */
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     await checkProjectAccess(params.id, 'EDITOR')
 
@@ -500,10 +496,7 @@ export async function PATCH(
  * DELETE /api/projects/:id
  * Delete project (owner only)
  */
-export async function DELETE(
-  _: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
   try {
     await checkProjectAccess(params.id, 'OWNER')
 
@@ -623,11 +616,16 @@ export type Dependency = z.infer<typeof DependencySchema>
 // UI State (non-exported)
 export const UISnapshotSchema = z.object({
   activeChapterId: z.string().uuid().optional(),
-  viewportByChapter: z.record(z.string().uuid(), z.object({
-    x: z.number(),
-    y: z.number(),
-    zoom: z.number(),
-  })).default({}),
+  viewportByChapter: z
+    .record(
+      z.string().uuid(),
+      z.object({
+        x: z.number(),
+        y: z.number(),
+        zoom: z.number(),
+      })
+    )
+    .default({}),
   selectedQuestId: z.string().uuid().optional(),
 })
 export type UISnapshot = z.infer<typeof UISnapshotSchema>
@@ -667,15 +665,19 @@ export type UpdateProjectRequest = z.infer<typeof UpdateProjectRequestSchema>
 ```
 
 - [ ] Build schema package:
+
   ```bash
   pnpm --filter schema build
   ```
 
 - [ ] Test schema validation:
+
   ```typescript
   import { ProjectSnapshotSchema } from '@mcquest/schema'
 
-  const snapshot = { /* ... */ }
+  const snapshot = {
+    /* ... */
+  }
   const validated = ProjectSnapshotSchema.parse(snapshot)
   ```
 
@@ -762,21 +764,25 @@ describe('POST /api/projects', () => {
 ## Quality Checklist
 
 - [ ] All TypeScript compiles without errors
+
   ```bash
   pnpm typecheck
   ```
 
 - [ ] All files pass linting
+
   ```bash
   pnpm lint
   ```
 
 - [ ] Prettier formatting applied
+
   ```bash
   pnpm format
   ```
 
 - [ ] All tests pass
+
   ```bash
   pnpm test
   ```
@@ -792,33 +798,39 @@ describe('POST /api/projects', () => {
 ## Git & PR Strategy
 
 ### PR 1: Prisma + Database
+
 - Schema definition
 - Migrations
 - db.ts wrapper
 - .env.example
 
 ### PR 2: Clerk Authentication
+
 - Middleware
 - Sign-in/sign-up pages
 - ClerkProvider wrapper
 - Clerk env vars
 
 ### PR 3: API Routes (Part 1)
+
 - Project list and create endpoints
 - Auth utilities
 - Basic tests
 
 ### PR 4: API Routes (Part 2)
+
 - Get, update, delete endpoints
 - Authorization checks
 - Full test coverage
 
 ### PR 5: Schema Expansion
+
 - Complete ProjectSnapshot schema
 - Task/Reward types
 - Request validation schemas
 
 ### PR 6: Documentation
+
 - Developer onboarding updates
 - API endpoint reference
 - Troubleshooting guide
@@ -842,18 +854,19 @@ describe('POST /api/projects', () => {
 
 ## Estimated Timeline
 
-| Phase | Duration | Cum. |
-|-------|----------|------|
-| 1. Prisma + DB | 1-2 days | 1-2 |
-| 2. Clerk Auth | 1-2 days | 2-4 |
-| 3. API Routes | 2-3 days | 4-7 |
-| 4. Schema Expansion | 1 day | 5-8 |
-| 5. Testing | 1-2 days | 6-10 |
-| 6. Documentation | 0.5 day | 6-10.5 |
-| **Buffer (15%)** | 1-2 days | 7-12 |
-| **Total** | **~6-8 days** | |
+| Phase               | Duration      | Cum.   |
+| ------------------- | ------------- | ------ |
+| 1. Prisma + DB      | 1-2 days      | 1-2    |
+| 2. Clerk Auth       | 1-2 days      | 2-4    |
+| 3. API Routes       | 2-3 days      | 4-7    |
+| 4. Schema Expansion | 1 day         | 5-8    |
+| 5. Testing          | 1-2 days      | 6-10   |
+| 6. Documentation    | 0.5 day       | 6-10.5 |
+| **Buffer (15%)**    | 1-2 days      | 7-12   |
+| **Total**           | **~6-8 days** |        |
 
 **Parallel opportunities:**
+
 - Schema expansion can start during Phase 2 (after Clerk installed)
 - Testing can start after each phase completes
 - Documentation can be updated incrementally

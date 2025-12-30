@@ -5,6 +5,7 @@
 If you already generated an overview doc earlier, place its contents here so Claude Code can reliably anchor on it.
 
 Minimum required sections:
+
 - What the project is
 - What problem it solves
 - Non-goals
@@ -14,7 +15,7 @@ Minimum required sections:
 - Links to external references
 
 ## Related docs
+
 - `docs/planning/project-plan.md`
 - `docs/reference/01_INTERNAL_PROJECT_SCHEMA.md`
 - `docs/architecture/06_SNBT_EXPORT_PIPELINE.md`
-

@@ -101,10 +101,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ project }, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: 'Invalid input', details: error.errors },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Invalid input', details: error.errors }, { status: 400 })
     }
     if (error instanceof Error && error.message.includes('Unauthorized')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -127,7 +124,7 @@ export async function updateProjectName(projectId: string, name: string) {
 
   // Verify ownership
   const project = await db.project.findUnique({
-    where: { id: projectId, userId }
+    where: { id: projectId, userId },
   })
 
   if (!project) {
@@ -137,7 +134,7 @@ export async function updateProjectName(projectId: string, name: string) {
   // Update
   await db.project.update({
     where: { id: projectId },
-    data: { name }
+    data: { name },
   })
 
   // Revalidate cached pages
@@ -160,8 +157,8 @@ async function requireProjectAccess(
 
   const member = await db.projectMember.findUnique({
     where: {
-      projectId_userId: { projectId, userId }
-    }
+      projectId_userId: { projectId, userId },
+    },
   })
 
   if (!member) {
@@ -182,19 +179,13 @@ async function requireProjectAccess(
 }
 
 // Usage
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: Request, { params }: { params: { id: string } }) {
   await requireProjectAccess(params.id, ProjectRole.VIEWER)
   const project = await fetchProject(params.id)
   return NextResponse.json({ project })
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: Request, { params }: { params: { id: string } }) {
   await requireProjectAccess(params.id, ProjectRole.EDITOR)
   const data = await request.json()
   const project = await updateProject(params.id, data)

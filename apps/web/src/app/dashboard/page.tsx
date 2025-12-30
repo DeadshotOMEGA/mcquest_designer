@@ -43,7 +43,8 @@ async function ProjectList() {
           <CardHeader>
             <CardTitle>No Projects Yet</CardTitle>
             <CardDescription>
-              Get started by creating your first questbook project. You'll be able to add chapters, quests, tasks, and rewards in the visual editor.
+              Get started by creating your first questbook project. You'll be able to add chapters,
+              quests, tasks, and rewards in the visual editor.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -90,7 +91,8 @@ async function ProjectList() {
           <CardHeader>
             <CardTitle>No Projects Yet</CardTitle>
             <CardDescription>
-              Get started by creating your first questbook project. You'll be able to add chapters, quests, tasks, and rewards in the visual editor.
+              Get started by creating your first questbook project. You'll be able to add chapters,
+              quests, tasks, and rewards in the visual editor.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -103,10 +105,14 @@ async function ProjectList() {
     )
   }
 
+  // Define the project type from findMany result
+  type ProjectWithMembers = (typeof projects)[number]
+  type MemberInfo = ProjectWithMembers['members'][number]
+
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {projects.map((project) => {
-        const userMembership = project.members.find((m) => m.userId === dbUser.id)
+      {projects.map((project: ProjectWithMembers) => {
+        const userMembership = project.members.find((m: MemberInfo) => m.userId === dbUser.id)
         return (
           <ProjectCard
             key={project.id}

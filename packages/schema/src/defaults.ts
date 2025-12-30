@@ -49,11 +49,7 @@ export function createDefaultChapter(title: string, order: number): Chapter {
 /**
  * Creates a new quest in the specified chapter at the given position.
  */
-export function createDefaultQuest(
-  chapterId: string,
-  title: string,
-  position: Position
-): Quest {
+export function createDefaultQuest(chapterId: string, title: string, position: Position): Quest {
   return {
     id: uuidv4(),
     chapterId,

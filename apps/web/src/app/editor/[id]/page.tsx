@@ -66,7 +66,9 @@ export default async function EditorPage({ params }: { params: Promise<{ id: str
         <Card className="max-w-2xl mx-auto">
           <CardHeader>
             <CardTitle>Editor Coming Soon</CardTitle>
-            <CardDescription>The visual quest editor will be implemented in Milestone 2</CardDescription>
+            <CardDescription>
+              The visual quest editor will be implemented in Milestone 2
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">

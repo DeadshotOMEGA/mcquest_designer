@@ -77,10 +77,10 @@ We implement **defense-in-depth** authentication:
 import { requireAuth, requireUser } from '@/lib/auth'
 
 export default async function Page() {
-  const userId = await requireAuth()        // Get user ID, throw if not authenticated
-  const user = await requireUser()          // Get full user profile, throw if not authenticated
-  const userId = await getAuthOrNull()      // Get user ID or null
-  const user = await getUserOrNull()        // Get user or null
+  const userId = await requireAuth() // Get user ID, throw if not authenticated
+  const user = await requireUser() // Get full user profile, throw if not authenticated
+  const userId = await getAuthOrNull() // Get user ID or null
+  const user = await getUserOrNull() // Get user or null
 }
 
 // Route Handler - require auth
@@ -97,16 +97,19 @@ See [docs/auth-patterns.md](docs/auth-patterns.md) for comprehensive examples.
 ## Routes
 
 ### Public Routes
+
 - `/` - Landing page
 - `/sign-in` - Sign in with OAuth
 - `/sign-up` - Sign up with OAuth
 
 ### Protected Routes (require authentication)
+
 - `/dashboard` - User dashboard
 - `/projects` - Project list (TODO)
 - `/projects/:id` - Project editor (TODO)
 
 ### API Routes
+
 - `GET /api/projects` - List user's projects
 - `POST /api/projects` - Create new project
 
@@ -142,16 +145,19 @@ pnpm --filter web build
 ## Security
 
 ### Authentication
+
 - OAuth-only (GitHub, Discord, Google)
 - Session-based via Clerk
 - Secure HTTP-only cookies
 
 ### Authorization (RBAC)
+
 - **OWNER** - Full project control
 - **EDITOR** - Read/write access
 - **VIEWER** - Read-only access
 
 ### Input Validation
+
 - All API inputs validated with Zod
 - Structured error responses
 - Rate limiting (TODO)

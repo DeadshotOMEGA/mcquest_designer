@@ -9,6 +9,7 @@ This directory contains CI/CD workflows for the MCQuest Designer project.
 Runs on every push and pull request to validate code quality, type safety, tests, and buildability.
 
 **Triggers:**
+
 - Push to `main`, `develop`, `feature/*`, `release/*`, `hotfix/*`
 - Pull requests to `main` and `develop`
 
@@ -60,21 +61,25 @@ Recommended branch protection rules for `main` and `develop`:
 ## Performance Optimizations
 
 ### Turbo Caching
+
 - Turbo automatically caches task outputs
 - Subsequent runs skip unchanged packages
 - Cache stored in `.turbo` directory
 
 ### pnpm Caching
+
 - GitHub Actions caches pnpm store using `setup-node`
 - Significantly speeds up dependency installation
 - Cache key: `${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}`
 
 ### Build Output Caching
+
 - Next.js `.next` directory cached between runs
 - Package `dist` directories cached
 - Reduces build times for unchanged code
 
 ### Concurrency Control
+
 - In-progress workflows for the same branch are cancelled
 - Prevents resource waste on superseded commits
 - Uses: `concurrency.group` with `cancel-in-progress: true`

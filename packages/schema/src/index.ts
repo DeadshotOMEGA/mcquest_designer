@@ -78,8 +78,4 @@ export type {
 } from './api'
 
 // Factory functions
-export {
-  createDefaultSnapshot,
-  createDefaultChapter,
-  createDefaultQuest,
-} from './defaults'
+export { createDefaultSnapshot, createDefaultChapter, createDefaultQuest } from './defaults'

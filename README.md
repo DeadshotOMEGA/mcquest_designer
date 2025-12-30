@@ -14,16 +14,16 @@ A visual graph editor for designing [FTB Quests](https://www.curseforge.com/mine
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | Next.js 14 (App Router), React, TypeScript |
-| Graph Editor | React Flow |
-| State | Zustand (editor), TanStack Query (server) |
-| UI Components | shadcn/ui, Tailwind CSS |
-| Backend | Next.js Route Handlers |
-| Database | Prisma + Neon PostgreSQL |
-| Auth | Clerk |
-| Testing | Vitest, Playwright |
+| Layer         | Technology                                 |
+| ------------- | ------------------------------------------ |
+| Frontend      | Next.js 14 (App Router), React, TypeScript |
+| Graph Editor  | React Flow                                 |
+| State         | Zustand (editor), TanStack Query (server)  |
+| UI Components | shadcn/ui, Tailwind CSS                    |
+| Backend       | Next.js Route Handlers                     |
+| Database      | Prisma + Neon PostgreSQL                   |
+| Auth          | Clerk                                      |
+| Testing       | Vitest, Playwright                         |
 
 ## Project Structure
 
@@ -68,13 +68,13 @@ pnpm build
 
 This project is actively under development.
 
-| Milestone | Status | Issues |
-|-----------|--------|--------|
+| Milestone                                                                        | Status      | Issues                           |
+| -------------------------------------------------------------------------------- | ----------- | -------------------------------- |
 | [M1 - Foundation](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/1) | In Progress | Auth, Project CRUD, Prisma setup |
-| [M2 - Editor](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/2) | Planned | React Flow, Inspector, Autosave |
-| [M3 - Versioning](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/3) | Planned | Version creation, restore |
-| [M4 - Export](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/4) | Planned | SNBT compiler, ZIP packaging |
-| [M5 - Sharing](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/5) | Planned | Share tokens, read-only mode |
+| [M2 - Editor](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/2)     | Planned     | React Flow, Inspector, Autosave  |
+| [M3 - Versioning](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/3) | Planned     | Version creation, restore        |
+| [M4 - Export](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/4)     | Planned     | SNBT compiler, ZIP packaging     |
+| [M5 - Sharing](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/5)    | Planned     | Share tokens, read-only mode     |
 
 View all [65 implementation tasks](https://github.com/DeadshotOMEGA/mcquest_designer/issues).
 
@@ -107,4 +107,4 @@ TBD
 
 ---
 
-*Built with Claude Code*
+_Built with Claude Code_

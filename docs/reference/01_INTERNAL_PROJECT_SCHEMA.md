@@ -3,11 +3,13 @@
 > Split from `developer_specifications.md`.
 
 ## Purpose
-Defines the **canonical internal data model** used by the platform. This schema is the *single source of truth* and must never directly mirror SNBT.
+
+Defines the **canonical internal data model** used by the platform. This schema is the _single source of truth_ and must never directly mirror SNBT.
 
 ---
 
 ## Design Principles
+
 - Stable IDs (UUID v4) for all entities
 - Version-agnostic
 - UI metadata allowed but isolated

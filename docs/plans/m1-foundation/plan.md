@@ -18,28 +18,28 @@ overview:
 
   related_items:
     github_issues:
-      - "#6 - Clerk Auth pages (DONE)"
-      - "#7 - Prisma/Neon setup (PENDING)"
-      - "#8 - Enhanced ProjectSnapshot schema (PENDING)"
-      - "#9 - Project CRUD APIs (PENDING - mock exists)"
-      - "#10 - Dashboard UI (PARTIAL)"
-      - "#11 - CI Pipeline (PENDING)"
+      - '#6 - Clerk Auth pages (DONE)'
+      - '#7 - Prisma/Neon setup (PENDING)'
+      - '#8 - Enhanced ProjectSnapshot schema (PENDING)'
+      - '#9 - Project CRUD APIs (PENDING - mock exists)'
+      - '#10 - Dashboard UI (PARTIAL)'
+      - '#11 - CI Pipeline (PENDING)'
 
     feature_specs:
-      - "docs/reference/01_INTERNAL_PROJECT_SCHEMA.md"
-      - "docs/reference/02_PRISMA_SCHEMA.md"
-      - "docs/reference/03_API_ENDPOINTS.md"
+      - 'docs/reference/01_INTERNAL_PROJECT_SCHEMA.md'
+      - 'docs/reference/02_PRISMA_SCHEMA.md'
+      - 'docs/reference/03_API_ENDPOINTS.md'
 
     user_stories: []
     user_flows: []
 
   related_docs:
-    - "docs/temp/M1_FOUNDATION_AUDIT.md"
-    - "docs/temp/M1_IMPLEMENTATION_CHECKLIST.md"
-    - "docs/temp/AUDIT_SUMMARY.md"
-    - "rules/00_invariants.md"
-    - "rules/60_backend_rules.md"
-    - "rules/80_security_and_abuse_prevention.md"
+    - 'docs/temp/M1_FOUNDATION_AUDIT.md'
+    - 'docs/temp/M1_IMPLEMENTATION_CHECKLIST.md'
+    - 'docs/temp/AUDIT_SUMMARY.md'
+    - 'rules/00_invariants.md'
+    - 'rules/60_backend_rules.md'
+    - 'rules/80_security_and_abuse_prevention.md'
 ```
 
 ---
@@ -50,35 +50,35 @@ overview:
 
 The following files were created and are functional:
 
-| File | Status | Notes |
-|------|--------|-------|
-| `apps/web/src/middleware.ts` | DONE | Clerk route protection with CVE-2025-29927 mitigation |
-| `apps/web/src/lib/auth.ts` | DONE | requireAuth, requireUser, getAuthOrNull utilities |
-| `apps/web/src/app/sign-in/[[...sign-in]]/page.tsx` | DONE | Clerk SignIn component |
-| `apps/web/src/app/sign-up/[[...sign-up]]/page.tsx` | DONE | Clerk SignUp component |
-| `apps/web/src/app/dashboard/page.tsx` | PARTIAL | Basic UI with auth, needs project list |
-| `apps/web/src/app/api/projects/route.ts` | PARTIAL | Mock GET/POST, needs real Prisma |
-| `apps/web/src/app/layout.tsx` | DONE | ClerkProvider wrapped |
-| `apps/web/src/app/page.tsx` | DONE | Auth-aware landing page |
-| `apps/web/src/types/auth.ts` | DONE | Auth type definitions |
-| `apps/web/.env.example` | PARTIAL | Has Clerk vars, needs DIRECT_URL |
-| `@clerk/nextjs` | DONE | Package installed |
+| File                                               | Status  | Notes                                                 |
+| -------------------------------------------------- | ------- | ----------------------------------------------------- |
+| `apps/web/src/middleware.ts`                       | DONE    | Clerk route protection with CVE-2025-29927 mitigation |
+| `apps/web/src/lib/auth.ts`                         | DONE    | requireAuth, requireUser, getAuthOrNull utilities     |
+| `apps/web/src/app/sign-in/[[...sign-in]]/page.tsx` | DONE    | Clerk SignIn component                                |
+| `apps/web/src/app/sign-up/[[...sign-up]]/page.tsx` | DONE    | Clerk SignUp component                                |
+| `apps/web/src/app/dashboard/page.tsx`              | PARTIAL | Basic UI with auth, needs project list                |
+| `apps/web/src/app/api/projects/route.ts`           | PARTIAL | Mock GET/POST, needs real Prisma                      |
+| `apps/web/src/app/layout.tsx`                      | DONE    | ClerkProvider wrapped                                 |
+| `apps/web/src/app/page.tsx`                        | DONE    | Auth-aware landing page                               |
+| `apps/web/src/types/auth.ts`                       | DONE    | Auth type definitions                                 |
+| `apps/web/.env.example`                            | PARTIAL | Has Clerk vars, needs DIRECT_URL                      |
+| `@clerk/nextjs`                                    | DONE    | Package installed                                     |
 
 ### Still Missing
 
-| Component | Status | Blocker Level |
-|-----------|--------|---------------|
-| Prisma schema | NOT STARTED | CRITICAL |
-| Prisma client wrapper (db.ts) | NOT STARTED | CRITICAL |
-| Database migrations | NOT STARTED | CRITICAL |
-| Neon PostgreSQL connection | NOT STARTED | CRITICAL |
-| Real Project CRUD (with Prisma) | NOT STARTED | CRITICAL |
-| Project [id] route handlers | NOT STARTED | CRITICAL |
-| Clerk webhook for user sync | NOT STARTED | HIGH |
-| Enhanced ProjectSnapshot schema | NOT STARTED | HIGH |
-| Authorization (checkProjectAccess) | NOT STARTED | HIGH |
-| Dashboard with real data | NOT STARTED | MEDIUM |
-| CI/CD Pipeline | NOT STARTED | MEDIUM |
+| Component                          | Status      | Blocker Level |
+| ---------------------------------- | ----------- | ------------- |
+| Prisma schema                      | NOT STARTED | CRITICAL      |
+| Prisma client wrapper (db.ts)      | NOT STARTED | CRITICAL      |
+| Database migrations                | NOT STARTED | CRITICAL      |
+| Neon PostgreSQL connection         | NOT STARTED | CRITICAL      |
+| Real Project CRUD (with Prisma)    | NOT STARTED | CRITICAL      |
+| Project [id] route handlers        | NOT STARTED | CRITICAL      |
+| Clerk webhook for user sync        | NOT STARTED | HIGH          |
+| Enhanced ProjectSnapshot schema    | NOT STARTED | HIGH          |
+| Authorization (checkProjectAccess) | NOT STARTED | HIGH          |
+| Dashboard with real data           | NOT STARTED | MEDIUM        |
+| CI/CD Pipeline                     | NOT STARTED | MEDIUM        |
 
 ---
 
@@ -119,24 +119,24 @@ current_system:
 
   existing_files:
     auth_layer:
-      - path: "apps/web/src/middleware.ts"
-        role: "Route protection via Clerk"
-      - path: "apps/web/src/lib/auth.ts"
-        role: "Auth utilities (requireAuth, requireUser)"
+      - path: 'apps/web/src/middleware.ts'
+        role: 'Route protection via Clerk'
+      - path: 'apps/web/src/lib/auth.ts'
+        role: 'Auth utilities (requireAuth, requireUser)'
 
     api_routes:
-      - path: "apps/web/src/app/api/projects/route.ts"
-        role: "Mock GET/POST for projects (needs Prisma)"
+      - path: 'apps/web/src/app/api/projects/route.ts'
+        role: 'Mock GET/POST for projects (needs Prisma)'
 
     frontend:
-      - path: "apps/web/src/app/dashboard/page.tsx"
-        role: "Dashboard with static cards"
-      - path: "apps/web/src/app/page.tsx"
-        role: "Landing page with auth buttons"
+      - path: 'apps/web/src/app/dashboard/page.tsx'
+        role: 'Dashboard with static cards'
+      - path: 'apps/web/src/app/page.tsx'
+        role: 'Landing page with auth buttons'
 
     schemas:
-      - path: "packages/schema/src/index.ts"
-        role: "Placeholder Quest and ProjectSnapshot schemas"
+      - path: 'packages/schema/src/index.ts'
+        role: 'Placeholder Quest and ProjectSnapshot schemas'
 ```
 
 ---
@@ -146,7 +146,7 @@ current_system:
 ```yaml
 changes_required:
   # Batch 1: Database Foundation
-  - path: "apps/web/prisma/schema.prisma"
+  - path: 'apps/web/prisma/schema.prisma'
     changes: |
       - CREATE file with PostgreSQL datasource
       - ADD User model (id, clerkId, email, name, timestamps)
@@ -157,19 +157,19 @@ changes_required:
       - ADD ProjectRole enum (OWNER, EDITOR, VIEWER)
       - ADD indexes for foreign keys and common queries
 
-  - path: "apps/web/src/lib/db.ts"
+  - path: 'apps/web/src/lib/db.ts'
     changes: |
       - CREATE Prisma client singleton with dev logging
       - ADD globalForPrisma pattern to prevent multiple instances
       - EXPORT prisma instance
 
-  - path: "apps/web/.env.example"
+  - path: 'apps/web/.env.example'
     changes: |
       - ADD DIRECT_URL for Prisma migrations
       - UPDATE DATABASE_URL comment with Neon format
 
   # Batch 2: Schema Enhancement
-  - path: "packages/schema/src/index.ts"
+  - path: 'packages/schema/src/index.ts'
     changes: |
       - REPLACE placeholder schemas with full implementation
       - ADD TaskTypeSchema enum (text, item, damage, die, advance)
@@ -189,7 +189,7 @@ changes_required:
       - ADD UpdateProjectRequestSchema
       - ADD UpdateSnapshotRequestSchema
 
-  - path: "packages/schema/src/defaults.ts"
+  - path: 'packages/schema/src/defaults.ts'
     changes: |
       - CREATE file with factory functions
       - ADD createDefaultSnapshot(name: string): ProjectSnapshot
@@ -197,20 +197,20 @@ changes_required:
       - ADD createDefaultQuest(chapterId: string, title: string): Quest
 
   # Batch 3: API Routes
-  - path: "apps/web/src/lib/auth.ts"
+  - path: 'apps/web/src/lib/auth.ts'
     changes: |
       - ADD getCurrentDbUser() to get/create User from Clerk
       - ADD checkProjectAccess(projectId, minRole) for RBAC
       - ADD syncClerkUser() for webhook handling
 
-  - path: "apps/web/src/app/api/projects/route.ts"
+  - path: 'apps/web/src/app/api/projects/route.ts'
     changes: |
       - REPLACE mock GET with Prisma query (findMany with member filter)
       - REPLACE mock POST with Prisma create (includes default snapshot)
       - ADD Zod validation using CreateProjectRequestSchema
       - ADD proper error responses (400, 401, 500)
 
-  - path: "apps/web/src/app/api/projects/[id]/route.ts"
+  - path: 'apps/web/src/app/api/projects/[id]/route.ts'
     changes: |
       - CREATE file with GET, PATCH, DELETE handlers
       - ADD GET: fetch project with checkProjectAccess(VIEWER)
@@ -219,13 +219,13 @@ changes_required:
       - ADD Zod validation for PATCH body
       - ADD optimistic locking check for snapshot updates
 
-  - path: "apps/web/src/app/api/projects/[id]/snapshot/route.ts"
+  - path: 'apps/web/src/app/api/projects/[id]/snapshot/route.ts'
     changes: |
       - CREATE file for dedicated snapshot updates
       - ADD PATCH: validate and update latestSnapshot only
       - ADD version field check for optimistic locking
 
-  - path: "apps/web/src/app/api/webhooks/clerk/route.ts"
+  - path: 'apps/web/src/app/api/webhooks/clerk/route.ts'
     changes: |
       - CREATE file for Clerk webhook handling
       - ADD POST: handle user.created and user.updated events
@@ -233,7 +233,7 @@ changes_required:
       - ADD syncClerkUser() call to upsert User record
 
   # Batch 4: Frontend Integration
-  - path: "apps/web/src/app/dashboard/page.tsx"
+  - path: 'apps/web/src/app/dashboard/page.tsx'
     changes: |
       - ADD fetch call to GET /api/projects
       - ADD project list rendering with cards
@@ -241,13 +241,13 @@ changes_required:
       - ADD loading skeleton during fetch
       - ADD "New Project" button with modal/form
 
-  - path: "apps/web/src/app/dashboard/components/project-card.tsx"
+  - path: 'apps/web/src/app/dashboard/components/project-card.tsx'
     changes: |
       - CREATE reusable ProjectCard component
       - ADD project name, updated date, chapter/quest counts
       - ADD link to /projects/[id] (future M2)
 
-  - path: "apps/web/src/app/dashboard/components/create-project-dialog.tsx"
+  - path: 'apps/web/src/app/dashboard/components/create-project-dialog.tsx'
     changes: |
       - CREATE dialog for new project creation
       - ADD form with project name input
@@ -255,7 +255,7 @@ changes_required:
       - ADD success redirect to project page
 
   # Batch 5: CI/CD Pipeline
-  - path: ".github/workflows/ci.yml"
+  - path: '.github/workflows/ci.yml'
     changes: |
       - CREATE GitHub Actions workflow
       - ADD trigger on push/PR to main, develop, feature/*
@@ -614,32 +614,32 @@ task_breakdown:
 ```yaml
 data_schema_changes:
   migrations:
-    - file: "apps/web/prisma/migrations/YYYYMMDD_init/migration.sql"
+    - file: 'apps/web/prisma/migrations/YYYYMMDD_init/migration.sql'
       summary: |
         Initial migration creating User, Project, ProjectMember, ProjectVersion,
         ShareToken tables with PostgreSQL JSONB for snapshots.
 
   api_changes:
-    - endpoint: "GET /api/projects"
-      changes: "Returns real projects from database instead of mock data"
+    - endpoint: 'GET /api/projects'
+      changes: 'Returns real projects from database instead of mock data'
 
-    - endpoint: "POST /api/projects"
-      changes: "Creates project with Prisma, includes default snapshot and OWNER membership"
+    - endpoint: 'POST /api/projects'
+      changes: 'Creates project with Prisma, includes default snapshot and OWNER membership'
 
-    - endpoint: "GET /api/projects/:id"
-      changes: "New endpoint - returns project with members and recent versions"
+    - endpoint: 'GET /api/projects/:id'
+      changes: 'New endpoint - returns project with members and recent versions'
 
-    - endpoint: "PATCH /api/projects/:id"
-      changes: "New endpoint - updates project name or snapshot"
+    - endpoint: 'PATCH /api/projects/:id'
+      changes: 'New endpoint - updates project name or snapshot'
 
-    - endpoint: "DELETE /api/projects/:id"
-      changes: "New endpoint - deletes project (OWNER only)"
+    - endpoint: 'DELETE /api/projects/:id'
+      changes: 'New endpoint - deletes project (OWNER only)'
 
-    - endpoint: "PATCH /api/projects/:id/snapshot"
-      changes: "New endpoint - dedicated snapshot update with optimistic locking"
+    - endpoint: 'PATCH /api/projects/:id/snapshot'
+      changes: 'New endpoint - dedicated snapshot update with optimistic locking'
 
-    - endpoint: "POST /api/webhooks/clerk"
-      changes: "New endpoint - Clerk webhook for user sync"
+    - endpoint: 'POST /api/webhooks/clerk'
+      changes: 'New endpoint - Clerk webhook for user sync'
 ```
 
 ---
@@ -689,15 +689,15 @@ Batch 5 (CI):            T19 (parallel)
 
 ### Parallelization Opportunities
 
-| Parallel Group | Tasks | Notes |
-|----------------|-------|-------|
-| First wave | T1, T5, T14, T18, T19 | Independent foundations |
-| After T1 | T2, T3, T4 | Database schema + client |
-| After T5 | T6, T7 | Schema extensions |
-| After T2+T3 | T9 | Auth utilities need db |
-| After T9 | T10, T13 | API routes need auth |
-| After T10 | T11 | Detail routes |
-| After T11 | T12, T15 | Snapshot route + dashboard |
+| Parallel Group | Tasks                 | Notes                      |
+| -------------- | --------------------- | -------------------------- |
+| First wave     | T1, T5, T14, T18, T19 | Independent foundations    |
+| After T1       | T2, T3, T4            | Database schema + client   |
+| After T5       | T6, T7                | Schema extensions          |
+| After T2+T3    | T9                    | Auth utilities need db     |
+| After T9       | T10, T13              | API routes need auth       |
+| After T10      | T11                   | Detail routes              |
+| After T11      | T12, T15              | Snapshot route + dashboard |
 
 ---
 
@@ -706,36 +706,36 @@ Batch 5 (CI):            T19 (parallel)
 ```yaml
 notes:
   blockers:
-    - "Neon PostgreSQL account required - free tier sufficient for development"
-    - "Clerk webhook secret must be configured in Clerk dashboard"
+    - 'Neon PostgreSQL account required - free tier sufficient for development'
+    - 'Clerk webhook secret must be configured in Clerk dashboard'
 
   decisions:
-    - "Using JSONB for snapshots enables efficient partial queries if needed later"
-    - "ProjectVersion stores immutable snapshots for version history (M3 scope)"
-    - "ShareToken prepared but not exposed in API until M5"
+    - 'Using JSONB for snapshots enables efficient partial queries if needed later'
+    - 'ProjectVersion stores immutable snapshots for version history (M3 scope)'
+    - 'ShareToken prepared but not exposed in API until M5'
 
   risks:
-    - "Clerk rate limits on webhook events (mitigated by idempotent upsert)"
-    - "Large snapshots may hit Vercel/Neon limits (defer optimization to M4)"
+    - 'Clerk rate limits on webhook events (mitigated by idempotent upsert)'
+    - 'Large snapshots may hit Vercel/Neon limits (defer optimization to M4)'
 
   references:
-    - "Prisma schema pattern: docs/reference/02_PRISMA_SCHEMA.md"
-    - "API endpoint design: docs/reference/03_API_ENDPOINTS.md"
-    - "ProjectSnapshot spec: docs/reference/01_INTERNAL_PROJECT_SCHEMA.md"
-    - "Security rules: rules/80_security_and_abuse_prevention.md"
+    - 'Prisma schema pattern: docs/reference/02_PRISMA_SCHEMA.md'
+    - 'API endpoint design: docs/reference/03_API_ENDPOINTS.md'
+    - 'ProjectSnapshot spec: docs/reference/01_INTERNAL_PROJECT_SCHEMA.md'
+    - 'Security rules: rules/80_security_and_abuse_prevention.md'
 ```
 
 ---
 
 ## PR Strategy
 
-| PR | Tasks | Description |
-|----|-------|-------------|
-| PR 1 | T1, T2, T3, T4 | Prisma + Database Setup |
-| PR 2 | T5, T6, T7, T8 | Schema Enhancement |
+| PR   | Tasks                       | Description               |
+| ---- | --------------------------- | ------------------------- |
+| PR 1 | T1, T2, T3, T4              | Prisma + Database Setup   |
+| PR 2 | T5, T6, T7, T8              | Schema Enhancement        |
 | PR 3 | T9, T10, T11, T12, T13, T14 | API Routes Implementation |
-| PR 4 | T15, T16, T17, T18 | Dashboard Integration |
-| PR 5 | T19, T20 | CI Pipeline + Tests |
+| PR 4 | T15, T16, T17, T18          | Dashboard Integration     |
+| PR 5 | T19, T20                    | CI Pipeline + Tests       |
 
 ---
 

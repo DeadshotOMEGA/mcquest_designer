@@ -52,12 +52,19 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
         createdAt: project.createdAt.toISOString(),
         updatedAt: project.updatedAt.toISOString(),
         role: membership.role,
-        members: project.members.map((m) => ({
-          userId: m.userId,
-          role: m.role,
-          user: m.user,
-          joinedAt: m.createdAt.toISOString(),
-        })),
+        members: project.members.map(
+          (m: {
+            userId: string
+            role: string
+            user: { id: string; name: string | null; email: string; avatarUrl: string | null }
+            createdAt: Date
+          }) => ({
+            userId: m.userId,
+            role: m.role,
+            user: m.user,
+            joinedAt: m.createdAt.toISOString(),
+          })
+        ),
         versionCount: project._count.versions,
       },
     })

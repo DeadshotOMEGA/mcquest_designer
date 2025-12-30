@@ -192,13 +192,7 @@ export type UISnapshot = z.infer<typeof UISnapshotSchema>
 // Project Metadata
 // ============================================
 
-export const MinecraftVersionSchema = z.enum([
-  '1.21',
-  '1.21.1',
-  '1.21.2',
-  '1.21.3',
-  '1.21.4',
-])
+export const MinecraftVersionSchema = z.enum(['1.21', '1.21.1', '1.21.2', '1.21.3', '1.21.4'])
 
 export type MinecraftVersion = z.infer<typeof MinecraftVersionSchema>
 

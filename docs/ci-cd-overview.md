@@ -31,6 +31,7 @@ mcquest_designer/
 ### Trigger Strategy
 
 **Push Triggers:**
+
 - `main` - Production branch
 - `develop` - Integration branch
 - `feature/*` - Feature branches
@@ -38,6 +39,7 @@ mcquest_designer/
 - `hotfix/*` - Emergency fixes
 
 **Pull Request Triggers:**
+
 - Target: `main` or `develop`
 - Ensures all changes are validated before merge
 
@@ -58,18 +60,22 @@ graph TD
 ### Job Details
 
 #### 1. Lint Job
+
 **Purpose:** Code quality and style enforcement
 
 **Steps:**
+
 - Install dependencies with pnpm
 - Run ESLint across all workspaces
 - Validate Prettier formatting
 
 **Success Criteria:**
+
 - No ESLint errors or warnings
 - All files properly formatted
 
 **Failure Examples:**
+
 - Unused variables
 - Missing type annotations
 - Inconsistent formatting
@@ -77,19 +83,23 @@ graph TD
 ---
 
 #### 2. Type Check Job
+
 **Purpose:** TypeScript type safety validation
 
 **Steps:**
+
 - Install dependencies
 - Run `tsc --noEmit` in all packages
 - Validate type consistency across monorepo
 
 **Success Criteria:**
+
 - No TypeScript errors
 - All types properly defined
 - Cross-package type consistency
 
 **Failure Examples:**
+
 - Type mismatches
 - Missing type definitions
 - Circular dependencies
@@ -97,54 +107,65 @@ graph TD
 ---
 
 #### 3. Test Job
+
 **Purpose:** Execute test suite and generate coverage
 
 **Steps:**
+
 - Install dependencies
 - Run Vitest tests
 - Upload coverage reports as artifacts
 
 **Success Criteria:**
+
 - All tests pass
 - No test timeouts
 - Coverage meets thresholds (if configured)
 
 **Failure Examples:**
+
 - Failed test assertions
 - Uncaught errors in tests
 - Golden export mismatches
 
 **Artifacts:**
+
 - Coverage reports (7-day retention)
 - Test results JSON
 
 ---
 
 #### 4. Build Job
+
 **Purpose:** Validate buildability of all packages
 
 **Steps:**
+
 - Install dependencies
 - Build TypeScript packages (`schema`, `export`)
 - Build Next.js web application
 - Cache outputs for reuse
 
 **Success Criteria:**
+
 - All packages build successfully
 - No build errors or warnings
 - Output artifacts generated
 
 **Environment Variables:**
+
 - `NEXT_TELEMETRY_DISABLED=1` - Disable Next.js telemetry
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - Clerk public key (or placeholder)
 - `CLERK_SECRET_KEY` - Clerk secret key (or placeholder)
 
 **Failure Examples:**
+
 - Missing dependencies
 - Import errors
 - Next.js configuration issues
 
 **Cache Strategy:**
+
 - Cache `.turbo` directory (Turbo outputs)
 - Cache `.next` directory (Next.js build)
 - Cache `packages/*/dist` (TypeScript builds)
@@ -152,14 +173,17 @@ graph TD
 ---
 
 #### 5. CI Success Job
+
 **Purpose:** Single status check for branch protection
 
 **Behavior:**
+
 - Runs after all other jobs complete
 - Fails if any dependent job fails
 - Provides unified pass/fail status
 
 **Usage:**
+
 - Configure branch protection to require "CI Success" check
 - Prevents merging PRs with failed CI
 
@@ -168,6 +192,7 @@ graph TD
 ### 1. Parallel Execution
 
 All jobs run in parallel by default:
+
 - **No dependencies between jobs** - Maximum parallelization
 - **Estimated time savings:** 60-70% vs sequential execution
 - **Example:** 10-minute sequential → 3-minute parallel
@@ -175,6 +200,7 @@ All jobs run in parallel by default:
 ### 2. Turbo Caching
 
 Turbo automatically caches task outputs:
+
 - **Cache location:** `.turbo` directory
 - **Cache key:** Content hash of inputs
 - **Behavior:** Skips tasks with unchanged inputs
@@ -183,6 +209,7 @@ Turbo automatically caches task outputs:
 ### 3. pnpm Caching
 
 GitHub Actions caches pnpm store:
+
 - **Cache key:** `pnpm-lock.yaml` hash
 - **Cache location:** `~/.pnpm-store`
 - **Impact:** 80% faster dependency installation
@@ -190,6 +217,7 @@ GitHub Actions caches pnpm store:
 ### 4. Concurrency Control
 
 Automatic cancellation of superseded workflows:
+
 - **Group:** `${{ github.workflow }}-${{ github.ref }}`
 - **Strategy:** Cancel in-progress workflows on new push
 - **Benefit:** Saves compute resources and queue time
@@ -200,10 +228,10 @@ Automatic cancellation of superseded workflows:
 
 Configure in GitHub repository settings (`Settings → Secrets and variables → Actions`):
 
-| Secret | Purpose | Required For |
-|--------|---------|--------------|
+| Secret                              | Purpose                       | Required For      |
+| ----------------------------------- | ----------------------------- | ----------------- |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk authentication (public) | Production builds |
-| `CLERK_SECRET_KEY` | Clerk authentication (server) | Production builds |
+| `CLERK_SECRET_KEY`                  | Clerk authentication (server) | Production builds |
 
 **Note:** CI uses placeholder values if secrets are missing, allowing fork/development builds to succeed.
 
@@ -211,17 +239,18 @@ Configure in GitHub repository settings (`Settings → Secrets and variables →
 
 For future enhancements:
 
-| Secret | Purpose |
-|--------|---------|
-| `VERCEL_TOKEN` | Deploy previews |
-| `CODECOV_TOKEN` | Coverage reporting |
-| `SONAR_TOKEN` | Code quality analysis |
+| Secret          | Purpose               |
+| --------------- | --------------------- |
+| `VERCEL_TOKEN`  | Deploy previews       |
+| `CODECOV_TOKEN` | Coverage reporting    |
+| `SONAR_TOKEN`   | Code quality analysis |
 
 ## Branch Protection
 
 ### Recommended Rules
 
 **For `main` branch:**
+
 - ✅ Require status checks: `CI Success`
 - ✅ Require branches to be up to date
 - ✅ Require pull request reviews (1+ approvers)
@@ -231,6 +260,7 @@ For future enhancements:
 - ❌ Allow force pushes (never on main)
 
 **For `develop` branch:**
+
 - ✅ Require status checks: `CI Success`
 - ✅ Require branches to be up to date
 - ✅ Require pull request reviews (1+ approvers)
@@ -248,6 +278,7 @@ For future enhancements:
 ### Common Failures
 
 #### Lint Failures
+
 ```
 Error: ESLint found 3 errors and 0 warnings
   src/components/QuestNode.tsx:45:10 - Unexpected console statement (no-console)
@@ -258,6 +289,7 @@ Error: ESLint found 3 errors and 0 warnings
 ---
 
 #### Type Check Failures
+
 ```
 Error: TS2322: Type 'string | undefined' is not assignable to type 'string'.
   apps/web/src/lib/auth.ts:12:5
@@ -268,6 +300,7 @@ Error: TS2322: Type 'string | undefined' is not assignable to type 'string'.
 ---
 
 #### Test Failures
+
 ```
 FAIL packages/export/src/__tests__/compiler.test.ts
   ✕ should generate deterministic quest IDs (45ms)
@@ -280,6 +313,7 @@ FAIL packages/export/src/__tests__/compiler.test.ts
 ---
 
 #### Build Failures
+
 ```
 Error: Missing required environment variable: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 ```
@@ -291,10 +325,12 @@ Error: Missing required environment variable: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 #### Slow Dependency Installation
 
 **Symptoms:**
+
 - `pnpm install` takes >2 minutes
 - No cache hit in logs
 
 **Solutions:**
+
 1. Check pnpm cache status in workflow logs
 2. Verify `pnpm-lock.yaml` is committed
 3. Force cache reset (delete and re-run)
@@ -304,10 +340,12 @@ Error: Missing required environment variable: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 #### Slow Builds
 
 **Symptoms:**
+
 - Build job takes >5 minutes
 - Turbo reports no cache hits
 
 **Solutions:**
+
 1. Check Turbo cache configuration in `turbo.json`
 2. Verify `.turbo` directory is cached
 3. Review build task dependencies
@@ -317,10 +355,12 @@ Error: Missing required environment variable: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 #### Queue Time
 
 **Symptoms:**
+
 - Workflow queued for extended period
 - Multiple workflows running simultaneously
 
 **Solutions:**
+
 1. Verify concurrency settings are correct
 2. Check GitHub Actions minute quota
 3. Consider upgrading GitHub plan
@@ -397,6 +437,7 @@ pnpm install
 ### 1. Commit Frequently
 
 Small, focused commits enable:
+
 - Faster CI runs (less to validate)
 - Easier debugging (smaller diffs)
 - Better cache utilization (fewer changes)
@@ -430,6 +471,7 @@ Small, focused commits enable:
 ### CI Passes Locally but Fails in GitHub Actions
 
 **Possible Causes:**
+
 1. **Node/pnpm version mismatch** - Check `package.json` engines
 2. **Missing environment variables** - Add to GitHub secrets
 3. **File case sensitivity** - CI runs on Linux (case-sensitive)
@@ -439,6 +481,7 @@ Small, focused commits enable:
 ### CI Fails Locally but Passes in GitHub Actions
 
 **Possible Causes:**
+
 1. **Uncommitted changes** - Ensure all files are committed
 2. **Local cache corruption** - Run `pnpm clean` and reinstall
 3. **Environment-specific config** - Check `.env.local` files
@@ -446,6 +489,7 @@ Small, focused commits enable:
 ### Workflow Not Triggering
 
 **Possible Causes:**
+
 1. **Branch name mismatch** - Check trigger patterns
 2. **Workflow file syntax error** - Validate YAML
 3. **GitHub Actions disabled** - Check repository settings

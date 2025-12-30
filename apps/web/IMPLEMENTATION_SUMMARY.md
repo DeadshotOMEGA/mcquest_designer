@@ -11,6 +11,7 @@
 ### Core Authentication Infrastructure
 
 #### 1. Clerk Integration
+
 - Installed `@clerk/nextjs@^6.36.5`
 - Configured ClerkProvider in root layout
 - Set up OAuth providers: GitHub, Discord, Google
@@ -18,11 +19,13 @@
 #### 2. Route Protection (Defense-in-Depth)
 
 **Layer 1: Middleware** (`src/middleware.ts`)
+
 - Protects routes: `/dashboard/*`, `/projects/*`, `/api/projects/*`
 - Redirects unauthenticated users to `/sign-in`
 - First line of defense (UX)
 
 **Layer 2: Server Verification** (`src/lib/auth.ts`)
+
 - `requireAuth()` - Get userId, throw if not authenticated
 - `requireUser()` - Get full user profile, throw if not authenticated
 - `getAuthOrNull()` - Get userId or null (no throw)
@@ -31,6 +34,7 @@
 - Second line of defense (SECURITY BOUNDARY)
 
 **CVE-2025-29927 Compliance:**
+
 - NEVER rely on middleware alone
 - ALWAYS verify auth in Server Components with `requireAuth()`
 - ALWAYS verify auth in Route Handlers with `requireAuth()`
@@ -38,11 +42,13 @@
 #### 3. Authentication Pages
 
 **Sign-In** (`/sign-in`)
+
 - OAuth buttons: GitHub, Discord, Google
 - Clerk-managed UI
 - Multi-step flow support (MFA, SSO)
 
 **Sign-Up** (`/sign-up`)
+
 - OAuth registration
 - Email verification flow
 - Clerk-managed UI
@@ -50,11 +56,13 @@
 #### 4. Protected Routes (Examples)
 
 **Dashboard** (`/dashboard`)
+
 - Demonstrates Server Component auth verification
 - Shows user profile
 - UserButton component for sign-out
 
 **API Route** (`/api/projects`)
+
 - Demonstrates Route Handler auth verification
 - GET - List user's projects
 - POST - Create new project
@@ -63,6 +71,7 @@
 #### 5. Public Routes
 
 **Home Page** (`/`)
+
 - Auth-aware CTAs
 - Shows "Go to Dashboard" if authenticated
 - Shows "Sign In / Sign Up" if not authenticated
@@ -71,6 +80,7 @@
 ### Type Definitions
 
 #### Auth Types (`src/types/auth.ts`)
+
 ```typescript
 enum ProjectRole {
   OWNER   // Full control
@@ -98,12 +108,14 @@ interface ShareToken {
 ### Documentation
 
 #### 1. Getting Started Guide (`GETTING_STARTED.md`)
+
 - Complete setup checklist
 - Clerk account creation
 - OAuth provider configuration
 - Troubleshooting common issues
 
 #### 2. Auth Setup Guide (`docs/auth-setup.md`)
+
 - Comprehensive authentication documentation
 - CVE-2025-29927 mitigation patterns
 - Security best practices
@@ -112,6 +124,7 @@ interface ShareToken {
 - Rate limiting patterns
 
 #### 3. Auth Patterns (`docs/auth-patterns.md`)
+
 - Quick reference for common patterns
 - Server Component examples
 - Route Handler examples
@@ -121,6 +134,7 @@ interface ShareToken {
 - Common mistakes to avoid
 
 #### 4. Architecture Decision Record (`docs/ADR-001-clerk-authentication.md`)
+
 - Decision rationale
 - Alternatives considered
 - Security considerations
@@ -128,6 +142,7 @@ interface ShareToken {
 - Testing strategy
 
 #### 5. Package README (`README.md`)
+
 - Project structure
 - Development commands
 - Route listing
@@ -137,11 +152,13 @@ interface ShareToken {
 ### Scripts
 
 #### Setup Verification (`scripts/check-auth-setup.mjs`)
+
 ```bash
 node apps/web/scripts/check-auth-setup.mjs
 ```
 
 Checks:
+
 - `.env.local` file exists
 - Required environment variables set
 - All auth files present
@@ -152,6 +169,7 @@ Provides clear feedback for setup issues.
 ### Environment Configuration
 
 #### `.env.example`
+
 ```bash
 # Clerk Authentication
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
@@ -248,18 +266,21 @@ pnpm --filter web dev
 ### 4. Future Implementation Tasks
 
 #### Database Integration
+
 - [ ] Set up Prisma with PostgreSQL
 - [ ] Create User, Project, ProjectMember tables
 - [ ] Implement Clerk webhooks for user sync
 - [ ] Add created_at, updated_at timestamps
 
 #### RBAC Implementation
+
 - [ ] Add ProjectMember model to database
 - [ ] Implement role checking in API routes
 - [ ] Create authorization middleware
 - [ ] Add member management UI
 
 #### Share Tokens
+
 - [ ] Create ShareToken model
 - [ ] Implement token generation (128-bit entropy)
 - [ ] Add revocation endpoint
@@ -267,12 +288,14 @@ pnpm --filter web dev
 - [ ] Create share link UI
 
 #### Rate Limiting
+
 - [ ] Add rate limiting to export endpoints
 - [ ] Implement per-user limits (10/min)
 - [ ] Implement per-project limits (30/min)
 - [ ] Add rate limit headers to responses
 
 #### Testing
+
 - [ ] Add Playwright E2E tests for auth flows
 - [ ] Mock Clerk in integration tests
 - [ ] Test RBAC authorization logic
@@ -285,12 +308,14 @@ pnpm --filter web dev
 ### CVE-2025-29927 Mitigation
 
 **Implemented:**
+
 - Two-layer defense (middleware + server verification)
 - Auth verification in all Server Components
 - Auth verification in all Route Handlers
 - Clear documentation of security patterns
 
 **Code Pattern:**
+
 ```typescript
 // CORRECT - Both layers
 export default async function Page() {
@@ -315,6 +340,7 @@ await requireProjectAccess(projectId, ProjectRole.EDITOR)
 ```
 
 Every project operation must verify:
+
 1. User is authenticated
 2. User has access to project
 3. User has required role for operation
@@ -349,6 +375,7 @@ pnpm --filter web typecheck
 ```
 
 **Strict mode:** Enabled
+
 - No `any` types used
 - All function parameters typed
 - All return types inferred or explicit
@@ -394,14 +421,17 @@ export async function GET() {
 ## Dependencies
 
 ### Added
+
 - `@clerk/nextjs@^6.36.5` - Authentication provider
 
 ### Existing (Relevant)
+
 - `next@^15.1.3` - Framework
 - `react@^19.0.0` - UI library
 - `typescript@^5.7.2` - Type safety
 
 ### Future (Recommended)
+
 - `@prisma/client` - Database ORM
 - `zod` - Schema validation (already in workspace)
 - `@upstash/ratelimit` - Rate limiting
@@ -412,6 +442,7 @@ export async function GET() {
 ## Known Limitations
 
 ### Current State
+
 - No database persistence (mock data in API routes)
 - No RBAC enforcement (types defined, not implemented)
 - No rate limiting (documented, not implemented)
@@ -419,6 +450,7 @@ export async function GET() {
 - No E2E tests
 
 ### Planned Improvements
+
 - Prisma + PostgreSQL integration
 - RBAC enforcement in API routes
 - Rate limiting with Upstash
@@ -432,13 +464,16 @@ export async function GET() {
 If replacing Clerk in future:
 
 ### Abstraction Layer
+
 All auth calls use `src/lib/auth.ts`:
+
 - `requireAuth()`
 - `requireUser()`
 - `getAuthOrNull()`
 - `getUserOrNull()`
 
 ### Migration Steps
+
 1. Replace implementation in `src/lib/auth.ts`
 2. Update `src/middleware.ts`
 3. Update `src/app/layout.tsx` (remove ClerkProvider)
@@ -461,6 +496,7 @@ The abstraction layer makes this feasible.
 ## Success Criteria
 
 **Implementation Complete:**
+
 - ✅ Clerk integration functional
 - ✅ OAuth providers configured (GitHub, Discord, Google)
 - ✅ Defense-in-depth pattern implemented
@@ -475,6 +511,7 @@ The abstraction layer makes this feasible.
 - ✅ TypeScript strict mode passing
 
 **Developer Experience:**
+
 - ✅ Clear setup instructions
 - ✅ Verification script for troubleshooting
 - ✅ Comprehensive code examples
@@ -483,6 +520,7 @@ The abstraction layer makes this feasible.
 - ✅ Common mistakes documented
 
 **Production Ready:**
+
 - ⏳ Database integration (pending)
 - ⏳ RBAC enforcement (pending)
 - ⏳ Rate limiting (pending)
@@ -496,6 +534,7 @@ The abstraction layer makes this feasible.
 The Clerk authentication integration is complete and ready for developer use. The implementation follows Next.js App Router best practices, addresses CVE-2025-29927 with defense-in-depth patterns, and provides a solid foundation for RBAC and future features.
 
 **Next Priority:**
+
 1. Set up `.env.local` with Clerk keys
 2. Configure OAuth providers in Clerk Dashboard
 3. Test authentication flow

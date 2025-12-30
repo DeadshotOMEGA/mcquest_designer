@@ -12,9 +12,7 @@ export default async function Home() {
     <main className="min-h-screen p-8">
       <div className="max-w-2xl mx-auto">
         <h1 className="text-4xl font-bold mb-2">MCQuest Designer</h1>
-        <p className="text-muted-foreground mb-8">
-          Visual graph editor for FTB Quests questbooks
-        </p>
+        <p className="text-muted-foreground mb-8">Visual graph editor for FTB Quests questbooks</p>
 
         <div className="flex gap-4 mb-8">
           {userId ? (

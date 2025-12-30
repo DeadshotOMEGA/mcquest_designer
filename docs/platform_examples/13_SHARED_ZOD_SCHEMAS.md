@@ -17,31 +17,35 @@ apps/
 ```
 
 ## Why a shared package?
+
 - Single source of truth for validation and types
 - Eliminates drift between frontend forms and backend persistence
 - Enables import/export tooling and CLI utilities later
 
 ## Files included
+
 - `packages/schema/src/snapshot.ts` – Zod schemas + inferred types
 
 ## Usage Examples
 
 ### In the backend
-```ts
-import { ProjectSnapshot } from '@yourorg/schema/snapshot';
 
-const parsed = ProjectSnapshot.parse(req.body.snapshot);
+```ts
+import { ProjectSnapshot } from '@yourorg/schema/snapshot'
+
+const parsed = ProjectSnapshot.parse(req.body.snapshot)
 ```
 
 ### In the frontend
+
 ```ts
-import { ProjectSnapshot } from '@yourorg/schema/snapshot';
+import { ProjectSnapshot } from '@yourorg/schema/snapshot'
 
 // validate before autosave
-ProjectSnapshot.parse(nextSnapshot);
+ProjectSnapshot.parse(nextSnapshot)
 ```
 
 ## Extension Strategy
+
 - Add new task/reward types as new discriminated union variants.
 - Keep deprecated variants behind feature flags if you support old exports.
-

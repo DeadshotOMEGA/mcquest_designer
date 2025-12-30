@@ -9,24 +9,25 @@
 
 ## Quick Status
 
-| Component | Status | Impact |
-|-----------|--------|--------|
-| **Monorepo Setup** | ✅ Complete | Build system ready |
-| **Next.js App** | ✅ Complete | Frontend framework ready |
-| **Build Tools** | ✅ Complete | TypeScript, Turbo, ESLint, Prettier |
-| **Package Structure** | ✅ Complete | schema + export + web |
-| **Documentation** | ✅ Excellent | 350+ pages (architecture, specs, rules) |
-| **Database** | ❌ **MISSING** | **Blocks M1 completion** |
-| **Authentication** | ❌ **MISSING** | **Blocks M1 completion** |
-| **API Routes** | ❌ **MISSING** | **Blocks M1 completion** |
-| **Authorization** | ❌ **MISSING** | **Blocks M1 completion** |
-| **Testing** | ⚠️ Partial | Vitest installed, no tests written |
+| Component             | Status         | Impact                                  |
+| --------------------- | -------------- | --------------------------------------- |
+| **Monorepo Setup**    | ✅ Complete    | Build system ready                      |
+| **Next.js App**       | ✅ Complete    | Frontend framework ready                |
+| **Build Tools**       | ✅ Complete    | TypeScript, Turbo, ESLint, Prettier     |
+| **Package Structure** | ✅ Complete    | schema + export + web                   |
+| **Documentation**     | ✅ Excellent   | 350+ pages (architecture, specs, rules) |
+| **Database**          | ❌ **MISSING** | **Blocks M1 completion**                |
+| **Authentication**    | ❌ **MISSING** | **Blocks M1 completion**                |
+| **API Routes**        | ❌ **MISSING** | **Blocks M1 completion**                |
+| **Authorization**     | ❌ **MISSING** | **Blocks M1 completion**                |
+| **Testing**           | ⚠️ Partial     | Vitest installed, no tests written      |
 
 ---
 
 ## What Works Right Now
 
 You can:
+
 - ✅ Develop Next.js components
 - ✅ Build TypeScript code
 - ✅ Run linting and formatting
@@ -34,6 +35,7 @@ You can:
 - ✅ Import shared schemas and export functions
 
 You **cannot** yet:
+
 - ❌ Authenticate users
 - ❌ Persist data to a database
 - ❌ Create or manage projects
@@ -44,10 +46,12 @@ You **cannot** yet:
 ## Critical Blockers for M1
 
 ### 1. Prisma + PostgreSQL Database (Currently Missing)
+
 **What:** Object-relational mapper + PostgreSQL database
 **Why Required:** Store users, projects, snapshots, versions
 **Effort:** 1-2 days
 **Files Needed:**
+
 - `apps/web/prisma/schema.prisma` - Database schema
 - `apps/web/src/lib/db.ts` - Prisma client wrapper
 - Neon PostgreSQL account + connection string
@@ -58,10 +62,12 @@ You **cannot** yet:
 ---
 
 ### 2. Clerk Authentication (Currently Missing)
+
 **What:** OAuth authentication service
 **Why Required:** Sign up/sign in users, session management
 **Effort:** 1-2 days
 **Files Needed:**
+
 - `apps/web/src/middleware.ts` - Auth middleware
 - `apps/web/src/app/sign-in/[[...sign-in]]/page.tsx` - Sign-in UI
 - `apps/web/src/app/sign-up/[[...sign-up]]/page.tsx` - Sign-up UI
@@ -72,10 +78,12 @@ You **cannot** yet:
 ---
 
 ### 3. Project CRUD API Routes (Currently Missing)
+
 **What:** REST API endpoints for project management
 **Why Required:** Frontend needs to interact with backend (create, read, update, delete projects)
 **Effort:** 2-3 days
 **Endpoints Needed:**
+
 - `POST /api/projects` - Create project
 - `GET /api/projects` - List user's projects
 - `GET /api/projects/:id` - Get project details
@@ -83,6 +91,7 @@ You **cannot** yet:
 - `DELETE /api/projects/:id` - Delete project
 
 **Files Needed:**
+
 - `apps/web/src/app/api/projects/route.ts` - POST/GET endpoints
 - `apps/web/src/app/api/projects/[id]/route.ts` - GET/PATCH/DELETE endpoints
 - `apps/web/src/lib/auth.ts` - Auth utilities (getCurrentUser, checkProjectAccess)
@@ -92,10 +101,12 @@ You **cannot** yet:
 ---
 
 ### 4. Authorization Layer (Currently Missing)
+
 **What:** Role-based access control (RBAC)
 **Why Required:** Enforce project ownership/membership (OWNER, EDITOR, VIEWER roles)
 **Effort:** 1 day
 **Patterns Needed:**
+
 - `checkProjectAccess(projectId, minRole)` - Verify user permission
 - `getCurrentUser()` - Get authenticated user from Clerk
 - Middleware to protect API routes
@@ -144,17 +155,20 @@ packages/export/
 ## What Was Done Well
 
 ### Architecture & Planning
+
 - **Exceptional documentation** - 350+ pages covering every aspect
 - **Clear design decisions** - SNBT export pipeline, snapshot-first approach
 - **Project rules** - 8 comprehensive rule files defining invariants, code style, security
 
 ### Infrastructure
+
 - **Monorepo setup** - Turbo + pnpm workspaces for scalability
 - **Strict TypeScript** - `strict: true`, declaration maps, no unused variables
 - **Build pipeline** - Lint, type check, and build automation ready
 - **Component base** - shadcn/ui foundation established
 
 ### Frontend
+
 - **Next.js 15** - Latest App Router with React 19
 - **Tailwind CSS 4** - Modern CSS solution with animations
 - **Path aliases** - Proper import configuration for workspace
@@ -163,15 +177,15 @@ packages/export/
 
 ## What's Missing for M1 Completion
 
-| Task | Effort | Blocker |
-|------|--------|---------|
-| **Prisma schema + migrations** | 1-2d | YES (1st) |
-| **Clerk auth setup** | 1-2d | YES (2nd) |
-| **Project CRUD endpoints** | 2-3d | YES (3rd) |
-| **Authorization utilities** | 1d | YES (4th) |
-| **Full schema validation** | 1d | NO |
-| **API route tests** | 1-2d | NO |
-| **Developer docs** | 0.5d | NO |
+| Task                           | Effort | Blocker   |
+| ------------------------------ | ------ | --------- |
+| **Prisma schema + migrations** | 1-2d   | YES (1st) |
+| **Clerk auth setup**           | 1-2d   | YES (2nd) |
+| **Project CRUD endpoints**     | 2-3d   | YES (3rd) |
+| **Authorization utilities**    | 1d     | YES (4th) |
+| **Full schema validation**     | 1d     | NO        |
+| **API route tests**            | 1-2d   | NO        |
+| **Developer docs**             | 0.5d   | NO        |
 
 **Total Estimated Effort:** 6-8 working days
 **Critical Path:** Database → Auth → API Routes → Authorization
@@ -181,6 +195,7 @@ packages/export/
 ## Next Steps (In Order)
 
 ### Week 1
+
 1. **Set up Neon PostgreSQL** (1 hour)
    - Create account, get connection string
    - Add to `.env.local` as DATABASE_URL
@@ -238,6 +253,7 @@ pnpm add -w reactflow      # Graph editor (M2)
 ## Configuration Files Needed
 
 ### `/apps/web/.env.example`
+
 ```env
 # Clerk
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_xxxxx
@@ -256,6 +272,7 @@ CLERK_AFTER_SIGN_UP_URL=/dashboard
 ```
 
 ### `/apps/web/.env.local` (git-ignored)
+
 Copy from `.env.example` and fill in actual values
 
 ---
@@ -263,6 +280,7 @@ Copy from `.env.example` and fill in actual values
 ## Key Files to Create/Modify
 
 **Create (Critical):**
+
 - ✅ `apps/web/prisma/schema.prisma` - Database schema
 - ✅ `apps/web/src/middleware.ts` - Clerk auth middleware
 - ✅ `apps/web/src/lib/db.ts` - Prisma client
@@ -273,11 +291,13 @@ Copy from `.env.example` and fill in actual values
 - ✅ `apps/web/src/app/sign-up/[[...sign-up]]/page.tsx` - Sign-up page
 
 **Modify (Important):**
+
 - ✅ `apps/web/src/app/layout.tsx` - Add ClerkProvider wrapper
 - ✅ `packages/schema/src/index.ts` - Expand to full schema
 - ✅ `.env.example` - Add all required variables
 
 **Update (Nice to Have):**
+
 - ✅ `docs/how-to/09_DEVELOPER_ONBOARDING.md` - Database + auth setup
 - ✅ `docs/reference/03_API_ENDPOINTS.md` - API endpoint reference
 
@@ -381,6 +401,7 @@ Begin with Prisma schema creation. That's the hardest dependency to unblock ever
 
 **Generated:** 2025-12-30 by Context Discovery Agent
 **Deliverables:**
+
 - 3 audit documents in `/docs/temp/`
 - Comprehensive task breakdown
 - Code examples ready to implement

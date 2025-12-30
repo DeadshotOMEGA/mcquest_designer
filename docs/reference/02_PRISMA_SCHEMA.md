@@ -3,6 +3,7 @@
 > Split from `developer_specifications.md`.
 
 ## Purpose
+
 Defines database persistence for projects, versioning, and access control.
 
 ---

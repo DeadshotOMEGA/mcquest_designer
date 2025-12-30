@@ -140,8 +140,9 @@ export async function getCurrentDbUser() {
   const { prisma } = await import('./db')
 
   // Get primary email address
-  const email =
-    clerkUser.emailAddresses.find((e) => e.id === clerkUser.primaryEmailAddressId)?.emailAddress
+  const email = clerkUser.emailAddresses.find(
+    (e) => e.id === clerkUser.primaryEmailAddressId
+  )?.emailAddress
 
   if (!email) {
     throw new Error('User has no email address')
@@ -211,8 +212,12 @@ export async function checkProjectAccess(
 
   // If a specific role is required, check if user has sufficient permissions
   if (requiredRole) {
-    const roleHierarchy = { VIEWER: 0, EDITOR: 1, OWNER: 2 }
-    const userLevel = roleHierarchy[membership.role]
+    const roleHierarchy: Record<'VIEWER' | 'EDITOR' | 'OWNER', number> = {
+      VIEWER: 0,
+      EDITOR: 1,
+      OWNER: 2,
+    }
+    const userLevel = roleHierarchy[membership.role as 'VIEWER' | 'EDITOR' | 'OWNER']
     const requiredLevel = roleHierarchy[requiredRole]
 
     if (userLevel < requiredLevel) {

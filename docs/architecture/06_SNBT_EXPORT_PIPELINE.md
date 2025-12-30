@@ -25,6 +25,7 @@ config/
 ---
 
 ## ID Strategy
+
 - Internal UUIDs → deterministic numeric/string IDs
 - Maintain mapping table during export
 

@@ -6,25 +6,25 @@
 
 ## What's Done ✅
 
-| Component | Details |
-|-----------|---------|
-| **Monorepo** | Turbo + pnpm configured |
-| **Frontend** | Next.js 15 (App Router) + React 19 |
-| **Styling** | Tailwind CSS 4 + shadcn/ui Button |
-| **Build** | TypeScript strict mode, ESLint, Prettier |
-| **Docs** | 350+ pages (architecture, specs, rules) |
-| **Packages** | schema + export workspaces ready |
+| Component    | Details                                  |
+| ------------ | ---------------------------------------- |
+| **Monorepo** | Turbo + pnpm configured                  |
+| **Frontend** | Next.js 15 (App Router) + React 19       |
+| **Styling**  | Tailwind CSS 4 + shadcn/ui Button        |
+| **Build**    | TypeScript strict mode, ESLint, Prettier |
+| **Docs**     | 350+ pages (architecture, specs, rules)  |
+| **Packages** | schema + export workspaces ready         |
 
 ---
 
 ## What's Missing ❌
 
-| Component | Impact | Files Needed | Days |
-|-----------|--------|--------------|------|
-| **Database** | Blocks everything | schema.prisma, db.ts | 1-2 |
-| **Auth** | Can't sign in | middleware.ts, sign-in/up pages | 1-2 |
-| **API Routes** | Can't manage projects | /api/projects/* routes | 2-3 |
-| **Auth Utils** | Can't enforce access | auth.ts utility functions | 1 |
+| Component      | Impact                | Files Needed                    | Days |
+| -------------- | --------------------- | ------------------------------- | ---- |
+| **Database**   | Blocks everything     | schema.prisma, db.ts            | 1-2  |
+| **Auth**       | Can't sign in         | middleware.ts, sign-in/up pages | 1-2  |
+| **API Routes** | Can't manage projects | /api/projects/\* routes         | 2-3  |
+| **Auth Utils** | Can't enforce access  | auth.ts utility functions       | 1    |
 
 **Total:** ~6-8 days (sequential path)
 
@@ -72,6 +72,7 @@ pnpm lint
 ## Environment Setup
 
 **`.env.local` template:**
+
 ```
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_xxxxx
 CLERK_SECRET_KEY=sk_test_xxxxx
@@ -81,6 +82,7 @@ NODE_ENV=development
 ```
 
 **Providers needed:**
+
 - Neon PostgreSQL (free tier, cloud)
 - Clerk (free tier, 10K MAU)
 
@@ -89,22 +91,26 @@ NODE_ENV=development
 ## File Creation Checklist
 
 **Phase 1 (Database):**
+
 - [ ] `apps/web/prisma/schema.prisma`
 - [ ] `apps/web/src/lib/db.ts`
 - [ ] `.env.local` with DATABASE_URL
 
 **Phase 2 (Auth):**
+
 - [ ] `apps/web/src/middleware.ts`
 - [ ] `apps/web/src/app/sign-in/[[...sign-in]]/page.tsx`
 - [ ] `apps/web/src/app/sign-up/[[...sign-up]]/page.tsx`
 - [ ] Update `apps/web/src/app/layout.tsx` (add ClerkProvider)
 
 **Phase 3 (API):**
+
 - [ ] `apps/web/src/lib/auth.ts`
 - [ ] `apps/web/src/app/api/projects/route.ts`
 - [ ] `apps/web/src/app/api/projects/[id]/route.ts`
 
 **Phase 4 (Schema):**
+
 - [ ] Expand `packages/schema/src/index.ts`
 
 ---
@@ -178,7 +184,10 @@ export async function getCurrentUser() {
   return await prisma.user.findUnique({ where: { clerkId: userId } })
 }
 
-export async function checkProjectAccess(projectId: string, minRole: 'VIEWER' | 'EDITOR' | 'OWNER') {
+export async function checkProjectAccess(
+  projectId: string,
+  minRole: 'VIEWER' | 'EDITOR' | 'OWNER'
+) {
   const user = await getCurrentUser()
   const membership = await prisma.projectMember.findUnique({
     where: { projectId_userId: { projectId, userId: user.id } },
@@ -193,14 +202,17 @@ export async function checkProjectAccess(projectId: string, minRole: 'VIEWER' | 
 ## Testing Strategy
 
 **Unit Tests:**
+
 ```bash
 pnpm test
 ```
+
 - Schema validation (Zod)
 - Auth utilities
 - API route handlers
 
 **Manual Testing:**
+
 ```bash
 # Sign up via Clerk
 # Create project: POST /api/projects {"name": "Test"}
@@ -213,13 +225,13 @@ pnpm test
 
 ## Git Strategy
 
-| PR | Focus | Effort |
-|----|-------|--------|
-| 1 | Prisma + migrations | 1-2d |
-| 2 | Clerk auth | 1-2d |
-| 3 | API routes (CRUD) | 2-3d |
-| 4 | Schema expansion | 1d |
-| 5 | Tests + docs | 1-2d |
+| PR  | Focus               | Effort |
+| --- | ------------------- | ------ |
+| 1   | Prisma + migrations | 1-2d   |
+| 2   | Clerk auth          | 1-2d   |
+| 3   | API routes (CRUD)   | 2-3d   |
+| 4   | Schema expansion    | 1d     |
+| 5   | Tests + docs        | 1-2d   |
 
 **Merge strategy:** PR 1 unblocks PR 2-5 (can be parallel)
 
@@ -236,7 +248,7 @@ pnpm test
    - Don't forget sign-in/sign-up whitelist
 
 3. **TypeScript paths**
-   - Path aliases (@/*, @mcquest/*) already configured
+   - Path aliases (@/_, @mcquest/_) already configured
    - Make sure tsconfig.json doesn't conflict
 
 4. **Environment variables**
@@ -283,14 +295,14 @@ curl -X POST http://localhost:3000/api/projects \
 
 ## Where to Go Next
 
-| Need | File | Location |
-|------|------|----------|
-| Full audit | M1_FOUNDATION_AUDIT.md | docs/temp/ |
-| Task breakdown | M1_IMPLEMENTATION_CHECKLIST.md | docs/temp/ |
-| Architecture | docs/planning/project-plan.md | docs/ |
-| Schema spec | docs/reference/01_INTERNAL_PROJECT_SCHEMA.md | docs/ |
-| Database spec | docs/reference/02_PRISMA_SCHEMA.md | docs/ |
-| Code rules | .claude/rules/ | Root |
+| Need           | File                                         | Location   |
+| -------------- | -------------------------------------------- | ---------- |
+| Full audit     | M1_FOUNDATION_AUDIT.md                       | docs/temp/ |
+| Task breakdown | M1_IMPLEMENTATION_CHECKLIST.md               | docs/temp/ |
+| Architecture   | docs/planning/project-plan.md                | docs/      |
+| Schema spec    | docs/reference/01_INTERNAL_PROJECT_SCHEMA.md | docs/      |
+| Database spec  | docs/reference/02_PRISMA_SCHEMA.md           | docs/      |
+| Code rules     | .claude/rules/                               | Root       |
 
 ---
 
@@ -332,12 +344,14 @@ M1 is complete when:
 ## Support Resources
 
 **Inside this project:**
+
 - 8 rule files in `.claude/rules/` - Code standards
 - Project plan in `docs/planning/` - Architecture
 - API specs in `docs/reference/` - Endpoint details
 - Examples in `docs/platform_examples/` - Reference implementations
 
 **External:**
+
 - Prisma docs: https://www.prisma.io/docs/
 - Clerk docs: https://clerk.com/docs
 - Next.js docs: https://nextjs.org/docs
@@ -347,15 +361,15 @@ M1 is complete when:
 
 ## TL;DR Summary
 
-| Question | Answer |
-|----------|--------|
-| **What's working?** | Build system, frontend, docs |
-| **What's missing?** | Auth, database, API |
-| **How long to M1?** | 6-8 days |
-| **Start with?** | Prisma schema |
-| **Hardest part?** | Setting up Neon connection string |
-| **Easiest part?** | Creating sign-in/sign-up pages (Clerk handles it) |
-| **Need help?** | See M1_IMPLEMENTATION_CHECKLIST.md for code examples |
+| Question            | Answer                                               |
+| ------------------- | ---------------------------------------------------- |
+| **What's working?** | Build system, frontend, docs                         |
+| **What's missing?** | Auth, database, API                                  |
+| **How long to M1?** | 6-8 days                                             |
+| **Start with?**     | Prisma schema                                        |
+| **Hardest part?**   | Setting up Neon connection string                    |
+| **Easiest part?**   | Creating sign-in/sign-up pages (Clerk handles it)    |
+| **Need help?**      | See M1_IMPLEMENTATION_CHECKLIST.md for code examples |
 
 ---
 

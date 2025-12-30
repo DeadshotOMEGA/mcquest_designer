@@ -3,10 +3,12 @@
 These examples are **platform internal snapshots** (your canonical source of truth). They intentionally avoid SNBT specifics.
 
 ## Files
+
 - `examples/snapshot_v1.json` – initial questbook layout
 - `examples/snapshot_v2.json` – edited version (demonstrates versioning)
 
 ## Snapshot v1 (excerpt)
+
 ```json
 {
   "metadata": {
@@ -38,6 +40,7 @@ These examples are **platform internal snapshots** (your canonical source of tru
 ```
 
 ## Snapshot v2 (what changed)
+
 - `Stone Age` moved from `x=12` → `x=14`
 - `Stone Age` marked `optional: true`
 - `Welcome!` gained an additional XP reward

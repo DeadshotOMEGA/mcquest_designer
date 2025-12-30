@@ -22,6 +22,7 @@
 ## Inspector Panel
 
 Dynamic form based on selected entity:
+
 - Quest metadata
 - Tasks
 - Rewards

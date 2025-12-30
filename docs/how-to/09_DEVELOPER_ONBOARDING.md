@@ -11,6 +11,7 @@ pnpm dev
 ```
 
 ## Coding Standards
+
 - Strict TypeScript
 - Shared Zod schemas
 - No SNBT logic in frontend

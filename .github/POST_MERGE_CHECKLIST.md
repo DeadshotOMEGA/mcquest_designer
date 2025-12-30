@@ -33,10 +33,10 @@ Complete these steps after merging the CI/CD implementation to activate all feat
 2. Click **New repository secret**
 3. Add these secrets:
 
-| Name | Value | Notes |
-|------|-------|-------|
+| Name                                | Value         | Notes                           |
+| ----------------------------------- | ------------- | ------------------------------- |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | `pk_live_...` | From Clerk Dashboard → API Keys |
-| `CLERK_SECRET_KEY` | `sk_live_...` | From Clerk Dashboard → API Keys |
+| `CLERK_SECRET_KEY`                  | `sk_live_...` | From Clerk Dashboard → API Keys |
 
 **Note:** If not using Clerk yet, CI will use placeholder values automatically.
 
@@ -60,9 +60,9 @@ Edit `.github/dependabot.yml` and replace placeholders:
 
 ```yaml
 reviewers:
-  - "YOUR_GITHUB_USERNAME"  # ← Replace this
+  - 'YOUR_GITHUB_USERNAME' # ← Replace this
 assignees:
-  - "YOUR_GITHUB_USERNAME"  # ← Replace this
+  - 'YOUR_GITHUB_USERNAME' # ← Replace this
 ```
 
 ## Optional Enhancements
@@ -130,6 +130,7 @@ gh pr create --title "test: CI verification" --body "Testing CI pipeline"
 ```
 
 **Verify:**
+
 - ✅ CI workflow triggers automatically
 - ✅ All jobs run in parallel
 - ✅ Jobs complete in <5 minutes (first run)
@@ -156,6 +157,7 @@ git push  # Should fail with protection error
 ```
 
 Expected error:
+
 ```
 remote: error: GH006: Protected branch update failed
 ```
@@ -184,6 +186,7 @@ Share these resources with team:
 Key points to communicate:
 
 1. **Local validation before push:**
+
    ```bash
    pnpm lint && pnpm typecheck && pnpm test && pnpm build
    ```
@@ -232,20 +235,24 @@ Key points to communicate:
 ### Common Issues
 
 **Issue: CI not triggering on push**
+
 - Verify workflow file syntax: `.github/scripts/validate-workflows.sh`
 - Check branch name matches trigger patterns
 - Verify GitHub Actions enabled: **Settings** → **Actions** → **General**
 
 **Issue: Status check not appearing on PR**
+
 - Wait 1-2 minutes for workflow to start
 - Verify workflow has `pull_request` trigger
 - Check workflow run in Actions tab
 
 **Issue: Required status check blocking merge but no workflow ran**
+
 - Rename status check in branch protection to match workflow job name
 - Ensure workflow runs on target branch
 
 **Issue: Slow CI runs**
+
 - Check cache hit rates in logs
 - Verify Turbo configuration in `turbo.json`
 - Review job parallelization
@@ -263,6 +270,7 @@ Key points to communicate:
 If CI causes issues:
 
 1. **Disable workflow temporarily:**
+
    ```bash
    # Rename workflow to disable
    git mv .github/workflows/ci.yml .github/workflows/ci.yml.disabled

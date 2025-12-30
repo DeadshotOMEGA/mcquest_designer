@@ -21,6 +21,7 @@ We chose **Clerk** with a **defense-in-depth** authentication pattern:
 ### 1. Clerk as Authentication Provider
 
 **Rationale:**
+
 - Managed OAuth - no need to create/manage GitHub/Discord/Google OAuth apps
 - First-class Next.js App Router support with React Server Components
 - Built-in session management with secure HTTP-only cookies
@@ -28,6 +29,7 @@ We chose **Clerk** with a **defense-in-depth** authentication pattern:
 - Generous free tier suitable for MVP
 
 **Alternatives Considered:**
+
 - **NextAuth.js (Auth.js)** - Requires managing OAuth apps, more configuration
 - **Supabase Auth** - Couples authentication to database choice
 - **Firebase Auth** - Google ecosystem lock-in, less Next.js-native
@@ -35,6 +37,7 @@ We chose **Clerk** with a **defense-in-depth** authentication pattern:
 ### 2. Defense-in-Depth Pattern (CVE-2025-29927 Mitigation)
 
 **Pattern:**
+
 ```typescript
 // Layer 1: Middleware (route protection)
 export default clerkMiddleware(async (auth, request) => {
@@ -57,12 +60,14 @@ export async function GET() {
 ```
 
 **Rationale:**
+
 - **CVE-2025-29927** demonstrated middleware-only protection is insufficient
 - Middleware provides UX (redirects) but not security guarantees
 - Server-side verification in components/handlers is the actual security boundary
 - Two-layer approach prevents bypass vulnerabilities
 
 **Alternative Rejected:**
+
 - Middleware-only protection - vulnerable to bypass exploits
 
 ### 3. Custom Auth Utilities
@@ -70,6 +75,7 @@ export async function GET() {
 Created wrapper functions (`requireAuth`, `requireUser`, `getAuthOrNull`, `getUserOrNull`) instead of using Clerk functions directly.
 
 **Rationale:**
+
 - Consistent error handling across the application
 - Clearer intent (`requireAuth` vs `auth().protect()`)
 - Easier to add telemetry/logging later
@@ -134,6 +140,7 @@ const isProtectedRoute = createRouteMatcher([
 ### OAuth Providers
 
 Configured in Clerk Dashboard:
+
 - GitHub
 - Discord
 - Google
@@ -155,9 +162,9 @@ Per `rules/80_security_and_abuse_prevention.md`:
 
 ```typescript
 enum ProjectRole {
-  OWNER,   // Full control
-  EDITOR,  // Read/write
-  VIEWER,  // Read-only
+  OWNER, // Full control
+  EDITOR, // Read/write
+  VIEWER, // Read-only
 }
 ```
 
@@ -176,6 +183,7 @@ Per `rules/80_security_and_abuse_prevention.md`:
 ### Rate Limiting
 
 Export operations must be rate-limited:
+
 - Per-user: 10 exports/minute
 - Per-project: 30 exports/minute
 - Implemented in API routes, not middleware

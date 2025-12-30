@@ -107,9 +107,7 @@ export function CreateProjectDialog({ children }: CreateProjectDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        {children || <Button>Create Project</Button>}
-      </DialogTrigger>
+      <DialogTrigger asChild>{children || <Button>Create Project</Button>}</DialogTrigger>
       <DialogContent aria-describedby={error ? 'dialog-error' : undefined}>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
@@ -132,7 +130,10 @@ export function CreateProjectDialog({ children }: CreateProjectDialogProps) {
 
             <div className="grid gap-2">
               <Label htmlFor="name">
-                Name <span className="text-destructive" aria-hidden="true">*</span>
+                Name{' '}
+                <span className="text-destructive" aria-hidden="true">
+                  *
+                </span>
               </Label>
               <Input
                 id="name"
@@ -173,7 +174,12 @@ export function CreateProjectDialog({ children }: CreateProjectDialogProps) {
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+              disabled={isLoading}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={isLoading}>

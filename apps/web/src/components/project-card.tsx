@@ -28,13 +28,19 @@ interface ProjectCardProps {
  */
 export function ProjectCard({ project }: ProjectCardProps) {
   return (
-    <Link href={`/editor/${project.id}`} className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg">
+    <Link
+      href={`/editor/${project.id}`}
+      className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg"
+    >
       <Card className="h-full transition-colors hover:bg-accent/50 group-focus-visible:bg-accent/50">
         <CardHeader>
           <div className="flex items-start justify-between gap-4">
             <CardTitle className="text-xl line-clamp-2">{project.name}</CardTitle>
             {project.role && (
-              <Badge variant={project.role === 'OWNER' ? 'default' : 'secondary'} className="shrink-0">
+              <Badge
+                variant={project.role === 'OWNER' ? 'default' : 'secondary'}
+                className="shrink-0"
+              >
                 {project.role}
               </Badge>
             )}
