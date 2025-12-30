@@ -1,0 +1,29 @@
+{
+  "active": false,
+  "project": "mcquest_designer",
+  "feature_slug": "implementation-roadmap",
+  "phase": "completed",
+  "category": "done",
+  "progress": {
+    "understanding": {
+      "completed": 8,
+      "total": 8
+    },
+    "exploration": {
+      "completed": 7,
+      "total": 7
+    },
+    "design": {
+      "completed": 9,
+      "total": 9
+    },
+    "review": {
+      "completed": 7,
+      "total": 7
+    }
+  },
+  "risk_level": "\u2014",
+  "agents_running": [],
+  "plan_path": "docs/plans/mcquest_designer-implementation-roadmap/plan.md",
+  "last_updated": "2025-12-30T01:59:31.540259"
+}
