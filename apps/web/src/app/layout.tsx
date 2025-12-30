@@ -20,7 +20,12 @@ export const metadata: Metadata = {
 function isClerkConfigured(): boolean {
   const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
   // Clerk keys follow pattern: pk_test_* or pk_live_* (with base64 suffix)
-  return !!publishableKey && /^pk_(test|live)_[A-Za-z0-9]+$/.test(publishableKey)
+  // Reject placeholder values and require at least 20 chars for the key portion
+  return (
+    !!publishableKey &&
+    !publishableKey.includes('placeholder') &&
+    /^pk_(test|live)_[A-Za-z0-9]{20,}$/.test(publishableKey)
+  )
 }
 
 export default function RootLayout({

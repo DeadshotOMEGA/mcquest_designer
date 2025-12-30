@@ -15,7 +15,12 @@ import type { User } from '@clerk/nextjs/server'
  */
 function isClerkConfigured(): boolean {
   const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-  return !!publishableKey && /^pk_(test|live)_[A-Za-z0-9]+$/.test(publishableKey)
+  // Reject placeholder values and require at least 20 chars for the key portion
+  return (
+    !!publishableKey &&
+    !publishableKey.includes('placeholder') &&
+    /^pk_(test|live)_[A-Za-z0-9]{20,}$/.test(publishableKey)
+  )
 }
 
 /**
