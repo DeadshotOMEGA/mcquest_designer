@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@mcquest/schema": ["packages/schema/src"],
+      "@mcquest/export": ["packages/export/src"]
+    }
+  },
+  "references": [
+    { "path": "packages/schema" },
+    { "path": "packages/export" },
+    { "path": "apps/web" }
+  ],
+  "files": [],
+  "include": []
+}

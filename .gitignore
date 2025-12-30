@@ -1,8 +1,39 @@
+# Dependencies
 node_modules/
-.claude/statusline/
 .pnpm-store/
-.env
-.env.*
+
+# Build outputs
 dist/
 .next/
+*.tsbuildinfo
+
+# Turbo
+.turbo/
+
+# Environment
+.env
+.env.*
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
 *Zone.Identifier*
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Claude Code statusline (local state)
+.claude/statusline/
