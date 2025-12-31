@@ -51,7 +51,13 @@ export function ProjectCard({ project }: ProjectCardProps) {
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <time dateTime={project.updatedAt} title={new Date(project.updatedAt).toLocaleString()}>
+            <time
+              dateTime={project.updatedAt}
+              title={new Date(project.updatedAt).toLocaleString('en-US', {
+                dateStyle: 'medium',
+                timeStyle: 'short',
+              })}
+            >
               Updated {formatDistanceToNow(new Date(project.updatedAt))}
             </time>
             {project.memberCount !== undefined && project.memberCount > 1 && (

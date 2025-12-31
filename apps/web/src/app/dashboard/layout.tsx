@@ -52,6 +52,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </div>
 
           <div className="flex items-center gap-4">
+            <Link
+              href="/settings"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Settings
+            </Link>
             <span className="text-sm text-muted-foreground hidden sm:inline">
               {user.firstName || user.emailAddresses[0].emailAddress}
             </span>
