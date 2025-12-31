@@ -33,17 +33,17 @@ pnpm dev
 
 ## Tech Stack
 
-| Layer         | Technology                                  |
-| ------------- | ------------------------------------------- |
+| Layer         | Technology                                    |
+| ------------- | --------------------------------------------- |
 | Frontend      | Next.js 15 (App Router), React 19, TypeScript |
-| Graph Editor  | React Flow                                  |
-| State         | Zustand (editor), TanStack Query (server)   |
-| UI Components | shadcn/ui, Tailwind CSS 4                   |
-| Backend       | Next.js Route Handlers                      |
-| Database      | Prisma + Neon PostgreSQL                    |
-| Auth          | Clerk                                       |
-| Build         | Turborepo, pnpm workspaces                  |
-| Testing       | Vitest, Playwright                          |
+| Graph Editor  | React Flow                                    |
+| State         | Zustand (editor), TanStack Query (server)     |
+| UI Components | shadcn/ui, Tailwind CSS 4                     |
+| Backend       | Next.js Route Handlers                        |
+| Database      | Prisma + Neon PostgreSQL                      |
+| Auth          | Clerk                                         |
+| Build         | Turborepo, pnpm workspaces                    |
+| Testing       | Vitest, Playwright                            |
 
 ## Project Structure
 
@@ -72,11 +72,13 @@ mcquest_designer/
 ## Environment Setup
 
 1. Copy the example environment file:
+
    ```bash
    cp apps/web/.env.example apps/web/.env.local
    ```
 
 2. Configure required variables in `.env.local`:
+
    ```bash
    # Clerk Authentication (from dashboard.clerk.com)
    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
@@ -117,13 +119,13 @@ pnpm build
 
 ## Development Status
 
-| Milestone | Status | Progress |
-| --------- | ------ | -------- |
+| Milestone                                                                        | Status          | Progress     |
+| -------------------------------------------------------------------------------- | --------------- | ------------ |
 | [M1 - Foundation](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/1) | Nearly Complete | 16/17 issues |
-| [M2 - Editor](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/2) | Planned | 0/20 issues |
-| [M3 - Versioning](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/3) | Planned | 0/8 issues |
-| [M4 - Export](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/4) | Planned | 0/14 issues |
-| [M5 - Sharing](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/5) | Planned | 0/6 issues |
+| [M2 - Editor](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/2)     | Planned         | 0/20 issues  |
+| [M3 - Versioning](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/3) | Planned         | 0/8 issues   |
+| [M4 - Export](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/4)     | Planned         | 0/14 issues  |
+| [M5 - Sharing](https://github.com/DeadshotOMEGA/mcquest_designer/milestone/5)    | Planned         | 0/6 issues   |
 
 **M1 Foundation** includes: Clerk authentication, project CRUD, Prisma database setup, API routes, and dashboard UI.
 
