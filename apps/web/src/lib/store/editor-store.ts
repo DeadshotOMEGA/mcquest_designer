@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import type { ProjectSnapshot, Chapter } from '@mcquest/schema'
+import type { ProjectSnapshot, Chapter, Quest } from '@mcquest/schema'
 import {
   MAX_HISTORY_SIZE,
   type EditorStore,
@@ -10,6 +10,13 @@ import {
   type DependencyOperation,
   type SyncState,
 } from './types'
+
+/**
+ * Stable empty array references to prevent infinite re-renders
+ * These are used in selectors when data doesn't exist yet
+ */
+const EMPTY_CHAPTERS: Chapter[] = []
+const EMPTY_QUESTS: Quest[] = []
 
 /**
  * Initial state for the editor store
@@ -389,14 +396,14 @@ export const useQuest = (questId: string) =>
  */
 export const useChapterQuests = (chapterId: string) =>
   useEditorStore((state) =>
-    state.snapshot?.quests.filter((q) => q.chapterId === chapterId) ?? []
+    state.snapshot?.quests.filter((q) => q.chapterId === chapterId) ?? EMPTY_QUESTS
   )
 
 /**
  * Get all chapters
  */
 export const useChapters = () =>
-  useEditorStore((state) => state.snapshot?.chapters ?? [])
+  useEditorStore((state) => state.snapshot?.chapters ?? EMPTY_CHAPTERS)
 
 /**
  * Get selection state
