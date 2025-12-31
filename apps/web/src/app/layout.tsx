@@ -2,6 +2,7 @@ import * as React from 'react'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
+import { Toaster } from '@/components/extended/toast'
 import './globals.css'
 
 const inter = Inter({
@@ -38,7 +39,10 @@ export default function RootLayout({
 
   const content = (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>{children}</body>
+      <body className={`${inter.variable} font-sans antialiased`}>
+        {children}
+        <Toaster />
+      </body>
     </html>
   )
 

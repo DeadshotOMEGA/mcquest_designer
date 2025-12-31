@@ -49,11 +49,13 @@ pnpm dev
 
 We use a layered component approach built on [shadcn/ui](https://ui.shadcn.com/):
 
-- **Base:** shadcn/ui components (Button, Card, Dialog, Input, etc.)
-- **Enhanced:** Sonner (toasts), Vaul (mobile drawers)
-- **Animated:** Magic UI (micro-interactions, polish)
-- **Extensions:** shadcn-extension (multi-select, advanced forms)
+- **Base:** shadcn/ui components (15 installed: Button, Card, Dialog, Input, Select, Checkbox, Tabs, Tooltip, Popover, ScrollArea, etc.)
+- **Enhanced:** Sonner (toasts) ✅, Vaul (mobile drawers) ✅
+- **Animated:** Magic UI (micro-interactions, polish) — planned for M2
+- **Extensions:** shadcn-extension (multi-select, advanced forms) — planned for M2
 - **Future:** Aceternity UI (landing page), Tremor (analytics dashboards)
+
+**Status:** P0 components installed and verified. See [Component Installation Summary](apps/web/COMPONENTS_INSTALL_SUMMARY.md) for details.
 
 See [UI Components Roadmap](docs/architecture/UI_COMPONENTS_ROADMAP.md) for detailed integration plan and priorities.
 

@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* React Flow styles */
+@import "@xyflow/react/dist/style.css";
+
 @theme {
   /* Light mode colors */
   --color-background: hsl(0 0% 100%);
