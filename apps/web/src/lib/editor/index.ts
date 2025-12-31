@@ -15,3 +15,5 @@ export {
   type FlowToSnapshotOptions,
   type FlowToSnapshotResult,
 } from './flow-to-snapshot'
+
+export { createDefaultSnapshot } from './default-snapshot'
