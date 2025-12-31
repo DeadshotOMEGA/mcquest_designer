@@ -38,12 +38,24 @@ pnpm dev
 | Frontend      | Next.js 15 (App Router), React 19, TypeScript |
 | Graph Editor  | React Flow                                    |
 | State         | Zustand (editor), TanStack Query (server)     |
-| UI Components | shadcn/ui, Tailwind CSS 4                     |
+| UI Components | shadcn/ui, Tailwind CSS 4, Sonner, Vaul, Magic UI |
 | Backend       | Next.js Route Handlers                        |
 | Database      | Prisma + Neon PostgreSQL                      |
 | Auth          | Clerk                                         |
 | Build         | Turborepo, pnpm workspaces                    |
 | Testing       | Vitest, Playwright                            |
+
+## UI Component Strategy
+
+We use a layered component approach built on [shadcn/ui](https://ui.shadcn.com/):
+
+- **Base:** shadcn/ui components (Button, Card, Dialog, Input, etc.)
+- **Enhanced:** Sonner (toasts), Vaul (mobile drawers)
+- **Animated:** Magic UI (micro-interactions, polish)
+- **Extensions:** shadcn-extension (multi-select, advanced forms)
+- **Future:** Aceternity UI (landing page), Tremor (analytics dashboards)
+
+See [UI Components Roadmap](docs/architecture/UI_COMPONENTS_ROADMAP.md) for detailed integration plan and priorities.
 
 ## Project Structure
 
@@ -132,6 +144,7 @@ pnpm build
 ## Documentation
 
 - [Project Plan](docs/planning/project-plan.md) — Full architecture and scope
+- [UI Components Roadmap](docs/architecture/UI_COMPONENTS_ROADMAP.md) — Component library strategy
 - [Internal Schema](docs/reference/01_INTERNAL_PROJECT_SCHEMA.md) — ProjectSnapshot data model
 - [API Endpoints](docs/reference/03_API_ENDPOINTS.md) — REST API reference
 - [Export Pipeline](docs/architecture/06_SNBT_EXPORT_PIPELINE.md) — Snapshot → SNBT flow
