@@ -1,0 +1,83 @@
+{
+default_hide_dependency_lines: false
+default_min_width: 250
+default_quest_shape: ""
+filename: "the_beginning"
+group: "4E06BB3DD10B837B"
+icon: { id: "minecraft:oak_sapling" }
+id: "7598810BEF4F4370"
+images: [
+{
+height: 3.0d
+image: "forbidden_arcanus:textures/effect/magic_circle/outer/hecate.png"
+rotation: 0.0d
+width: 3.0d
+x: 9.0d
+y: -1.0d
+}
+]
+order_index: 0
+quest_links: []
+quests: [
+{
+icon: { id: "minecraft:oak_log" }
+id: "4A2123FF92275F64"
+rewards: [
+{ count: 8, id: "43233783FF2F890A", item: { count: 1, id: "minecraft:torch" }, type: "item" }
+{ id: "0A2AB57C8ACD3C17", type: "xp", xp: 5 }
+]
+shape: "square"
+size: 2.0d
+tasks: [{ icon: { id: "minecraft:oak_log" }, id: "2E7ED86FD24E5718", item: { count: 1, id: "minecraft:oak_log" }, type: "item" }]
+x: -0.5d
+y: -1.0d
+}
+{
+dependencies: ["4A2123FF92275F64"]
+id: "2617EB4B3D2A80DA"
+rewards: [
+{ id: "492635DEBC5A5BF1", item: { count: 1, id: "minecraft:oak_log" }, random_bonus: 2, type: "item" }
+{ id: "6728CC0DE831D3D4", type: "xp", xp: 5 }
+]
+shape: "rsquare"
+tasks: [{ id: "49B75416EE1D2471", item: { count: 1, id: "minecraft:wooden_pickaxe" }, type: "item" }]
+x: 1.5d
+y: -1.0d
+}
+{
+dependencies: ["2617EB4B3D2A80DA"]
+icon: { id: "minecraft:stone_pickaxe" }
+id: "44F07423FC4BA868"
+optional: false
+rewards: [
+{ count: 16, id: "22815A4184CB7DD6", item: { count: 1, id: "minecraft:cobblestone" }, random_bonus: 16, type: "item" }
+{ command: "/puffish_skills points add @p puffish_skills:mining 1", id: "598DA6E6E498FFB7", permission_level: 2, silent: true, type: "command" }
+]
+shape: "rsquare"
+tasks: [{ id: "31E205D2882FCBE7", item: { count: 1, id: "minecraft:stone_pickaxe" }, type: "item" }]
+x: 3.5d
+y: -1.0d
+}
+{
+dependencies: ["44F07423FC4BA868"]
+hide_dependency_lines: false
+hide_until_deps: true
+icon: { id: "minecraft:furnace" }
+id: "592271A09A5655D4"
+optional: true
+rewards: [
+{ count: 2, id: "446CF081AFCCD596", item: { count: 1, id: "minecraft:coal" }, random_bonus: 2, type: "item" }
+{ id: "551FF19813FB0077", item: { count: 1, id: "minecraft:raw_iron" }, type: "item" }
+]
+shape: "hexagon"
+size: 1.25d
+tasks: [
+{ id: "6AA4915D7428301F", item: { count: 1, id: "minecraft:furnace" }, type: "item" }
+{ count: 4, icon: { id: "minecraft:coal" }, id: "18BBCE523EABE49C", item: { count: 1, id: "minecraft:coal" }, type: "item" }
+{ id: "73127293636F868D", item: { count: 1, id: "minecraft:iron_ingot" }, type: "item" }
+]
+x: 5.5d
+y: -1.0d
+}
+]
+}

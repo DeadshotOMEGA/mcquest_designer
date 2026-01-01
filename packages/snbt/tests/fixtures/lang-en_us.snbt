@@ -1,0 +1,14 @@
+{
+	quest.4A2123FF92275F64.title: "&fPunch A Tree"
+	quest.4A2123FF92275F64.quest_desc: [
+		"You need to gather wood from trees to start your adventure."
+		"Use your bare fists to hit oak logs."
+	]
+	quest.2617EB4B3D2A80DA.title: "&fWooden Pickaxe"
+	quest.2617EB4B3D2A80DA.quest_desc: ["The first tool you absolutely need to make is a &2Wooden Pickaxe&r. However, Wood does not make a great material for mining..."]
+	quest.44F07423FC4BA868.title: "&fStone Age"
+	quest.44F07423FC4BA868.quest_desc: ["Congratulations! Now you have a stone pickaxe. This is the next step in your progression."]
+	quest.592271A09A5655D4.title: "&eSmelt It!"
+	quest.592271A09A5655D4.quest_desc: ["Now that you have better tools, it is time to smelt some ore."]
+	chapter.7598810BEF4F4370.title: "&lThe Beginning"
+}

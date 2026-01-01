@@ -1,0 +1,119 @@
+/**
+ * FTB Quests SNBT format adapter
+ * Handles non-standard SNBT syntax used by FTB Quests
+ */
+
+/**
+ * Normalize FTB Quests SNBT format to standard SNBT
+ * FTB Quests uses newline-delimited fields instead of comma-separated
+ * @param text FTB Quests SNBT text
+ */
+export function normalizeFTBQuests(text: string): string {
+  let result = '';
+  let inString = false;
+  let inEscape = false;
+  let braceDepth = 0;
+  let bracketDepth = 0;
+  let i = 0;
+
+  while (i < text.length) {
+    const char = text[i];
+    const nextChar = i + 1 < text.length ? text[i + 1] : '';
+
+    // Handle escape sequences
+    if (inString && inEscape) {
+      result += char;
+      inEscape = false;
+      i++;
+      continue;
+    }
+
+    if (inString && char === '\\') {
+      result += char;
+      inEscape = true;
+      i++;
+      continue;
+    }
+
+    // Track string state
+    if (char === '"' && !inEscape) {
+      inString = !inString;
+      result += char;
+      i++;
+      continue;
+    }
+
+    // If we're in a string, just copy the character
+    if (inString) {
+      result += char;
+      i++;
+      continue;
+    }
+
+    // Track braces and brackets outside strings
+    if (char === '{') {
+      braceDepth++;
+      result += char;
+      i++;
+      continue;
+    }
+
+    if (char === '}') {
+      braceDepth--;
+      result += char;
+      i++;
+      continue;
+    }
+
+    if (char === '[') {
+      bracketDepth++;
+      result += char;
+      i++;
+      continue;
+    }
+
+    if (char === ']') {
+      bracketDepth--;
+      result += char;
+      i++;
+      continue;
+    }
+
+    // Handle newlines that should become commas
+    if (char === '\n' || char === '\r') {
+      // Skip CRLF and LF combinations
+      if (char === '\r' && nextChar === '\n') {
+        i += 2;
+      } else {
+        i++;
+      }
+
+      // Only insert comma if we're at the top level of a compound
+      // and the next non-whitespace character suggests we need one
+      if (braceDepth > 0 && bracketDepth === 0) {
+        // Look ahead to find next non-whitespace character
+        let j = i;
+        while (j < text.length && (text[j] === ' ' || text[j] === '\t' || text[j] === '\n' || text[j] === '\r')) {
+          j++;
+        }
+
+        // Add comma if next char is a field name (letter or letter/number/underscore pattern)
+        if (j < text.length) {
+          const nextNonWhitespace = text[j];
+          // Field names start with letters or underscores
+          if (/[a-zA-Z_]/.test(nextNonWhitespace)) {
+            result += ',';
+          }
+        }
+      }
+
+      continue;
+    }
+
+    // Copy regular characters
+    result += char;
+    i++;
+  }
+
+  return result;
+}
