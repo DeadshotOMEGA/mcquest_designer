@@ -16,14 +16,14 @@
 import { createHash } from 'crypto';
 
 export interface IDMapper {
-  /** Get hex ID for a UUID, creating if needed */
-  getHexId(uuid: string): string;
+  /** Get hex ID for a UUID */
+  toHexId(uuid: string): string;
 
   /** Get UUID for a hex ID (reverse lookup) */
-  getUuid(hexId: string): string | undefined;
+  toUUID(hexId: string): string | undefined;
 
   /** Get all mappings */
-  getMappings(): Map<string, string>;
+  getAllMappings(): Map<string, string>;
 }
 
 export interface IDMapperOptions {
@@ -112,7 +112,7 @@ export function createIDMapper(entities: Entity[], options?: IDMapperOptions): I
   }
 
   return {
-    getHexId: (uuid: string): string => {
+    toHexId: (uuid: string): string => {
       const hexId = uuidToHex.get(uuid);
       if (!hexId) {
         throw new Error(`No hex ID mapping found for UUID: ${uuid}`);
@@ -120,11 +120,11 @@ export function createIDMapper(entities: Entity[], options?: IDMapperOptions): I
       return hexId;
     },
 
-    getUuid: (hexId: string): string | undefined => {
+    toUUID: (hexId: string): string | undefined => {
       return hexToUuid.get(hexId);
     },
 
-    getMappings: (): Map<string, string> => {
+    getAllMappings: (): Map<string, string> => {
       return new Map(uuidToHex);
     },
   };
