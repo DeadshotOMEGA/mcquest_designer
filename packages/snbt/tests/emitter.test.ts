@@ -22,15 +22,16 @@ describe('emitSNBT', () => {
       expect(emitSNBT(-123)).toBe('-123');
     });
 
-    it('emits floats with decimal point', () => {
-      expect(emitSNBT(1.5)).toBe('1.5');
-      expect(emitSNBT(0.1)).toBe('0.1');
-      expect(emitSNBT(-3.7)).toBe('-3.7');
+    it('emits floats with decimal point and d suffix', () => {
+      expect(emitSNBT(1.5)).toBe('1.5d');
+      expect(emitSNBT(0.1)).toBe('0.1d');
+      expect(emitSNBT(-3.7)).toBe('-3.7d');
     });
 
-    it('emits floats that are integers as x.0', () => {
-      expect(emitSNBT(1.0)).toBe('1.0');
-      expect(emitSNBT(42.0)).toBe('42.0');
+    it('emits integers without suffix (JavaScript cannot distinguish 1.0 from 1)', () => {
+      // In JavaScript, 1.0 === 1, so these will be emitted as integers
+      expect(emitSNBT(1)).toBe('1');
+      expect(emitSNBT(42)).toBe('42');
     });
 
     it('emits strings with quotes', () => {
@@ -274,13 +275,13 @@ describe('emitSNBT', () => {
 
     it('handles negative numbers', () => {
       expect(emitSNBT(-42)).toBe('-42');
-      expect(emitSNBT(-1.5)).toBe('-1.5');
+      expect(emitSNBT(-1.5)).toBe('-1.5d');
     });
 
     it('handles scientific notation floats', () => {
       // Should be formatted as decimal, not scientific
       const result = emitSNBT(1e-10);
-      expect(result).toBe('0.0');
+      expect(result).toBe('0.0000000001d');
     });
 
     it('handles special characters in strings', () => {

@@ -73,9 +73,19 @@ function formatNumber(num: number): string {
     return String(num);
   }
 
-  // Format float with at least one decimal place
-  const str = num.toFixed(1);
-  return str;
+  // Format float with at least one decimal place and 'd' suffix for FTB Quests
+  const str = num.toFixed(Math.max(1, countDecimalPlaces(num)));
+  return str + 'd';
+}
+
+/**
+ * Count decimal places in a number
+ */
+function countDecimalPlaces(num: number): number {
+  const str = num.toString();
+  const decimalIndex = str.indexOf('.');
+  if (decimalIndex === -1) return 0;
+  return str.length - decimalIndex - 1;
 }
 
 /**
