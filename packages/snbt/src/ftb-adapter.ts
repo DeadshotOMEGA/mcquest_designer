@@ -40,6 +40,7 @@ export function normalizeFTBQuests(text: string): string {
     if (char === '"' && !inEscape) {
       inString = !inString;
       result += char;
+      lastNonWhitespace = char;  // Track quotes as non-whitespace
       i++;
       continue;
     }
@@ -93,24 +94,25 @@ export function normalizeFTBQuests(text: string): string {
         i++;
       }
 
-      // Only insert comma if we're inside an object (braceDepth > 0)
+      // Only insert comma if we're inside an object or array
       // and the next non-whitespace character suggests we need one
       // Don't add comma right after opening braces or brackets
-      if (braceDepth > 0 && lastNonWhitespace !== '{' && lastNonWhitespace !== '[') {
+      if ((braceDepth > 0 || bracketDepth > 0) && lastNonWhitespace !== '{' && lastNonWhitespace !== '[') {
         // Look ahead to find next non-whitespace character
         let j = i;
         while (j < text.length && (text[j] === ' ' || text[j] === '\t' || text[j] === '\n' || text[j] === '\r')) {
           j++;
         }
 
-        // Add comma if next char is a field name or another object (array of objects)
+        // Add comma if next char is a field name, string, or another object
         // and current context isn't closing a structure
         if (j < text.length) {
           const nextNonWhitespace = text[j];
           // Field names start with letters or underscores
+          // String literals start with quotes
           // Also add comma before opening brace (new object in array)
           // But not before closing braces/brackets
-          if ((/[a-zA-Z_]/.test(nextNonWhitespace) || nextNonWhitespace === '{') && nextNonWhitespace !== '}' && nextNonWhitespace !== ']') {
+          if ((/[a-zA-Z_"]/.test(nextNonWhitespace) || nextNonWhitespace === '{') && nextNonWhitespace !== '}' && nextNonWhitespace !== ']') {
             result += ',';
           }
         }
