@@ -14,6 +14,7 @@ export function normalizeFTBQuests(text: string): string {
   let inEscape = false;
   let braceDepth = 0;
   let bracketDepth = 0;
+  let lastNonWhitespace = '';
   let i = 0;
 
   while (i < text.length) {
@@ -54,6 +55,7 @@ export function normalizeFTBQuests(text: string): string {
     if (char === '{') {
       braceDepth++;
       result += char;
+      lastNonWhitespace = char;
       i++;
       continue;
     }
@@ -61,6 +63,7 @@ export function normalizeFTBQuests(text: string): string {
     if (char === '}') {
       braceDepth--;
       result += char;
+      lastNonWhitespace = char;
       i++;
       continue;
     }
@@ -68,6 +71,7 @@ export function normalizeFTBQuests(text: string): string {
     if (char === '[') {
       bracketDepth++;
       result += char;
+      lastNonWhitespace = char;
       i++;
       continue;
     }
@@ -75,6 +79,7 @@ export function normalizeFTBQuests(text: string): string {
     if (char === ']') {
       bracketDepth--;
       result += char;
+      lastNonWhitespace = char;
       i++;
       continue;
     }
@@ -88,20 +93,24 @@ export function normalizeFTBQuests(text: string): string {
         i++;
       }
 
-      // Only insert comma if we're at the top level of a compound
+      // Only insert comma if we're inside an object (braceDepth > 0)
       // and the next non-whitespace character suggests we need one
-      if (braceDepth > 0 && bracketDepth === 0) {
+      // Don't add comma right after opening braces or brackets
+      if (braceDepth > 0 && lastNonWhitespace !== '{' && lastNonWhitespace !== '[') {
         // Look ahead to find next non-whitespace character
         let j = i;
         while (j < text.length && (text[j] === ' ' || text[j] === '\t' || text[j] === '\n' || text[j] === '\r')) {
           j++;
         }
 
-        // Add comma if next char is a field name (letter or letter/number/underscore pattern)
+        // Add comma if next char is a field name or another object (array of objects)
+        // and current context isn't closing a structure
         if (j < text.length) {
           const nextNonWhitespace = text[j];
           // Field names start with letters or underscores
-          if (/[a-zA-Z_]/.test(nextNonWhitespace)) {
+          // Also add comma before opening brace (new object in array)
+          // But not before closing braces/brackets
+          if ((/[a-zA-Z_]/.test(nextNonWhitespace) || nextNonWhitespace === '{') && nextNonWhitespace !== '}' && nextNonWhitespace !== ']') {
             result += ',';
           }
         }
@@ -112,6 +121,12 @@ export function normalizeFTBQuests(text: string): string {
 
     // Copy regular characters
     result += char;
+
+    // Track last non-whitespace character
+    if (char !== ' ' && char !== '\t') {
+      lastNonWhitespace = char;
+    }
+
     i++;
   }
 

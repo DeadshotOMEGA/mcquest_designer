@@ -53,7 +53,22 @@ export function convertToSnapshot(snbtData: unknown, langData?: LangData): Conve
     return { success: false, snapshot: null, problems };
   }
 
-  const data = snbtData as Record<string, unknown>;
+  let data = snbtData as Record<string, unknown>;
+
+  // Detect if this is a single chapter file (has filename and quests, but no chapters array)
+  // FTB Quests stores each chapter in a separate file
+  if ('filename' in data && 'quests' in data && !('chapters' in data)) {
+    // Extract quests from the chapter and merge into the expected format
+    const chapterQuests = data.quests;
+    const chapterData = { ...data };
+    delete chapterData.quests;
+
+    // Wrap the single chapter in the expected structure
+    data = {
+      chapters: [chapterData],
+      quests: chapterQuests,
+    };
+  }
 
   // Create maps for ID tracking
   const idMap = new Map<string, string>(); // hex ID -> UUID

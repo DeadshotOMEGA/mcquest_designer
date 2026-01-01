@@ -21,6 +21,59 @@ export interface ParseResult {
 }
 
 /**
+ * Flatten snbt-js output structure to plain JavaScript object
+ * snbt-js returns { childs: { key: { value: ... } } }
+ * We need { key: value }
+ */
+function flattenNbtData(data: unknown): unknown {
+  if (data === null || data === undefined) {
+    return data;
+  }
+
+  // Handle objects with childs (NBT compound tags or list tags)
+  if (typeof data === 'object' && data !== null && 'childs' in data) {
+    const obj = data as { childs: unknown };
+
+    // If childs is an array, it's an NBT list tag
+    if (Array.isArray(obj.childs)) {
+      return obj.childs.map(flattenNbtData);
+    }
+
+    // Otherwise it's an NBT compound tag (object)
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj.childs as Record<string, unknown>)) {
+      result[key] = flattenNbtData(value);
+    }
+    return result;
+  }
+
+  // Handle primitive value wrappers (NBT primitive tags)
+  // These have a 'value' property and may have helper properties like 'text'
+  if (typeof data === 'object' && data !== null && 'value' in data && !('childs' in data)) {
+    const obj = data as Record<string, unknown>;
+    return flattenNbtData(obj.value);
+  }
+
+  // Handle arrays
+  if (Array.isArray(data)) {
+    return data.map(flattenNbtData);
+  }
+
+  // Handle regular objects (recursively flatten)
+  if (typeof data === 'object' && data !== null) {
+    const obj = data as Record<string, unknown>;
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj)) {
+      result[key] = flattenNbtData(value);
+    }
+    return result;
+  }
+
+  // Return primitives as-is
+  return data;
+}
+
+/**
  * Parse SNBT text into JavaScript object
  * @param text SNBT text to parse
  * @param options Parse options
@@ -34,7 +87,10 @@ export function parseSNBT(text: string, options: ParseOptions = {}): ParseResult
     }
 
     // Parse using snbt-js library
-    const data = parseNbtString(snbtText);
+    const rawData = parseNbtString(snbtText);
+
+    // Flatten the snbt-js structure to plain JavaScript object
+    const data = flattenNbtData(rawData);
 
     return {
       success: true,
