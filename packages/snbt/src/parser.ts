@@ -51,7 +51,21 @@ function flattenNbtData(data: unknown): unknown {
   // These have a 'value' property and may have helper properties like 'text'
   if (typeof data === 'object' && data !== null && 'value' in data && !('childs' in data)) {
     const obj = data as Record<string, unknown>;
-    return flattenNbtData(obj.value);
+    const value = obj.value;
+
+    // Convert string values to appropriate types
+    if (typeof value === 'string') {
+      // Try to parse as number
+      if (/^-?\d+\.?\d*$/.test(value)) {
+        const num = parseFloat(value);
+        if (!isNaN(num)) return num;
+      }
+      // Try to parse as boolean
+      if (value === 'true') return true;
+      if (value === 'false') return false;
+    }
+
+    return flattenNbtData(value);
   }
 
   // Handle arrays
