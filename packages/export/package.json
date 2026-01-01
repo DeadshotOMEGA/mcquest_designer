@@ -21,7 +21,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@mcquest/schema": "workspace:*"
+    "@mcquest/schema": "workspace:*",
+    "@mcquest/snbt": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.7.2",

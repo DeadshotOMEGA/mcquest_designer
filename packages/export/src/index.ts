@@ -1,4 +1,5 @@
 import type { ProjectSnapshot } from '@mcquest/schema'
+import { convertFromSnapshot, emitSNBT } from '@mcquest/snbt'
 
 /**
  * Export package version - used for compatibility checks
@@ -20,15 +21,38 @@ export interface ExportResult {
 }
 
 /**
- * Placeholder compiler function - will be expanded in future issues
+ * Compile a ProjectSnapshot to SNBT export format
+ *
+ * Converts the internal snapshot model to FTB Quests SNBT format,
+ * producing the quests.snbt file that can be placed in a modpack.
+ *
+ * @param snapshot The project snapshot to export
+ * @param _version Minecraft version (1.21, 1.21.1) - future use for version-specific handling
+ * @returns Export result with files map and warnings
  */
 export function compileSnapshot(
-  _snapshot: ProjectSnapshot,
+  snapshot: ProjectSnapshot,
   _version: SupportedVersion = '1.21.1'
 ): ExportResult {
-  // Stub implementation
+  const warnings: string[] = []
+  const files = new Map<string, string>()
+
+  try {
+    // Convert snapshot to SNBT object structure
+    const snbtObj = convertFromSnapshot(snapshot)
+
+    // Emit as FTB-formatted SNBT text
+    const snbtText = emitSNBT(snbtObj, { format: 'ftb' })
+
+    // Store as quests.snbt (FTB Quests expects this filename)
+    files.set('quests.snbt', snbtText)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    warnings.push(`Export failed: ${message}`)
+  }
+
   return {
-    files: new Map(),
-    warnings: [],
+    files,
+    warnings,
   }
 }
