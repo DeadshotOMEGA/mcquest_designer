@@ -73,7 +73,7 @@ describe('Performance Benchmarks', () => {
       expect(parseResult.success).toBe(true);
 
       const startTime = performance.now();
-      const result = convertToSnapshot(parseResult.data, {});
+      const result = convertToSnapshot(parseResult.data, { titles: new Map(), descriptions: new Map() });
       const endTime = performance.now();
 
       expect(result.snapshot).toBeDefined();
@@ -89,7 +89,7 @@ describe('Performance Benchmarks', () => {
       expect(parseResult.success).toBe(true);
 
       const startTime = performance.now();
-      const result = convertToSnapshot(parseResult.data, {});
+      const result = convertToSnapshot(parseResult.data, { titles: new Map(), descriptions: new Map() });
       const endTime = performance.now();
 
       expect(result.snapshot).toBeDefined();
@@ -105,7 +105,7 @@ describe('Performance Benchmarks', () => {
       expect(parseResult.success).toBe(true);
 
       const startTime = performance.now();
-      const result = convertToSnapshot(parseResult.data, {});
+      const result = convertToSnapshot(parseResult.data, { titles: new Map(), descriptions: new Map() });
       const endTime = performance.now();
 
       expect(result.snapshot).toBeDefined();
@@ -230,7 +230,7 @@ describe('Performance Benchmarks', () => {
       expect(parseResult.success).toBe(true);
 
       // Step 2: Convert to snapshot
-      const conversionResult = convertToSnapshot(parseResult.data, {});
+      const conversionResult = convertToSnapshot(parseResult.data, { titles: new Map(), descriptions: new Map() });
       expect(conversionResult.snapshot).toBeDefined();
 
       // Step 3: Convert back to SNBT

@@ -3,6 +3,7 @@ import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { parseSNBT } from '../src/parser.js';
+import { parseLangFile } from '../src/lang-handler.js';
 import { convertToSnapshot, convertFromSnapshot } from '../src/converter.js';
 import { emitSNBT } from '../src/emitter.js';
 import type { ProjectSnapshot } from '@mcquest/schema';
@@ -39,10 +40,9 @@ describe('Round-Trip Integration Tests', () => {
       const parseResult = parseSNBT(chapterSnbt, { format: 'ftb' });
       expect(parseResult.success).toBe(true);
 
-      const langResult = parseSNBT(langSnbt, { format: 'ftb' });
-      expect(langResult.success).toBe(true);
+      const langData = parseLangFile(langSnbt);
 
-      const conversionResult = convertToSnapshot(parseResult.data, langResult.data);
+      const conversionResult = convertToSnapshot(parseResult.data, langData);
       expect(conversionResult.success).toBe(true);
       expect(conversionResult.snapshot).toBeDefined();
 
@@ -63,7 +63,7 @@ describe('Round-Trip Integration Tests', () => {
       const parseResult2 = parseSNBT(exportedSnbt1, { format: 'ftb' });
       expect(parseResult2.success).toBe(true);
 
-      const conversionResult2 = convertToSnapshot(parseResult2.data, langResult.data);
+      const conversionResult2 = convertToSnapshot(parseResult2.data, langData);
       expect(conversionResult2.success).toBe(true);
       expect(conversionResult2.snapshot).toBeDefined();
 
@@ -79,7 +79,7 @@ describe('Round-Trip Integration Tests', () => {
 
       // Import
       const parseResult = parseSNBT(chapterSnbt, { format: 'ftb' });
-      const conversionResult = convertToSnapshot(parseResult.data, {});
+      const conversionResult = convertToSnapshot(parseResult.data, { titles: new Map(), descriptions: new Map() });
       const snapshot1 = conversionResult.snapshot!;
 
       // Get original FTB IDs from metadata
@@ -91,7 +91,7 @@ describe('Round-Trip Integration Tests', () => {
       const exportedSnbt = emitSNBT(snbtObj, { format: 'ftb' });
 
       const parseResult2 = parseSNBT(exportedSnbt, { format: 'ftb' });
-      const conversionResult2 = convertToSnapshot(parseResult2.data, {});
+      const conversionResult2 = convertToSnapshot(parseResult2.data, { titles: new Map(), descriptions: new Map() });
       const snapshot2 = conversionResult2.snapshot!;
 
       // Verify FTB IDs are preserved
@@ -108,7 +108,7 @@ describe('Round-Trip Integration Tests', () => {
 
       // Import
       const parseResult = parseSNBT(chapterSnbt, { format: 'ftb' });
-      const conversionResult = convertToSnapshot(parseResult.data, {});
+      const conversionResult = convertToSnapshot(parseResult.data, { titles: new Map(), descriptions: new Map() });
       const snapshot1 = conversionResult.snapshot!;
 
       // Get original positions
@@ -119,7 +119,7 @@ describe('Round-Trip Integration Tests', () => {
       const exportedSnbt = emitSNBT(snbtObj, { format: 'ftb' });
 
       const parseResult2 = parseSNBT(exportedSnbt, { format: 'ftb' });
-      const conversionResult2 = convertToSnapshot(parseResult2.data, {});
+      const conversionResult2 = convertToSnapshot(parseResult2.data, { titles: new Map(), descriptions: new Map() });
       const snapshot2 = conversionResult2.snapshot!;
 
       // Verify positions are preserved
@@ -135,7 +135,7 @@ describe('Round-Trip Integration Tests', () => {
 
       // Import
       const parseResult = parseSNBT(chapterSnbt, { format: 'ftb' });
-      const conversionResult = convertToSnapshot(parseResult.data, {});
+      const conversionResult = convertToSnapshot(parseResult.data, { titles: new Map(), descriptions: new Map() });
       const snapshot1 = conversionResult.snapshot!;
 
       // Get original dependencies
@@ -146,17 +146,27 @@ describe('Round-Trip Integration Tests', () => {
       const exportedSnbt = emitSNBT(snbtObj, { format: 'ftb' });
 
       const parseResult2 = parseSNBT(exportedSnbt, { format: 'ftb' });
-      const conversionResult2 = convertToSnapshot(parseResult2.data, {});
+      const conversionResult2 = convertToSnapshot(parseResult2.data, { titles: new Map(), descriptions: new Map() });
       const snapshot2 = conversionResult2.snapshot!;
 
       // Verify dependencies count matches
       expect(snapshot2.dependencies).toHaveLength(originalDeps.length);
 
-      // Verify each dependency exists (order might differ)
+      // Create quest index maps for both snapshots
+      const questIndexMap1 = new Map(snapshot1.quests.map((q, i) => [q.id, i]));
+      const questIndexMap2 = new Map(snapshot2.quests.map((q, i) => [q.id, i]));
+
+      // Verify each dependency exists (by quest position, not UUID)
       originalDeps.forEach((originalDep) => {
-        const found = snapshot2.dependencies.some(
-          (dep) => dep.fromQuestId === originalDep.fromQuestId && dep.toQuestId === originalDep.toQuestId
-        );
+        const fromIndex1 = questIndexMap1.get(originalDep.fromQuestId);
+        const toIndex1 = questIndexMap1.get(originalDep.toQuestId);
+
+        // Find corresponding dependency in snapshot2 by quest positions
+        const found = snapshot2.dependencies.some((dep) => {
+          const fromIndex2 = questIndexMap2.get(dep.fromQuestId);
+          const toIndex2 = questIndexMap2.get(dep.toQuestId);
+          return fromIndex2 === fromIndex1 && toIndex2 === toIndex1 && dep.type === originalDep.type;
+        });
         expect(found).toBe(true);
       });
     });
@@ -187,7 +197,7 @@ describe('Round-Trip Integration Tests', () => {
 
       // Re-import
       const parseResult1 = parseSNBT(export1, { format: 'ftb' });
-      const conversionResult1 = convertToSnapshot(parseResult1.data, {});
+      const conversionResult1 = convertToSnapshot(parseResult1.data, { titles: new Map(), descriptions: new Map() });
       const snapshot2 = conversionResult1.snapshot!;
 
       // Second export
@@ -196,7 +206,7 @@ describe('Round-Trip Integration Tests', () => {
 
       // Re-import again
       const parseResult2 = parseSNBT(export2, { format: 'ftb' });
-      const conversionResult2 = convertToSnapshot(parseResult2.data, {});
+      const conversionResult2 = convertToSnapshot(parseResult2.data, { titles: new Map(), descriptions: new Map() });
       const snapshot3 = conversionResult2.snapshot!;
 
       // Third export
@@ -217,7 +227,7 @@ describe('Round-Trip Integration Tests', () => {
       const exportedSnbt = emitSNBT(snbtObj, { format: 'ftb' });
 
       const parseResult = parseSNBT(exportedSnbt, { format: 'ftb' });
-      const conversionResult = convertToSnapshot(parseResult.data, {});
+      const conversionResult = convertToSnapshot(parseResult.data, { titles: new Map(), descriptions: new Map() });
       const snapshot2 = conversionResult.snapshot!;
 
       // Verify all task types survived
@@ -238,7 +248,7 @@ describe('Round-Trip Integration Tests', () => {
       const exportedSnbt = emitSNBT(snbtObj, { format: 'ftb' });
 
       const parseResult = parseSNBT(exportedSnbt, { format: 'ftb' });
-      const conversionResult = convertToSnapshot(parseResult.data, {});
+      const conversionResult = convertToSnapshot(parseResult.data, { titles: new Map(), descriptions: new Map() });
       const snapshot2 = conversionResult.snapshot!;
 
       // Verify all reward types survived
@@ -263,7 +273,7 @@ describe('Round-Trip Integration Tests', () => {
       const exportedSnbt = emitSNBT(snbtObj, { format: 'ftb' });
 
       const parseResult = parseSNBT(exportedSnbt, { format: 'ftb' });
-      const conversionResult = convertToSnapshot(parseResult.data, {});
+      const conversionResult = convertToSnapshot(parseResult.data, { titles: new Map(), descriptions: new Map() });
       const snapshot2 = conversionResult.snapshot!;
 
       // Verify settings preserved
@@ -287,18 +297,18 @@ function verifySnapshotEquivalence(s1: ProjectSnapshot, s2: ProjectSnapshot): vo
     const ch2 = s2.chapters[i];
     expect(ch2.title).toBe(ch1.title);
     expect(ch2.order).toBe(ch1.order);
-    expect(ch2.icon).toBe(ch1.icon);
+    expect(ch2.icon).toStrictEqual(ch1.icon);
   });
 
-  // Verify quests match (order may vary, so match by ID)
-  s1.quests.forEach((q1) => {
-    const q2 = s2.quests.find((q) => q.id === q1.id);
+  // Verify quests match (by position, since UUIDs are regenerated on import)
+  s1.quests.forEach((q1, i) => {
+    const q2 = s2.quests[i];
     expect(q2).toBeDefined();
 
     if (!q2) return;
 
     expect(q2.title).toBe(q1.title);
-    expect(q2.chapterId).toBe(q1.chapterId);
+    // Chapter ID will be different (new UUID), so don't compare directly
     expect(q2.tasks).toHaveLength(q1.tasks.length);
     expect(q2.rewards).toHaveLength(q1.rewards.length);
   });

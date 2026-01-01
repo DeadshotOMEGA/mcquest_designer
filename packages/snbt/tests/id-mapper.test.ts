@@ -14,9 +14,9 @@ describe('IDMapper', () => {
       const mapper2 = createIDMapper(entities);
 
       // Same UUIDs should produce same hex IDs
-      expect(mapper1.getHexId(entities[0].id)).toBe(mapper2.getHexId(entities[0].id));
-      expect(mapper1.getHexId(entities[1].id)).toBe(mapper2.getHexId(entities[1].id));
-      expect(mapper1.getHexId(entities[2].id)).toBe(mapper2.getHexId(entities[2].id));
+      expect(mapper1.toHexId(entities[0].id)).toBe(mapper2.toHexId(entities[0].id));
+      expect(mapper1.toHexId(entities[1].id)).toBe(mapper2.toHexId(entities[1].id));
+      expect(mapper1.toHexId(entities[2].id)).toBe(mapper2.toHexId(entities[2].id));
     });
 
     it('should produce same mappings regardless of input order', () => {
@@ -33,9 +33,9 @@ describe('IDMapper', () => {
 
       // Despite different input order, mappings should be the same
       // because they're sorted internally
-      expect(mapper1.getHexId(entities[0].id)).toBe(mapper2.getHexId(entities[0].id));
-      expect(mapper1.getHexId(entities[1].id)).toBe(mapper2.getHexId(entities[1].id));
-      expect(mapper1.getHexId(entities[2].id)).toBe(mapper2.getHexId(entities[2].id));
+      expect(mapper1.toHexId(entities[0].id)).toBe(mapper2.toHexId(entities[0].id));
+      expect(mapper1.toHexId(entities[1].id)).toBe(mapper2.toHexId(entities[1].id));
+      expect(mapper1.toHexId(entities[2].id)).toBe(mapper2.toHexId(entities[2].id));
     });
 
     it('should be consistent when mapping is called multiple times', () => {
@@ -47,9 +47,9 @@ describe('IDMapper', () => {
       const mapper = createIDMapper(entities);
 
       const uuid = entities[0].id;
-      const hexId1 = mapper.getHexId(uuid);
-      const hexId2 = mapper.getHexId(uuid);
-      const hexId3 = mapper.getHexId(uuid);
+      const hexId1 = mapper.toHexId(uuid);
+      const hexId2 = mapper.toHexId(uuid);
+      const hexId3 = mapper.toHexId(uuid);
 
       expect(hexId1).toBe(hexId2);
       expect(hexId2).toBe(hexId3);
@@ -65,8 +65,8 @@ describe('IDMapper', () => {
 
       const mapper = createIDMapper(entities);
 
-      const hexId1 = mapper.getHexId(entities[0].id);
-      const hexId2 = mapper.getHexId(entities[1].id);
+      const hexId1 = mapper.toHexId(entities[0].id);
+      const hexId2 = mapper.toHexId(entities[1].id);
 
       expect(hexId1).toMatch(/^[0-9A-F]{8}$/);
       expect(hexId2).toMatch(/^[0-9A-F]{8}$/);
@@ -76,7 +76,7 @@ describe('IDMapper', () => {
       const entities = [{ id: '550e8400-e29b-41d4-a716-446655440000' }];
 
       const mapper = createIDMapper(entities);
-      const hexId = mapper.getHexId(entities[0].id);
+      const hexId = mapper.toHexId(entities[0].id);
 
       expect(hexId).toMatch(/^[0-9A-F]+$/);
     });
@@ -93,7 +93,7 @@ describe('IDMapper', () => {
       const hexIds = new Set<string>();
 
       for (const entity of entities) {
-        const hexId = mapper.getHexId(entity.id);
+        const hexId = mapper.toHexId(entity.id);
         expect(hexIds.has(hexId)).toBe(false);
         hexIds.add(hexId);
       }
@@ -111,7 +111,7 @@ describe('IDMapper', () => {
       const hexIds = new Set<string>();
 
       for (const entity of entities) {
-        const hexId = mapper.getHexId(entity.id);
+        const hexId = mapper.toHexId(entity.id);
         expect(hexIds.has(hexId)).toBe(false);
         hexIds.add(hexId);
       }
@@ -132,7 +132,7 @@ describe('IDMapper', () => {
       const hexIds = new Set<string>();
 
       for (const entity of entities) {
-        const hexId = mapper.getHexId(entity.id);
+        const hexId = mapper.toHexId(entity.id);
         hexIds.add(hexId);
       }
 
@@ -154,8 +154,8 @@ describe('IDMapper', () => {
 
       const mapper = createIDMapper(entities, { existingMappings });
 
-      expect(mapper.getHexId(entities[0].id)).toBe('2B3C4D5E');
-      expect(mapper.getHexId(entities[1].id)).toBe('ABCDEF00');
+      expect(mapper.toHexId(entities[0].id)).toBe('2B3C4D5E');
+      expect(mapper.toHexId(entities[1].id)).toBe('ABCDEF00');
     });
 
     it('should assign new IDs for unmapped entities', () => {
@@ -168,10 +168,10 @@ describe('IDMapper', () => {
 
       const mapper = createIDMapper(entities, { existingMappings });
 
-      expect(mapper.getHexId(entities[0].id)).toBe('2B3C4D5E');
+      expect(mapper.toHexId(entities[0].id)).toBe('2B3C4D5E');
 
       // New entity should have a generated ID
-      const newId = mapper.getHexId(entities[1].id);
+      const newId = mapper.toHexId(entities[1].id);
       expect(newId).not.toBe('2B3C4D5E');
       expect(newId).toMatch(/^[0-9A-F]{8}$/);
     });
@@ -185,14 +185,14 @@ describe('IDMapper', () => {
       const mapper1 = createIDMapper(entities);
 
       // Simulate an export/import cycle
-      const mappings = mapper1.getMappings();
+      const mappings = mapper1.getAllMappings();
 
       // Create a new mapper with the same mappings
       const mapper2 = createIDMapper(entities, { existingMappings: mappings });
 
       // The new mapper should produce the same results
       for (const entity of entities) {
-        expect(mapper1.getHexId(entity.id)).toBe(mapper2.getHexId(entity.id));
+        expect(mapper1.toHexId(entity.id)).toBe(mapper2.toHexId(entity.id));
       }
     });
   });
@@ -207,8 +207,8 @@ describe('IDMapper', () => {
       const mapper = createIDMapper(entities);
 
       for (const entity of entities) {
-        const hexId = mapper.getHexId(entity.id);
-        const uuid = mapper.getUuid(hexId);
+        const hexId = mapper.toHexId(entity.id);
+        const uuid = mapper.toUUID(hexId);
         expect(uuid).toBe(entity.id);
       }
     });
@@ -219,7 +219,7 @@ describe('IDMapper', () => {
       const mapper = createIDMapper(entities);
       const unmappedHex = 'FFFFFFFF';
 
-      expect(mapper.getUuid(unmappedHex)).toBeUndefined();
+      expect(mapper.toUUID(unmappedHex)).toBeUndefined();
     });
   });
 
@@ -232,7 +232,7 @@ describe('IDMapper', () => {
       ];
 
       const mapper = createIDMapper(entities);
-      const mappings = mapper.getMappings();
+      const mappings = mapper.getAllMappings();
 
       expect(mappings.size).toBe(3);
 
@@ -246,8 +246,8 @@ describe('IDMapper', () => {
       const entities = [{ id: '550e8400-e29b-41d4-a716-446655440000' }];
 
       const mapper = createIDMapper(entities);
-      const mappings1 = mapper.getMappings();
-      const mappings2 = mapper.getMappings();
+      const mappings1 = mapper.getAllMappings();
+      const mappings2 = mapper.getAllMappings();
 
       expect(mappings1).not.toBe(mappings2);
       expect(mappings1.size).toBe(mappings2.size);
@@ -256,7 +256,7 @@ describe('IDMapper', () => {
       const firstKey = Array.from(mappings1.keys())[0]!;
       mappings1.delete(firstKey);
 
-      expect(mapper.getMappings().has(firstKey)).toBe(true);
+      expect(mapper.getAllMappings().has(firstKey)).toBe(true);
     });
   });
 
@@ -277,8 +277,8 @@ describe('IDMapper', () => {
 
       // All should produce the same mapping
       for (const entity of entities) {
-        expect(mapper.getHexId(entity.id)).toBe(mapper2.getHexId(entity.id));
-        expect(mapper.getHexId(entity.id)).toBe(mapper3.getHexId(entity.id));
+        expect(mapper.toHexId(entity.id)).toBe(mapper2.toHexId(entity.id));
+        expect(mapper.toHexId(entity.id)).toBe(mapper3.toHexId(entity.id));
       }
     });
 
@@ -294,7 +294,7 @@ describe('IDMapper', () => {
       const mapper2 = createIDMapper([entities[2], entities[0], entities[1]]);
 
       for (const entity of entities) {
-        expect(mapper1.getHexId(entity.id)).toBe(mapper2.getHexId(entity.id));
+        expect(mapper1.toHexId(entity.id)).toBe(mapper2.toHexId(entity.id));
       }
     });
 
@@ -310,7 +310,7 @@ describe('IDMapper', () => {
       const mapper2 = createIDMapper([entities[1], entities[0], entities[2]]);
 
       for (const entity of entities) {
-        expect(mapper1.getHexId(entity.id)).toBe(mapper2.getHexId(entity.id));
+        expect(mapper1.toHexId(entity.id)).toBe(mapper2.toHexId(entity.id));
       }
     });
 
@@ -326,7 +326,7 @@ describe('IDMapper', () => {
       const mapper2 = createIDMapper([entities[2], entities[0], entities[1]]);
 
       for (const entity of entities) {
-        expect(mapper1.getHexId(entity.id)).toBe(mapper2.getHexId(entity.id));
+        expect(mapper1.toHexId(entity.id)).toBe(mapper2.toHexId(entity.id));
       }
     });
   });
@@ -338,16 +338,16 @@ describe('IDMapper', () => {
       const mapper = createIDMapper(entities);
 
       expect(() => {
-        mapper.getHexId('unmapped-uuid');
+        mapper.toHexId('unmapped-uuid');
       }).toThrow('No hex ID mapping found for UUID: unmapped-uuid');
     });
 
     it('should handle empty entity list', () => {
       const mapper = createIDMapper([]);
 
-      expect(mapper.getMappings().size).toBe(0);
+      expect(mapper.getAllMappings().size).toBe(0);
       expect(() => {
-        mapper.getHexId('any-uuid');
+        mapper.toHexId('any-uuid');
       }).toThrow();
     });
 
@@ -361,7 +361,7 @@ describe('IDMapper', () => {
       const mapper = createIDMapper(entities);
 
       // Should not throw
-      const hexIds = entities.map(e => mapper.getHexId(e.id));
+      const hexIds = entities.map(e => mapper.toHexId(e.id));
       expect(new Set(hexIds).size).toBe(3);
     });
 
@@ -375,7 +375,7 @@ describe('IDMapper', () => {
       const mapper = createIDMapper(entities);
 
       // Should not throw
-      const hexIds = entities.map(e => mapper.getHexId(e.id));
+      const hexIds = entities.map(e => mapper.toHexId(e.id));
       expect(new Set(hexIds).size).toBe(3);
     });
   });
@@ -391,7 +391,7 @@ describe('IDMapper', () => {
       const mapper2 = createIDMapper(entities, { seed: 'seed2' });
 
       // Different seeds should produce different IDs
-      expect(mapper1.getHexId(entities[0].id)).not.toBe(mapper2.getHexId(entities[0].id));
+      expect(mapper1.toHexId(entities[0].id)).not.toBe(mapper2.toHexId(entities[0].id));
     });
   });
 });

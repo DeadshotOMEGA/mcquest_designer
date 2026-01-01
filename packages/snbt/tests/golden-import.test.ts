@@ -456,7 +456,7 @@ describe('Golden Import Test - FTB Quests SNBT Pipeline', () => {
 
       // Check dependency structure
       // Quest 2 depends on quest 1
-      const dep1 = deps.find((d) => d.toQuestId === snapshot.quests[1].id);
+      const dep1 = deps.find((d) => d.fromQuestId === snapshot.quests[1].id);
       expect(dep1?.fromQuestId).toBe(snapshot.quests[1].id);
       expect(dep1?.toQuestId).toBe(snapshot.quests[0].id);
       expect(dep1?.type).toBe('AND');
@@ -584,8 +584,10 @@ describe('Golden Import Test - FTB Quests SNBT Pipeline', () => {
       const snapshot = conversionResult.snapshot as ProjectSnapshot;
       const quests = snapshot.quests as Quest[];
 
-      // Fourth quest has 16 and 2 random bonus counts
-      expect(quests[3].rewards[0].count).toBe(16);
+      // Fourth quest has count: 2 with random_bonus: 2
+      expect(quests[3].rewards[0].count).toBe(2);
+      // Second quest has count: 8 (larger count for torch reward)
+      expect(quests[0].rewards[0].count).toBe(8);
     });
 
     it('should provide detailed problem reports if conversion issues occur', () => {
