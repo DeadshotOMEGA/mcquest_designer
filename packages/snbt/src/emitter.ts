@@ -73,8 +73,28 @@ function formatNumber(num: number): string {
     return String(num);
   }
 
-  // Format float with at least one decimal place and 'd' suffix for FTB Quests
-  const str = num.toFixed(Math.max(1, countDecimalPlaces(num)));
+  // Format float with sufficient precision and 'd' suffix for FTB Quests
+  // Use toPrecision for very small/large numbers, toFixed for normal range
+  let str: string;
+  const absNum = Math.abs(num);
+
+  if (absNum < 0.0001 || absNum > 1e6) {
+    // For very small or very large numbers, use toPrecision to avoid scientific notation
+    // Then manually format to decimal notation
+    str = num.toExponential(10);
+    const parsed = parseFloat(str);
+    // Convert to fixed notation with enough decimal places
+    const decimalPlaces = Math.max(1, 15 - Math.floor(Math.log10(absNum)));
+    str = parsed.toFixed(Math.min(decimalPlaces, 15));
+  } else {
+    // For normal range numbers, use toFixed with appropriate precision
+    const decimalPlaces = countDecimalPlaces(num);
+    str = num.toFixed(Math.max(1, decimalPlaces));
+  }
+
+  // Remove trailing zeros after decimal point, but keep at least one
+  str = str.replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '.0');
+
   return str + 'd';
 }
 
@@ -83,6 +103,11 @@ function formatNumber(num: number): string {
  */
 function countDecimalPlaces(num: number): number {
   const str = num.toString();
+  if (str.includes('e')) {
+    // Scientific notation - extract exponent
+    const [, exp] = str.split('e');
+    return Math.abs(parseInt(exp, 10));
+  }
   const decimalIndex = str.indexOf('.');
   if (decimalIndex === -1) return 0;
   return str.length - decimalIndex - 1;
