@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { readFileSync } from 'fs';
-import { join } from 'path';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import { parseSNBT } from '../src/parser.js';
 import { parseLangFile } from '../src/lang-handler.js';
 import { convertToSnapshot } from '../src/converter.js';
@@ -27,6 +28,8 @@ interface TestFixtures {
 let fixtures: TestFixtures;
 
 beforeAll(() => {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
   const fixturesDir = join(__dirname, 'fixtures');
 
   fixtures = {

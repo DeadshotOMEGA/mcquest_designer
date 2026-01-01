@@ -68,12 +68,8 @@ function emitValue(
  * Format a number with appropriate SNBT type suffix
  */
 function formatNumber(num: number): string {
-  // Detect integer vs float
-  if (Number.isInteger(num)) {
-    return String(num);
-  }
-
-  // Format float
+  // Always use .toFixed(1) to ensure .0 suffix for floats
+  // This matches FTB Quests format expectations
   const str = num.toFixed(1);
   return str;
 }

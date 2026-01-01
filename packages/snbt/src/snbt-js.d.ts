@@ -9,12 +9,12 @@ declare module 'snbt-js' {
    * @returns Parsed object
    * @throws {Error} if parsing fails
    */
-  export function parse(text: string): unknown;
+  export function parseNbtString(text: string): unknown;
 
   /**
-   * Stringify a JavaScript object to SNBT format
+   * Stringify a JavaScript object to SNBT format (if available)
    * @param obj Object to stringify
    * @returns SNBT string
    */
-  export function stringify(obj: unknown): string;
+  export function changeObj(obj: unknown): string;
 }

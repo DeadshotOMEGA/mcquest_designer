@@ -2,7 +2,7 @@
  * SNBT parser - wraps snbt-js library for FTB Quests format
  */
 
-import { parse } from 'snbt-js';
+import { parseNbtString } from 'snbt-js';
 import { normalizeFTBQuests } from './ftb-adapter.js';
 
 export interface ParseOptions {
@@ -34,7 +34,7 @@ export function parseSNBT(text: string, options: ParseOptions = {}): ParseResult
     }
 
     // Parse using snbt-js library
-    const data = parse(snbtText);
+    const data = parseNbtString(snbtText);
 
     return {
       success: true,
