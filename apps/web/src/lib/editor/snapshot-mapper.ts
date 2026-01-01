@@ -20,7 +20,7 @@ import type { DependencyEdgeData } from '@/components/editor/edges'
 /**
  * Quest node type for React Flow
  */
-export type QuestFlowNode = Node<QuestNodeData, 'quest'>
+export type QuestFlowNode = Node<QuestNodeData, 'quest-node'>
 
 /**
  * Dependency edge type for React Flow
@@ -67,7 +67,7 @@ export function snapshotToNodes(
       return {
         // node.id === quest.id (UUID) - invariant from #21
         id: quest.id,
-        type: 'quest',
+        type: 'quest-node',
         position: {
           x: quest.position.x,
           y: quest.position.y,

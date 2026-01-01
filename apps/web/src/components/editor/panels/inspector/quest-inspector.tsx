@@ -8,7 +8,8 @@ import { IconSelector } from './icon-selector'
 import { SettingsForm } from './settings-form'
 import { TasksList } from './tasks-list'
 import { RewardsList } from './rewards-list'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 /**
  * QuestInspector - Panel for viewing and editing selected quest details
@@ -31,6 +32,7 @@ export function QuestInspector() {
   const selectedQuestId = useSelectedQuestId()
   const quest = useQuest(selectedQuestId ?? '')
   const updateQuest = useEditorStore((state) => state.updateQuest)
+  const deleteQuest = useEditorStore((state) => state.deleteQuest)
   const [settingsOpen, setSettingsOpen] = useState(false)
 
   /**
@@ -133,6 +135,21 @@ export function QuestInspector() {
     [selectedQuestId, quest, updateQuest]
   )
 
+  /**
+   * Handle deleting the quest
+   */
+  const handleDeleteQuest = useCallback(() => {
+    if (!selectedQuestId) return
+
+    // TODO: Push undo point when #25 is implemented
+    // pushUndoPoint()
+
+    // Confirm deletion
+    if (window.confirm('Are you sure you want to delete this quest? This action cannot be undone.')) {
+      deleteQuest(selectedQuestId)
+    }
+  }, [selectedQuestId, deleteQuest])
+
   // Show placeholder when no quest is selected
   if (!selectedQuestId || !quest) {
     return (
@@ -144,11 +161,19 @@ export function QuestInspector() {
 
   return (
     <div className="h-full overflow-auto p-4">
-      {/* Quest ID for reference (readonly) */}
-      <div className="mb-4 rounded-md bg-muted/50 px-3 py-2">
+      {/* Quest ID and delete button */}
+      <div className="mb-4 flex items-center justify-between rounded-md bg-muted/50 px-3 py-2">
         <p className="text-xs text-muted-foreground">
           Quest ID: <span className="font-mono">{quest.id.slice(0, 8)}...</span>
         </p>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleDeleteQuest}
+          className="h-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
       </div>
 
       {/* Metadata editing form */}

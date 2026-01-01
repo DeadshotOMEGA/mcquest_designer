@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog'
 import {
   useChapters,
+  useQuests,
   useSelectedChapterId,
   useEditorStore,
 } from '@/lib/store/editor-store'
@@ -40,8 +41,8 @@ import type { Chapter } from '@mcquest/schema'
  */
 export function ChapterPanel() {
   const chapters = useChapters()
+  const quests = useQuests()
   const selectedChapterId = useSelectedChapterId()
-  const snapshot = useEditorStore((state) => state.snapshot)
   const selectChapter = useEditorStore((state) => state.selectChapter)
   const addChapter = useEditorStore((state) => state.addChapter)
   const deleteChapter = useEditorStore((state) => state.deleteChapter)
@@ -56,15 +57,12 @@ export function ChapterPanel() {
   }, [chapters])
 
   // Get quest count per chapter
-  const questCountByChapter = React.useMemo(() => {
-    const counts: Record<string, number> = {}
-    if (snapshot?.quests) {
-      for (const quest of snapshot.quests) {
-        counts[quest.chapterId] = (counts[quest.chapterId] ?? 0) + 1
-      }
-    }
-    return counts
-  }, [snapshot?.quests])
+  // Compute counts directly without memoization to avoid infinite loop
+  // The computation is fast enough and prevents dependency chain issues
+  const questCountByChapter: Record<string, number> = {}
+  for (const quest of quests) {
+    questCountByChapter[quest.chapterId] = (questCountByChapter[quest.chapterId] ?? 0) + 1
+  }
 
   const handleAddChapter = () => {
     // Calculate next order number
