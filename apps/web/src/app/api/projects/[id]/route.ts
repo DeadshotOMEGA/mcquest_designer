@@ -15,24 +15,24 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     // Verify user has access to this project
     const membership = await checkProjectAccess(id)
 
-    const project = await prisma.project.findUnique({
+    const project = await prisma.projects.findUnique({
       where: { id },
       include: {
-        members: {
+        project_members: {
           include: {
-            user: {
+            users: {
               select: {
                 id: true,
                 name: true,
                 email: true,
-                avatarUrl: true,
+                avatar_url: true,
               },
             },
           },
         },
         _count: {
           select: {
-            versions: true,
+            project_versions: true,
           },
         },
       },
@@ -48,24 +48,24 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
         id: project.id,
         name: project.name,
         description: project.description,
-        latestSnapshot: project.latestSnapshot,
-        createdAt: project.createdAt.toISOString(),
-        updatedAt: project.updatedAt.toISOString(),
+        latestSnapshot: project.latest_snapshot,
+        createdAt: project.created_at.toISOString(),
+        updatedAt: project.updated_at.toISOString(),
         role: membership.role,
-        members: project.members.map(
+        members: project.project_members.map(
           (m: {
-            userId: string
+            user_id: string
             role: string
-            user: { id: string; name: string | null; email: string; avatarUrl: string | null }
-            createdAt: Date
+            users: { id: string; name: string | null; email: string; avatar_url: string | null }
+            created_at: Date
           }) => ({
-            userId: m.userId,
+            userId: m.user_id,
             role: m.role,
-            user: m.user,
-            joinedAt: m.createdAt.toISOString(),
+            user: m.users,
+            joinedAt: m.created_at.toISOString(),
           })
         ),
-        versionCount: project._count.versions,
+        versionCount: project._count.project_versions,
       },
     })
   } catch (error) {
@@ -91,15 +91,15 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     const validatedData = UpdateProjectRequestSchema.parse(body)
 
     // Update project
-    const project = await prisma.project.update({
+    const project = await prisma.projects.update({
       where: { id },
       data: {
         ...(validatedData.name && { name: validatedData.name }),
         ...(validatedData.description !== undefined && { description: validatedData.description }),
       },
       include: {
-        members: {
-          select: { role: true, userId: true },
+        project_members: {
+          select: { role: true, user_id: true },
         },
       },
     })
@@ -109,9 +109,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         id: project.id,
         name: project.name,
         description: project.description,
-        latestSnapshot: project.latestSnapshot,
-        createdAt: project.createdAt.toISOString(),
-        updatedAt: project.updatedAt.toISOString(),
+        latestSnapshot: project.latest_snapshot,
+        createdAt: project.created_at.toISOString(),
+        updatedAt: project.updated_at.toISOString(),
       },
     })
   } catch (error) {
@@ -132,7 +132,7 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
     await checkProjectAccess(id, 'OWNER')
 
     // Delete project (cascade will delete members, versions, and share tokens)
-    await prisma.project.delete({
+    await prisma.projects.delete({
       where: { id },
     })
 

@@ -19,7 +19,7 @@ export default async function EditorPage({ params }: { params: Promise<{ id: str
   const clerkUser = await requireUser()
 
   // Get database user
-  const dbUser = await prisma.user.findUnique({
+  const dbUser = await prisma.users.findUnique({
     where: { clerkId: clerkUser.id },
   })
 
@@ -28,18 +28,18 @@ export default async function EditorPage({ params }: { params: Promise<{ id: str
   }
 
   // Fetch project with access check
-  const project = await prisma.project.findFirst({
+  const project = await prisma.projects.findFirst({
     where: {
       id,
-      members: {
+      project_members: {
         some: {
-          userId: dbUser.id,
+          user_id: dbUser.id,
         },
       },
     },
     include: {
-      members: {
-        where: { userId: dbUser.id },
+      project_members: {
+        where: { user_id: dbUser.id },
         select: { role: true },
       },
     },
@@ -54,8 +54,8 @@ export default async function EditorPage({ params }: { params: Promise<{ id: str
     id: project.id,
     name: project.name,
     description: project.description,
-    latestSnapshot: project.latestSnapshot,
-    role: project.members[0]?.role ?? 'VIEWER',
+    latestSnapshot: project.latest_snapshot,
+    role: project.project_members[0]?.role ?? 'VIEWER',
   }
 
   return <EditorPageClient project={projectData} />

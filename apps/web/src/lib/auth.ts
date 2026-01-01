@@ -154,22 +154,25 @@ export async function getCurrentDbUser() {
   }
 
   // Upsert user in database
-  const dbUser = await prisma.user.upsert({
+  const dbUser = await prisma.users.upsert({
     where: { clerkId: clerkUser.id },
     update: {
       email,
       name: clerkUser.firstName
         ? `${clerkUser.firstName}${clerkUser.lastName ? ' ' + clerkUser.lastName : ''}`
         : undefined,
-      avatarUrl: clerkUser.imageUrl,
+      avatar_url: clerkUser.imageUrl,
+      updated_at: new Date(),
     },
     create: {
+      id: `clerk_${clerkUser.id}`,
       clerkId: clerkUser.id,
       email,
       name: clerkUser.firstName
         ? `${clerkUser.firstName}${clerkUser.lastName ? ' ' + clerkUser.lastName : ''}`
         : undefined,
-      avatarUrl: clerkUser.imageUrl,
+      avatar_url: clerkUser.imageUrl,
+      updated_at: new Date(),
     },
   })
 
@@ -199,15 +202,15 @@ export async function checkProjectAccess(
   const dbUser = await getCurrentDbUser()
 
   // Find user's membership in the project
-  const membership = await prisma.projectMember.findUnique({
+  const membership = await prisma.project_members.findUnique({
     where: {
-      projectId_userId: {
-        projectId,
-        userId: dbUser.id,
+      project_id_user_id: {
+        project_id: projectId,
+        user_id: dbUser.id,
       },
     },
     include: {
-      project: true,
+      projects: true,
     },
   })
 

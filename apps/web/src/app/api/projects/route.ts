@@ -8,6 +8,7 @@ import {
   createDefaultSnapshot,
 } from '@mcquest/schema'
 import type { Prisma } from '@prisma/client'
+import { randomUUID } from 'crypto'
 
 /**
  * Protected API route for project operations
@@ -33,30 +34,30 @@ export async function GET(request: Request) {
 
     // Build where clause
     const where = {
-      members: {
+      project_members: {
         some: {
-          userId: dbUser.id,
+          user_id: dbUser.id,
           ...(query.role && { role: query.role }),
         },
       },
     }
 
     // Fetch projects with pagination
-    const projects = await prisma.project.findMany({
+    const projects = await prisma.projects.findMany({
       where,
       take: query.limit + 1, // Fetch one extra to determine if there are more
       ...(query.cursor && {
         skip: 1,
         cursor: { id: query.cursor },
       }),
-      orderBy: { updatedAt: 'desc' },
+      orderBy: { updated_at: 'desc' },
       include: {
-        members: {
-          where: { userId: dbUser.id },
+        project_members: {
+          where: { user_id: dbUser.id },
           select: { role: true },
         },
         _count: {
-          select: { members: true },
+          select: { project_members: true },
         },
       },
     })
@@ -71,11 +72,11 @@ export async function GET(request: Request) {
       id: project.id,
       name: project.name,
       description: project.description,
-      latestSnapshot: project.latestSnapshot,
-      createdAt: project.createdAt.toISOString(),
-      updatedAt: project.updatedAt.toISOString(),
-      role: project.members[0]?.role,
-      memberCount: project._count.members,
+      latestSnapshot: project.latest_snapshot,
+      createdAt: project.created_at.toISOString(),
+      updatedAt: project.updated_at.toISOString(),
+      role: project.project_members[0]?.role,
+      memberCount: project._count.project_members,
     }))
 
     return NextResponse.json({
@@ -104,36 +105,42 @@ export async function POST(request: Request) {
     const defaultSnapshot = createDefaultSnapshot(validatedData.name)
 
     // Create project with owner membership in a transaction
-    const project = await prisma.project.create({
+    const projectId = randomUUID()
+    const now = new Date()
+    const project = await prisma.projects.create({
       data: {
+        id: projectId,
         name: validatedData.name,
         description: validatedData.description,
-        latestSnapshot: defaultSnapshot as unknown as Prisma.InputJsonValue,
-        members: {
+        latest_snapshot: defaultSnapshot as unknown as Prisma.InputJsonValue,
+        updated_at: now,
+        project_members: {
           create: {
-            userId: dbUser.id,
+            user_id: dbUser.id,
             role: 'OWNER',
+            updated_at: now,
           },
         },
       },
       include: {
-        members: {
-          where: { userId: dbUser.id },
+        project_members: {
+          where: { user_id: dbUser.id },
           select: { role: true },
         },
       },
     })
 
+    const projectMembers = project.project_members as Array<{ role: string }>
     return NextResponse.json(
       {
         project: {
           id: project.id,
           name: project.name,
           description: project.description,
-          latestSnapshot: project.latestSnapshot,
-          createdAt: project.createdAt.toISOString(),
-          updatedAt: project.updatedAt.toISOString(),
-          role: project.members[0]?.role,
+          latestSnapshot: project.latest_snapshot,
+          createdAt: project.created_at.toISOString(),
+          updatedAt: project.updated_at.toISOString(),
+          role: projectMembers[0]?.role,
         },
       },
       { status: 201 }

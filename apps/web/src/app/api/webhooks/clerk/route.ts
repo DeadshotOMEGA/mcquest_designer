@@ -94,12 +94,14 @@ export async function POST(request: Request) {
         }
 
         // Create user in database
-        await prisma.user.create({
+        await prisma.users.create({
           data: {
+            id: `clerk_${id}`,
             clerkId: id,
             email: primaryEmail.email_address,
             name: first_name ? `${first_name}${last_name ? ' ' + last_name : ''}` : null,
-            avatarUrl: image_url,
+            avatar_url: image_url,
+            updated_at: new Date(),
           },
         })
 
@@ -118,12 +120,13 @@ export async function POST(request: Request) {
         }
 
         // Update user in database
-        await prisma.user.update({
+        await prisma.users.update({
           where: { clerkId: id },
           data: {
             email: primaryEmail.email_address,
             name: first_name ? `${first_name}${last_name ? ' ' + last_name : ''}` : null,
-            avatarUrl: image_url,
+            avatar_url: image_url,
+            updated_at: new Date(),
           },
         })
 
@@ -134,7 +137,7 @@ export async function POST(request: Request) {
       case 'user.deleted': {
         // Delete user from database
         // This will cascade delete memberships due to Prisma schema
-        await prisma.user.delete({
+        await prisma.users.delete({
           where: { clerkId: id },
         })
 
