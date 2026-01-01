@@ -163,12 +163,12 @@ export function convertToSnapshot(snbtData: unknown, langData?: LangData): Conve
       const title = langData?.titles.get(hexId) || `Quest ${i}`;
       const description = langData?.descriptions.get(hexId);
 
-      // Extract position
-      const x = typeof questObj.x === 'number' ? questObj.x : 0;
-      const y = typeof questObj.y === 'number' ? questObj.y : 0;
+      // Extract position (handle both numbers and string numbers)
+      const x = typeof questObj.x === 'number' ? questObj.x : (typeof questObj.x === 'string' ? parseFloat(questObj.x) || 0 : 0);
+      const y = typeof questObj.y === 'number' ? questObj.y : (typeof questObj.y === 'string' ? parseFloat(questObj.y) || 0 : 0);
 
-      // Extract size
-      const size = typeof questObj.size === 'number' ? questObj.size : 1;
+      // Extract size (handle both numbers and string numbers)
+      const size = typeof questObj.size === 'number' ? questObj.size : (typeof questObj.size === 'string' ? parseFloat(questObj.size) || 1 : 1);
 
       // Extract tasks
       const tasks = extractTasks(questObj.tasks);
@@ -176,9 +176,9 @@ export function convertToSnapshot(snbtData: unknown, langData?: LangData): Conve
       // Extract rewards
       const rewards = extractRewards(questObj.rewards);
 
-      // Extract settings
-      const optional = questObj.optional === true;
-      const hideUntilDeps = questObj.hide_until_deps === true;
+      // Extract settings (handle both booleans and string booleans)
+      const optional = questObj.optional === true || questObj.optional === 'true';
+      const hideUntilDeps = questObj.hide_until_deps === true || questObj.hide_until_deps === 'true';
 
       const shapeValue = typeof questObj.shape === 'string'
         ? (questObj.shape as Quest['shape'])
@@ -333,7 +333,7 @@ export function convertFromSnapshot(snapshot: ProjectSnapshot): unknown {
 
   // Convert chapters
   const chapters: unknown[] = snapshot.chapters.map((chapter) => {
-    const hexId = idMapper.getHexId(chapter.id);
+    const hexId = idMapper.toHexId(chapter.id);
     const chapterObj: Record<string, unknown> = {
       id: hexId,
       filename: chapter.title,
@@ -370,7 +370,7 @@ export function convertFromSnapshot(snapshot: ProjectSnapshot): unknown {
 
   // Convert quests
   const quests: unknown[] = snapshot.quests.map((quest) => {
-    const hexId = idMapper.getHexId(quest.id);
+    const hexId = idMapper.toHexId(quest.id);
     const questObj: Record<string, unknown> = {
       id: hexId,
       title: quest.title,
@@ -495,7 +495,7 @@ export function convertFromSnapshot(snapshot: ProjectSnapshot): unknown {
     // Build dependencies array
     const deps = snapshot.dependencies.filter((d) => d.fromQuestId === quest.id);
     if (deps.length > 0) {
-      questObj.dependencies = deps.map((dep) => idMapper.getHexId(dep.toQuestId));
+      questObj.dependencies = deps.map((dep) => idMapper.toHexId(dep.toQuestId));
     }
 
     // Restore unknown SNBT fields
@@ -592,12 +592,21 @@ function extractTasks(tasksData: unknown): Task[] {
 
     const taskType = (type as Task['type']) || 'item';
 
+    // Extract item (handle both string and nested object formats)
+    let itemId: string | undefined;
+    if (typeof taskObj.item === 'string') {
+      itemId = taskObj.item;
+    } else if (taskObj.item && typeof taskObj.item === 'object') {
+      const itemObj = taskObj.item as Record<string, unknown>;
+      itemId = typeof itemObj.id === 'string' ? itemObj.id : undefined;
+    }
+
     const task: Task = {
       id: taskId,
       type: taskType,
       title: typeof taskObj.title === 'string' ? taskObj.title : undefined,
       count: typeof taskObj.count === 'number' ? Math.max(1, taskObj.count) : 1,
-      item: typeof taskObj.item === 'string' ? taskObj.item : undefined,
+      item: itemId,
       advancementId:
         typeof taskObj.advancement === 'string' ? taskObj.advancement : undefined,
       entityType: typeof taskObj.entity === 'string' ? taskObj.entity : undefined,
@@ -630,12 +639,21 @@ function extractRewards(rewardsData: unknown): Reward[] {
 
     const rewardType = (type as Reward['type']) || 'item';
 
+    // Extract item (handle both string and nested object formats)
+    let itemId: string | undefined;
+    if (typeof rewardObj.item === 'string') {
+      itemId = rewardObj.item;
+    } else if (rewardObj.item && typeof rewardObj.item === 'object') {
+      const itemObj = rewardObj.item as Record<string, unknown>;
+      itemId = typeof itemObj.id === 'string' ? itemObj.id : undefined;
+    }
+
     const reward: Reward = {
       id: rewardId,
       type: rewardType,
       title: typeof rewardObj.title === 'string' ? rewardObj.title : undefined,
       count: typeof rewardObj.count === 'number' ? Math.max(1, rewardObj.count) : 1,
-      item: typeof rewardObj.item === 'string' ? rewardObj.item : undefined,
+      item: itemId,
       command: typeof rewardObj.command === 'string' ? rewardObj.command : undefined,
       xp: typeof rewardObj.xp === 'number' ? rewardObj.xp : undefined,
       levels: typeof rewardObj.levels === 'number' ? rewardObj.levels : undefined,
