@@ -1,6 +1,6 @@
 import type { ProjectSnapshot, Quest, Dependency } from '@mcquest/schema'
 import type { Node, Edge } from '@xyflow/react'
-import type { QuestNodeData } from '@/components/editor/nodes'
+import type { CompactQuestNodeData } from '@/components/editor/nodes'
 import type { DependencyEdgeData } from '@/components/editor/edges'
 
 /**
@@ -14,13 +14,15 @@ import type { DependencyEdgeData } from '@/components/editor/edges'
  * - edge.id follows ${fromQuestId}-->${toQuestId} pattern
  * - Filters by activeChapterId
  *
+ * Uses compact quest nodes for auto-layout visualization (Phase 4).
+ *
  * @see ReactFlow-to-Snapshot mapper in #22 for the reverse direction
  */
 
 /**
- * Quest node type for React Flow
+ * Quest node type for React Flow (compact visualization)
  */
-export type QuestFlowNode = Node<QuestNodeData, 'quest-node'>
+export type QuestFlowNode = Node<CompactQuestNodeData, 'compact-quest-node'>
 
 /**
  * Dependency edge type for React Flow
@@ -41,6 +43,16 @@ export interface SnapshotMapperOptions {
    * Keys are entity IDs (quest or dependency)
    */
   validationResults?: Map<string, { state: 'warning' | 'error'; messages: string[] }>
+
+  /**
+   * Selected quest ID (for highlighting selected node)
+   */
+  selectedQuestId?: string | null
+
+  /**
+   * Callback when a quest node is clicked
+   */
+  onSelectQuest?: (questId: string) => void
 }
 
 /**
@@ -56,31 +68,24 @@ export function snapshotToNodes(
   quests: Quest[],
   options: SnapshotMapperOptions
 ): QuestFlowNode[] {
-  const { activeChapterId, validationResults } = options
+  const { activeChapterId, selectedQuestId, onSelectQuest } = options
 
   return quests
     .filter((quest) => quest.chapterId === activeChapterId)
     .map((quest): QuestFlowNode => {
-      // Get validation state for this quest
-      const validation = validationResults?.get(quest.id)
-
       return {
         // node.id === quest.id (UUID) - invariant from #21
         id: quest.id,
-        type: 'quest-node',
+        type: 'compact-quest-node',
         position: {
           x: quest.position.x,
           y: quest.position.y,
         },
         data: {
-          questId: quest.id,
-          title: quest.title,
-          subtitle: quest.subtitle,
-          shape: quest.shape,
-          icon: quest.icon,
-          size: quest.size,
-          validationState: validation?.state ?? 'valid',
-          validationMessages: validation?.messages,
+          quest,
+          isSelected: quest.id === selectedQuestId,
+          isOptional: quest.settings.optional,
+          onSelect: onSelectQuest,
         },
       }
     })

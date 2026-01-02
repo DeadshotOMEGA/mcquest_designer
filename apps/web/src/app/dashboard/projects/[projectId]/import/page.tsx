@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { use } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, CheckCircle2, Loader2, AlertTriangle, FileUp } from 'lucide-react'
 import Link from 'next/link'
@@ -48,7 +49,8 @@ interface ImportState {
  * @example
  * Route: /dashboard/projects/[projectId]/import
  */
-export default function ImportPage({ params }: { params: { projectId: string } }) {
+export default function ImportPage({ params }: { params: Promise<{ projectId: string }> }) {
+  const { projectId } = use(params)
   const router = useRouter()
   const [state, setState] = React.useState<ImportState>({
     step: 'upload',
@@ -134,7 +136,7 @@ export default function ImportPage({ params }: { params: { projectId: string } }
     try {
       setState((prev) => ({ ...prev, step: 'importing', error: null }))
 
-      const response = await fetch(`/api/projects/${params.projectId}/import`, {
+      const response = await fetch(`/api/projects/${projectId}/import`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ snapshot: state.snapshot }),
@@ -145,13 +147,13 @@ export default function ImportPage({ params }: { params: { projectId: string } }
         throw new Error(errorData.error?.message || 'Import failed')
       }
 
-      const data = await response.json()
+      await response.json()
 
       setState((prev) => ({ ...prev, step: 'complete' }))
 
       // Redirect to editor after a short delay
       setTimeout(() => {
-        router.push(`/editor/${params.projectId}`)
+        router.push(`/editor/${projectId}`)
       }, 2000)
     } catch (error) {
       setState((prev) => ({
@@ -160,7 +162,7 @@ export default function ImportPage({ params }: { params: { projectId: string } }
         error: error instanceof Error ? error.message : 'Failed to import snapshot',
       }))
     }
-  }, [state.snapshot, params.projectId, router])
+  }, [state.snapshot, projectId, router])
 
   /**
    * Reset workflow to start over
@@ -189,7 +191,7 @@ export default function ImportPage({ params }: { params: { projectId: string } }
         </Link>
         <span aria-hidden="true">/</span>
         <Link
-          href={`/editor/${params.projectId}`}
+          href={`/editor/${projectId}`}
           className="hover:text-foreground transition-colors"
         >
           Project
@@ -200,7 +202,7 @@ export default function ImportPage({ params }: { params: { projectId: string } }
 
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link href={`/editor/${params.projectId}`}>
+        <Link href={`/editor/${projectId}`}>
           <Button variant="ghost" size="icon" aria-label="Back to editor">
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -434,7 +436,7 @@ export default function ImportPage({ params }: { params: { projectId: string } }
           )}
 
           <div className="flex items-center justify-between">
-            <Button variant="outline" onClick={() => router.push(`/editor/${params.projectId}`)}>
+            <Button variant="outline" onClick={() => router.push(`/editor/${projectId}`)}>
               Cancel Import
             </Button>
             <Button onClick={resetWorkflow}>

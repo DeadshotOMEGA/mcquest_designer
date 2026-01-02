@@ -26,12 +26,13 @@ export interface LayoutResult {
 }
 
 /**
- * Default layout options
+ * Default layout options for compact quest nodes
+ * Compact nodes are 40x40px (w-10 h-10 in CompactQuestNode)
  */
 const DEFAULT_LAYOUT_OPTIONS: LayoutOptions = {
   direction: 'TB',
-  nodeWidth: 64,
-  nodeHeight: 64,
+  nodeWidth: 40,
+  nodeHeight: 40,
   rankSep: 100,
   nodeSep: 60,
 }

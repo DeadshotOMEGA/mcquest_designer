@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import { NextResponse } from 'next/server'
 import { ProjectSnapshotSchema } from '@mcquest/schema'
 import type { Prisma } from '@prisma/client'
+import { randomUUID } from 'crypto'
 
 /**
  * Import request body schema
@@ -13,7 +14,7 @@ interface ImportRequestBody {
 }
 
 /**
- * POST /api/projects/:projectId/import
+ * POST /api/projects/:id/import
  * Import SNBT snapshot into project
  *
  * Creates a new version from the imported snapshot and sets it as the latest.
@@ -56,13 +57,13 @@ interface ImportRequestBody {
  */
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ projectId: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { projectId } = await params
+    const { id } = await params
 
     // Verify user has at least EDITOR access
-    const membership = await checkProjectAccess(projectId, 'EDITOR')
+    const membership = await checkProjectAccess(id, 'EDITOR')
 
     // Parse and validate request body
     const body: unknown = await request.json()
@@ -86,31 +87,32 @@ export async function POST(
     }
 
     // Create new version record for audit trail
-    const version = await prisma.projectVersion.create({
+    const version = await prisma.project_versions.create({
       data: {
-        projectId,
+        id: randomUUID(),
+        project_id: id,
         snapshot: updatedSnapshot as unknown as Prisma.InputJsonValue,
-        createdById: membership.userId,
-        comment: 'Imported from SNBT files',
+        created_by: membership.user_id,
+        message: 'Imported from SNBT files',
       },
       select: {
         id: true,
-        versionNumber: true,
-        createdAt: true,
+        created_at: true,
       },
     })
 
     // Update project with the new snapshot as latest
-    const project = await prisma.project.update({
-      where: { id: projectId },
+    const project = await prisma.projects.update({
+      where: { id },
       data: {
-        latestSnapshot: updatedSnapshot as unknown as Prisma.InputJsonValue,
+        latest_snapshot: updatedSnapshot as unknown as Prisma.InputJsonValue,
+        updated_at: new Date(),
       },
       select: {
         id: true,
         name: true,
         description: true,
-        updatedAt: true,
+        updated_at: true,
       },
     })
 
@@ -118,12 +120,11 @@ export async function POST(
       {
         success: true,
         versionId: version.id,
-        versionNumber: version.versionNumber,
         project: {
           id: project.id,
           name: project.name,
           description: project.description,
-          updatedAt: project.updatedAt.toISOString(),
+          updatedAt: project.updated_at.toISOString(),
         },
       },
       { status: 201 }

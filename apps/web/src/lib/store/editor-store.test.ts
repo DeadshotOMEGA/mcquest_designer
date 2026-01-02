@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { useEditorStore } from './editor-store'
 import { createDefaultSnapshot } from '@/lib/editor/default-snapshot'
 import { createDefaultQuest, createDefaultChapter } from '@mcquest/schema'
-import type { Quest, Chapter } from '@mcquest/schema'
 
 describe('EditorStore', () => {
   beforeEach(() => {
@@ -405,10 +404,6 @@ describe('EditorStore', () => {
 
       // Apply layout
       useEditorStore.getState().applyAutoLayout()
-
-      const afterLayout = useEditorStore
-        .getState()
-        .snapshot?.quests.map((q) => ({ id: q.id, pos: { ...q.position } }))
 
       // Undo the layout
       useEditorStore.getState().undo()
