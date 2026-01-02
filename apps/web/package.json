@@ -16,7 +16,8 @@
     "test:coverage": "vitest --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:debug": "playwright test --debug"
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:headed": "playwright test --headed"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.36.5",
@@ -25,9 +26,11 @@
     "@mcquest/schema": "workspace:*",
     "@mcquest/snbt": "workspace:*",
     "@prisma/client": "6.9.0",
+    "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-checkbox": "^1.3.3",
     "@radix-ui/react-collapsible": "^1.1.12",
     "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-popover": "^1.1.15",
     "@radix-ui/react-scroll-area": "^1.2.10",
@@ -68,6 +71,8 @@
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/coverage-v8": "^2.1.9",
     "@vitest/ui": "^2.1.9",
+    "dotenv": "^17.2.3",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9.17.0",
     "eslint-config-next": "^15.1.3",
     "happy-dom": "^20.0.11",
