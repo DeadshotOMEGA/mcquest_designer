@@ -56,8 +56,7 @@ export function EditorPageClient({ project }: EditorPageClientProps) {
 
     // Initialize store with validated snapshot
     initializeProject(project.id, parseResult.data)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [project.id, project.name, project.latestSnapshot])
+  }, [project.id, project.name, project.latestSnapshot, initializeProject])
 
   return (
     <AutosaveProvider projectId={project.id}>

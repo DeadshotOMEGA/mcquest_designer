@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo, useCallback } from 'react'
+import React, { useMemo, useCallback, useEffect, useRef } from 'react'
 import {
   ReactFlow,
   Background,
@@ -10,6 +10,7 @@ import {
   type EdgeTypes,
   type OnSelectionChangeFunc,
   type OnNodeDrag,
+  type OnConnect,
   BackgroundVariant,
 } from '@xyflow/react'
 import { QuestNode as QuestNodeComponent, CompactQuestNode as CompactQuestNodeComponent } from './nodes'
@@ -29,7 +30,7 @@ import {
   type QuestFlowNode,
   type DependencyFlowEdge,
 } from '@/lib/editor'
-import { createDefaultQuest } from '@mcquest/schema'
+import { createDefaultQuest, type Dependency } from '@mcquest/schema'
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EditorToolbar } from './editor-toolbar'
@@ -85,6 +86,8 @@ export function EditorCanvas({ projectId: _projectId }: EditorCanvasProps) {
   const updateQuest = useEditorStore((state) => state.updateQuest)
   const selectQuest = useEditorStore((state) => state.selectQuest)
   const addQuest = useEditorStore((state) => state.addQuest)
+  const updateDependencies = useEditorStore((state) => state.updateDependencies)
+  const pushUndoPoint = useEditorStore((state) => state.pushUndoPoint)
   const applyAutoLayout = useEditorStore((state) => state.applyAutoLayout)
   const undo = useEditorStore((state) => state.undo)
   const redo = useEditorStore((state) => state.redo)
@@ -102,16 +105,39 @@ export function EditorCanvas({ projectId: _projectId }: EditorCanvasProps) {
 
     return snapshotToFlow(snapshot, {
       activeChapterId: selectedChapterId,
+      selectedQuestId,
+      onSelectQuest: selectQuest,
     })
-  }, [snapshot, selectedChapterId])
+  }, [snapshot, selectedChapterId, selectedQuestId, selectQuest])
 
-  // Apply selection state to nodes
-  const nodesWithSelection = useMemo<QuestFlowNode[]>(() => {
-    return nodes.map((node) => ({
-      ...node,
-      selected: node.id === selectedQuestId,
-    }))
-  }, [nodes, selectedQuestId])
+  // Track the last chapter ID to detect chapter changes
+  const lastChapterIdRef = useRef<string | null>(null)
+
+  // Apply auto-layout when chapter changes (make auto-layout the default)
+  useEffect(() => {
+    // Only apply if chapter changed and we have quests
+    if (
+      selectedChapterId &&
+      selectedChapterId !== lastChapterIdRef.current &&
+      nodes.length > 0
+    ) {
+      lastChapterIdRef.current = selectedChapterId
+
+      // Apply layout after a short delay to allow React Flow to initialize
+      const timeoutId = setTimeout(() => {
+        setArranging(true)
+        try {
+          applyAutoLayout()
+        } finally {
+          setTimeout(() => setArranging(false), 300)
+        }
+      }, 100)
+
+      return () => clearTimeout(timeoutId)
+    } else if (selectedChapterId) {
+      lastChapterIdRef.current = selectedChapterId
+    }
+  }, [selectedChapterId, nodes.length, applyAutoLayout, setArranging])
 
   // Handle node drag - update quest position in store when drag ends
   const onNodeDragStop: OnNodeDrag<QuestFlowNode> = useCallback(
@@ -126,6 +152,42 @@ export function EditorCanvas({ projectId: _projectId }: EditorCanvasProps) {
       })
     },
     [updateQuest]
+  )
+
+  // Handle edge connection - create new dependency when user connects two quests
+  const onConnect: OnConnect = useCallback(
+    (connection) => {
+      // Validate connection has both source and target
+      if (!connection.source || !connection.target) return
+
+      // Push undo point before adding dependency
+      pushUndoPoint()
+
+      // Create new dependency
+      const newDependency: Dependency = {
+        fromQuestId: connection.source,
+        toQuestId: connection.target,
+        type: 'AND', // Default to AND dependency
+      }
+
+      // Add to snapshot
+      updateDependencies({
+        type: 'add',
+        dependency: newDependency,
+      })
+    },
+    [updateDependencies, pushUndoPoint]
+  )
+
+  // Handle node click - ensure clicking opens the quest details
+  const onNodeClick = useCallback(
+    (_event: React.MouseEvent, node: QuestFlowNode) => {
+      // Select the clicked quest to open details modal
+      if (node.id !== selectedQuestId) {
+        selectQuest(node.id)
+      }
+    },
+    [selectedQuestId, selectQuest]
   )
 
   // Handle selection changes from React Flow
@@ -211,9 +273,11 @@ export function EditorCanvas({ projectId: _projectId }: EditorCanvasProps) {
       />
 
       <ReactFlow
-        nodes={nodesWithSelection}
+        nodes={nodes}
         edges={edges}
         onNodeDragStop={onNodeDragStop}
+        onNodeClick={onNodeClick}
+        onConnect={onConnect}
         onSelectionChange={onSelectionChange}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
