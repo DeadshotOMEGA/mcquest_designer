@@ -24,9 +24,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
     // If expectedVersion is provided, implement optimistic locking
     if (validatedData.expectedVersion) {
-      const currentProject = await prisma.project.findUnique({
+      const currentProject = await prisma.projects.findUnique({
         where: { id },
-        select: { updatedAt: true },
+        select: { updated_at: true },
       })
 
       if (!currentProject) {
@@ -34,7 +34,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       }
 
       // Compare expected version (ISO timestamp) with current updatedAt
-      if (currentProject.updatedAt.toISOString() !== validatedData.expectedVersion) {
+      if (currentProject.updated_at.toISOString() !== validatedData.expectedVersion) {
         throw ApiErrors.conflict(
           'Project has been modified by another user. Please refresh and try again.'
         )
@@ -51,17 +51,17 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     }
 
     // Update project with new snapshot
-    const project = await prisma.project.update({
+    const project = await prisma.projects.update({
       where: { id },
       data: {
-        latestSnapshot: updatedSnapshot as unknown as Prisma.InputJsonValue,
+        latest_snapshot: updatedSnapshot as unknown as Prisma.InputJsonValue,
       },
       select: {
         id: true,
         name: true,
         description: true,
-        latestSnapshot: true,
-        updatedAt: true,
+        latest_snapshot: true,
+        updated_at: true,
       },
     })
 
@@ -70,8 +70,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         id: project.id,
         name: project.name,
         description: project.description,
-        latestSnapshot: project.latestSnapshot,
-        updatedAt: project.updatedAt.toISOString(),
+        latestSnapshot: project.latest_snapshot,
+        updatedAt: project.updated_at.toISOString(),
       },
     })
   } catch (error) {

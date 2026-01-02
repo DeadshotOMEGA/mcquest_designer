@@ -31,7 +31,7 @@ async function ProjectList() {
   const clerkUser = await requireUser()
 
   // Get database user
-  const dbUser = await prisma.user.findUnique({
+  const dbUser = await prisma.users.findUnique({
     where: { clerkId: clerkUser.id },
   })
 
@@ -58,29 +58,29 @@ async function ProjectList() {
   }
 
   // Fetch user's projects with member information
-  const projects = await prisma.project.findMany({
+  const projects = await prisma.projects.findMany({
     where: {
-      members: {
+      project_members: {
         some: {
-          userId: dbUser.id,
+          user_id: dbUser.id,
         },
       },
     },
     include: {
-      members: {
+      project_members: {
         select: {
           role: true,
-          userId: true,
+          user_id: true,
         },
       },
       _count: {
         select: {
-          members: true,
+          project_members: true,
         },
       },
     },
     orderBy: {
-      updatedAt: 'desc',
+      updated_at: 'desc',
     },
   })
 
@@ -107,12 +107,12 @@ async function ProjectList() {
 
   // Define the project type from findMany result
   type ProjectWithMembers = (typeof projects)[number]
-  type MemberInfo = ProjectWithMembers['members'][number]
+  type MemberInfo = ProjectWithMembers['project_members'][number]
 
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {projects.map((project: ProjectWithMembers) => {
-        const userMembership = project.members.find((m: MemberInfo) => m.userId === dbUser.id)
+        const userMembership = project.project_members.find((m: MemberInfo) => m.user_id === dbUser.id)
         return (
           <ProjectCard
             key={project.id}
@@ -120,8 +120,8 @@ async function ProjectList() {
               id: project.id,
               name: project.name,
               description: project.description,
-              updatedAt: project.updatedAt.toISOString(),
-              memberCount: project._count.members,
+              updatedAt: project.updated_at.toISOString(),
+              memberCount: project._count.project_members,
               role: userMembership?.role,
             }}
           />

@@ -14,6 +14,49 @@ import { createProblem } from './types'
 // ============================================
 
 /**
+ * Validates that SNBT metadata fields are properly structured.
+ * Severity: warning (non-blocking, but indicates import issues)
+ */
+export function validateSNBTMetadata(snapshot: ProjectSnapshot): Problem[] {
+  const problems: Problem[] = []
+
+  // Validate quest metadata
+  for (const quest of snapshot.quests) {
+    if (quest.metadata?.snbtMetadata) {
+      // Check that snbtMetadata is an object
+      if (typeof quest.metadata.snbtMetadata !== 'object' || quest.metadata.snbtMetadata === null) {
+        problems.push(
+          createProblem(
+            'warning',
+            'INVALID_SNBT_METADATA',
+            `Quest has invalid SNBT metadata (expected object)`,
+            { kind: 'quest', id: quest.id }
+          )
+        )
+      }
+    }
+  }
+
+  // Validate chapter metadata
+  for (const chapter of snapshot.chapters) {
+    if (chapter.metadata?.snbtMetadata) {
+      if (typeof chapter.metadata.snbtMetadata !== 'object' || chapter.metadata.snbtMetadata === null) {
+        problems.push(
+          createProblem(
+            'warning',
+            'INVALID_SNBT_METADATA',
+            `Chapter has invalid SNBT metadata (expected object)`,
+            { kind: 'chapter', id: chapter.id }
+          )
+        )
+      }
+    }
+  }
+
+  return problems
+}
+
+/**
  * Validates that all quests have a non-empty title.
  * Severity: error (blocking)
  */
@@ -459,6 +502,9 @@ export const allValidationRules: Array<(snapshot: ProjectSnapshot) => Problem[]>
 
   // Graph analysis rules
   validateNoCircularDependencies,
+
+  // SNBT metadata validation
+  validateSNBTMetadata,
 
   // Design warning rules
   validateOrphanQuests,

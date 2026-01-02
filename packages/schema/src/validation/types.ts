@@ -42,6 +42,8 @@ export type ProblemCode =
   | 'SELF_DEPENDENCY'
   | 'DUPLICATE_DEPENDENCY'
   | 'CROSS_CHAPTER_DEPENDENCY'
+  // SNBT metadata validation
+  | 'INVALID_SNBT_METADATA'
 
 /**
  * A validation problem discovered in a ProjectSnapshot.

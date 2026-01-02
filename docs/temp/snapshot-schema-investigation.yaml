@@ -1,0 +1,392 @@
+# Investigation: ProjectSnapshot Schema & Data Model
+# Context bundle for understanding the canonical snapshot structure and validation rules
+
+title: ProjectSnapshot Schema Investigation
+goal: Document the complete ProjectSnapshot Zod schema, data model, ID handling, and semantic validation rules
+
+# ============================================
+# Key Files
+# ============================================
+
+keyFiles:
+  schemaCore: packages/schema/src/core.ts:1-223
+    - Main Zod schema definitions
+    - All entity types (Quest, Chapter, Task, Reward)
+    - UI state and metadata structures
+
+  schemaDefaults: packages/schema/src/defaults.ts:1-71
+    - Factory functions for creating default snapshots/chapters/quests
+    - UUID generation at creation
+
+  apiSchemas: packages/schema/src/api.ts:1-40
+    - Request/response schemas for API endpoints
+    - CreateProjectRequest, UpdateSnapshotRequest
+
+  validationTypes: packages/schema/src/validation/types.ts:1-90
+    - Problem, ProblemSeverity, ProblemEntity types
+    - ProblemCode enum for all validation error codes
+
+  validationRules: packages/schema/src/validation/rules.ts:1-467
+    - 15+ validation rule functions
+    - Rules for quests, chapters, dependencies
+    - Kahn's algorithm for circular dependency detection
+
+  validationValidator: packages/schema/src/validation/validator.ts:1-156
+    - validateSnapshot() main entry point
+    - isSnapshotValid() quick check
+    - Problem filtering helpers
+
+# ============================================
+# ProjectSnapshot Structure
+# ============================================
+
+structure: |
+  ProjectSnapshot {
+    version: string (SCHEMA_VERSION = "0.1.0")
+    metadata: ProjectMetadata {
+      projectName: string (1-255 chars)
+      targetMinecraftVersion: "1.21" | "1.21.1" | "1.21.2" | "1.21.3" | "1.21.4"
+      targetFTBQuestsVersion?: string
+      createdAt: ISO datetime string
+      updatedAt: ISO datetime string
+    }
+    chapters: Chapter[] (default [])
+    quests: Quest[] (default [])
+    dependencies: Dependency[] (default [])
+    uiState?: UISnapshot (optional, editor-only)
+  }
+
+# ============================================
+# ID Handling
+# ============================================
+
+idStrategy: |
+  **All IDs are UUIDs (v4)**
+  - Quest.id: UUID v4 (must equal React Flow node.id)
+  - Chapter.id: UUID v4
+  - Task.id: UUID v4 (within quest)
+  - Reward.id: UUID v4 (within quest)
+  - Dependency uses: fromQuestId, toQuestId (both UUIDs)
+
+  **UUID Generation**
+  - Created via uuid.v4() in factory functions
+  - Example: createDefaultSnapshot() generates random chapter ID
+  - UuidSchema enforces: z.string().uuid()
+  - No numeric ID remapping in v0.1.0 (reserved for future export mapping)
+
+# ============================================
+# Entity Definitions
+# ============================================
+
+chapter: |
+  Chapter {
+    id: UUID v4
+    title: string (required, min 1 char)
+    description?: string
+    order: integer (>= 0, must be unique)
+    icon?: IconReference
+    background?: string (background image reference)
+    defaultQuestShape?: QuestShape
+  }
+
+  **Purpose**: Groups quests into logical sections
+  **Ordering**: Chapters sorted by order field for export
+
+quest: |
+  Quest {
+    id: UUID v4
+    chapterId: UUID v4 (must reference existing chapter)
+    title: string (required, min 1 char)
+    subtitle?: string
+    description?: string
+    position: Position { x: number, y: number }
+    size: number (default 1, must be positive)
+    shape: QuestShape (default 'square')
+      - Options: square, rsquare, circle, diamond, pentagon, hexagon, octagon
+    icon?: IconReference
+    tasks: Task[] (default [])
+    rewards: Reward[] (default [])
+    settings: QuestSettings {
+      optional: boolean (default false)
+      hidden: 'true' | 'false' | 'dependency' (default 'false')
+      repeatable: boolean (default false)
+      canRepeat: boolean (default false)
+      hideUntilDeps: boolean (default false)
+    }
+  }
+
+  **Position**: Canvas coordinates for React Flow visualization
+  **Settings**: FTB Quests 1.21.x quest behavior flags
+
+task: |
+  Task {
+    id: UUID v4
+    type: TaskType (required)
+      - Options: item, checkmark, advancement, kill, location, observation, xp, stat
+    title?: string
+    count: integer (default 1, must be positive)
+
+    Type-specific fields (conditional on task.type):
+    - item (string): Item ID like "minecraft:stone"
+    - advancementId (string): Advancement ID
+    - entityType (string): Entity type for 'kill' tasks
+    - dimension (string): Dimension ID for 'location' tasks
+    - position (Position): Coordinates for location-based tasks
+    - range (number): Detection range for location tasks
+  }
+
+  **Pattern**: Discriminated union by type field
+  **Validation**: Zod schema allows optional fields; export validation ensures type-specific fields are present
+
+reward: |
+  Reward {
+    id: UUID v4
+    type: RewardType (required)
+      - Options: item, command, xp, xp_levels, choice, random, loot
+    title?: string
+    count: integer (default 1, must be positive)
+
+    Type-specific fields (conditional on reward.type):
+    - item (string): Item ID for 'item' rewards
+    - command (string): Command string for 'command' rewards
+    - xp (integer): XP amount for 'xp' type
+    - levels (integer): XP level count for 'xp_levels'
+    - table (string): Loot table ID for 'loot' type
+  }
+
+  **Pattern**: Discriminated union by type field
+  **Choices/Random**: Nested array structure not yet defined
+
+dependency: |
+  Dependency {
+    fromQuestId: UUID v4 (must reference existing quest)
+    toQuestId: UUID v4 (must reference existing quest)
+    type: 'AND' | 'OR' (default 'AND')
+  }
+
+  **Semantics**: "fromQuestId must be completed before toQuestId"
+  **Direction**: Arrow in React Flow from fromQuestId to toQuestId
+  **No self-dependencies**: Validated to prevent circular references
+  **No cross-chapter deps**: Warning only (non-blocking, valid design)
+
+iconReference: |
+  IconReference {
+    type: 'item' | 'texture'
+    value: string
+      - 'item': e.g., "minecraft:book", "ftbquests:egg"
+      - 'texture': e.g., "ftbquests:textures/quests/background"
+  }
+
+  **No texture loading**: Icons are references only, not downloaded/rendered
+  **Export mapping**: Icon references preserved as-is in SNBT output
+
+uiState: |
+  UISnapshot (optional, never exported) {
+    activeChapterId?: UUID
+    viewportByChapter: Map<UUID, ViewportState>
+      - ViewportState { x, y, zoom }
+    selectedQuestId?: UUID
+  }
+
+  **Purpose**: Restore editor UI state (viewport, selection)
+  **Invariant**: Must not influence export output
+  **Persistence**: Stored in Prisma but never used for SNBT generation
+
+# ============================================
+# Validation Rules & Constraints
+# ============================================
+
+validationLayers: |
+  **Layer 1: Zod Schema Validation (core.ts)**
+  - Type checking
+  - Field presence/optionality
+  - Min/max lengths
+  - Enum values
+  - Positive numbers, valid UUIDs, ISO datetimes
+
+  **Layer 2: Semantic Validation (rules.ts)**
+  - Quest structure: titles non-empty, chapter refs valid, unique IDs
+  - Chapter structure: titles non-empty, unique IDs, unique order values
+  - Dependency graph: no circular deps, no self-deps, refs valid
+  - Design patterns: orphan quests (warning), cross-chapter deps (warning)
+
+questValidationRules: |
+  1. validateUniqueQuestIds - DUPLICATE_QUEST_ID (error)
+     - No two quests can share an ID
+
+  2. validateQuestTitles - MISSING_QUEST_TITLE (error)
+     - Every quest must have non-empty title
+
+  3. validateQuestChapterReferences - QUEST_MISSING_CHAPTER (error)
+     - Every quest.chapterId must reference existing chapter
+
+  4. validateOrphanQuests - ORPHAN_QUEST (warning)
+     - Quest with no incoming/outgoing dependencies (only if >1 quest)
+     - Does not block export, indicates design issue
+
+chapterValidationRules: |
+  1. validateUniqueChapterIds - DUPLICATE_CHAPTER_ID (error)
+     - No two chapters can share an ID
+
+  2. validateChapterTitles - MISSING_CHAPTER_TITLE (error)
+     - Every chapter must have non-empty title
+
+  3. validateUniqueChapterOrder - DUPLICATE_CHAPTER_ORDER (warning)
+     - Chapter order values should be unique
+     - Non-blocking but may cause export ordering issues
+
+dependencyValidationRules: |
+  1. validateDependencySourceExists - DEPENDENCY_MISSING_SOURCE (error)
+     - fromQuestId must reference existing quest
+
+  2. validateDependencyTargetExists - DEPENDENCY_MISSING_TARGET (error)
+     - toQuestId must reference existing quest
+
+  3. validateNoSelfDependencies - SELF_DEPENDENCY (error)
+     - Cannot have fromQuestId === toQuestId
+
+  4. validateNoDuplicateDependencies - DUPLICATE_DEPENDENCY (warning)
+     - Same (fromQuestId, toQuestId) pair can appear only once
+
+  5. validateNoCircularDependencies - CIRCULAR_DEPENDENCY (error)
+     - Uses Kahn's algorithm for O(V+E) cycle detection
+     - Reports all quests involved in cycles
+
+  6. validateCrossChapterDependencies - CROSS_CHAPTER_DEPENDENCY (warning)
+     - Warns when fromQuestId and toQuestId are in different chapters
+     - Valid design, but may complicate progression
+
+# ============================================
+# Validation Entry Points
+# ============================================
+
+mainValidator: |
+  **validateSnapshot(snapshot, options?)**
+  - packages/schema/src/validation/validator.ts:58-106
+  - Entry point for semantic validation
+  - Runs all 15+ rules in defined order (structure first, then semantic)
+
+  Options:
+  - stopOnFirstError: boolean (fail-fast mode)
+  - severityFilter: 'error' | 'warning' (filter results)
+  - skipWarnings: boolean (exclude warning-only rules)
+
+  Returns: ValidationResult {
+    valid: boolean (true if no errors, warnings allowed)
+    problems: Problem[]
+    errorCount: number
+    warningCount: number
+  }
+
+quickCheck: |
+  **isSnapshotValid(snapshot)**
+  - packages/schema/src/validation/validator.ts:116-119
+  - Returns boolean only
+  - Internally uses: stopOnFirstError: true, skipWarnings: true
+  - Most efficient for yes/no checks
+
+helperFunctions: |
+  - filterBySeverity(problems, severity) - Filter by error/warning
+  - filterByEntityKind(problems, 'quest'|'chapter'|'dependency') - By entity type
+  - getProblemsForEntity(problems, entityId) - By specific ID
+  - createProblem(severity, code, message, entity?) - Type-safe Problem construction
+
+# ============================================
+# Factory Functions (Defaults)
+# ============================================
+
+factories: |
+  **createDefaultSnapshot(name: string)**
+  - packages/schema/src/defaults.ts:8-36
+  - Creates ProjectSnapshot with one empty "Getting Started" chapter
+  - Generates UUID v4 for chapter
+  - Sets timestamps to now (ISO string)
+  - Initializes uiState with chapter viewport
+  - Returns ready-to-edit snapshot
+
+  **createDefaultChapter(title, order)**
+  - packages/schema/src/defaults.ts:41-47
+  - Minimal chapter with just ID, title, order
+  - Generates UUID v4
+
+  **createDefaultQuest(chapterId, title, position)**
+  - packages/schema/src/defaults.ts:52-70
+  - Quest at canvas position with default settings
+  - All settings set to false/default
+  - No tasks or rewards initially
+
+# ============================================
+# Constraints & Limits (from rules)
+# ============================================
+
+constraints: |
+  **Hard Constraints (Errors)**
+  - All chapter/quest IDs must be unique UUIDs
+  - All quest titles must be non-empty
+  - All chapter titles must be non-empty
+  - Every quest must reference existing chapter
+  - Every dependency must reference existing quests
+  - No circular dependencies allowed
+  - No self-dependencies allowed
+
+  **Soft Constraints (Warnings)**
+  - Chapter order should be unique (affects export sort)
+  - Quests should have incoming/outgoing dependencies (orphan detection)
+  - Dependencies within same chapter preferred (cross-chapter is valid but noted)
+  - No duplicate dependencies (redundant edges)
+
+# ============================================
+# Integration Points
+# ============================================
+
+integrationPoints: |
+  **Frontend (apps/web)**
+  - Imports ProjectSnapshot, Quest, Chapter from @mcquest/schema
+  - Uses createDefaultSnapshot/createDefaultQuest for new entities
+  - React Flow nodes store quest.id as node.id (invariant)
+  - Zustand editor store holds working snapshot in memory
+  - Sends UpdateSnapshotRequest (with snapshot field) to API
+
+  **Backend/API (apps/web)**
+  - POST /api/projects - CreateProjectRequest
+  - PATCH /api/projects/:id/snapshot - UpdateSnapshotRequest
+  - Parses with ProjectSnapshotSchema (Zod)
+  - Stores JSONB in Prisma PostgreSQL
+  - Validates with validateSnapshot() before storing
+
+  **Export (packages/export)**
+  - Receives ProjectSnapshot
+  - Validates with validateSnapshot() (stops if errors)
+  - Transforms to ExportModel (version-aware)
+  - Generates SNBT files maintaining determinism
+  - Preserves quest.id order, chapter.order sort
+
+# ============================================
+# Notes & Observations
+# ============================================
+
+notes: |
+  **Current State (v0.1.0)**
+  - Snapshot version is hardcoded "0.1.0"
+  - No version migration logic yet
+  - UUIDs used internally; export ID mapping deferred to packages/export
+  - uiState structure minimal (activeChapterId, viewport, selectedQuestId)
+  - Task/Reward types use discriminated union pattern but nested choice/random not yet defined
+
+  **Validation Order Matters**
+  - Structure rules (IDs, references) run first
+  - Semantic rules (cycles, design patterns) run after
+  - Circular dependency detection uses Kahn's algorithm (efficient)
+  - Warning rules run last to avoid false positives from errors
+
+  **Export Assumptions**
+  - Quest IDs stable (UUIDs never change in snapshot)
+  - Chapter order field drives export sort (not insertion order)
+  - Quest position used for secondary sort (y, then x)
+  - Dependency direction: fromQuestId → toQuestId (from completes first)
+
+  **Future Extensions**
+  - Choice/random reward structures not yet detailed
+  - Quest groups or quest lines not yet modeled
+  - Conditional tasks/rewards deferred
+  - Version migration schema not yet implemented

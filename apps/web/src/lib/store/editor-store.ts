@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { ProjectSnapshot, Chapter, Quest } from '@mcquest/schema'
+import { calculateLayout } from '@/lib/layout/dagre-layout'
 import {
   MAX_HISTORY_SIZE,
   type EditorStore,
@@ -36,6 +37,7 @@ const initialState: EditorState = {
     undoStack: [],
     redoStack: [],
   },
+  isArranging: false,
 }
 
 /**
@@ -151,6 +153,27 @@ export const useEditorStore = create<EditorStore>()(
       })
     },
 
+    addQuest: (quest) => {
+      set((state) => {
+        if (!state.snapshot) return
+
+        // Add the quest to the snapshot
+        state.snapshot.quests.push(quest)
+
+        // Update metadata timestamp
+        state.snapshot.metadata.updatedAt = new Date().toISOString()
+        state.isDirty = true
+
+        // TEMPORARILY DISABLED: Auto-select causes infinite loop with QuestInspector
+        // The massive unmount/remount of inspector components triggers Radix UI ref issues
+        // TODO: Fix by preventing inspector from full unmount/remount
+        // state.selection.selectedQuestId = quest.id
+        // if (state.snapshot.uiState) {
+        //   state.snapshot.uiState.selectedQuestId = quest.id
+        // }
+      })
+    },
+
     updateQuest: (questId: string, updates: QuestUpdate) => {
       set((state) => {
         if (!state.snapshot) return
@@ -161,6 +184,35 @@ export const useEditorStore = create<EditorStore>()(
         // Merge updates into the quest
         const quest = state.snapshot.quests[questIndex]
         Object.assign(quest, updates)
+
+        // Update metadata timestamp
+        state.snapshot.metadata.updatedAt = new Date().toISOString()
+        state.isDirty = true
+      })
+    },
+
+    deleteQuest: (questId: string) => {
+      set((state) => {
+        if (!state.snapshot) return
+
+        // Remove the quest
+        const questIndex = state.snapshot.quests.findIndex((q) => q.id === questId)
+        if (questIndex === -1) return
+
+        state.snapshot.quests.splice(questIndex, 1)
+
+        // Remove all dependencies involving this quest
+        state.snapshot.dependencies = state.snapshot.dependencies.filter(
+          (d) => d.fromQuestId !== questId && d.toQuestId !== questId
+        )
+
+        // Clear selection if this quest was selected
+        if (state.selection.selectedQuestId === questId) {
+          state.selection.selectedQuestId = null
+          if (state.snapshot.uiState) {
+            state.snapshot.uiState.selectedQuestId = undefined
+          }
+        }
 
         // Update metadata timestamp
         state.snapshot.metadata.updatedAt = new Date().toISOString()
@@ -363,6 +415,61 @@ export const useEditorStore = create<EditorStore>()(
     reset: () => {
       set(() => initialState)
     },
+
+    applyAutoLayout: () => {
+      set((state) => {
+        if (!state.snapshot) return
+
+        // Get the active chapter
+        const activeChapterId = state.selection.selectedChapterId
+        if (!activeChapterId) return
+
+        const chapter = state.snapshot.chapters.find((c) => c.id === activeChapterId)
+        if (!chapter) return
+
+        // Get quests in this chapter
+        const chapterQuests = state.snapshot.quests.filter((q) => q.chapterId === activeChapterId)
+        if (chapterQuests.length === 0) return
+
+        // Record undo point BEFORE applying changes
+        state.history.undoStack.push(JSON.parse(JSON.stringify(state.snapshot)) as ProjectSnapshot)
+
+        // Trim undo stack to max history size
+        if (state.history.undoStack.length > MAX_HISTORY_SIZE) {
+          state.history.undoStack.shift()
+        }
+
+        // Clear redo stack - new changes invalidate redo history
+        state.history.redoStack = []
+
+        // Build dependencies for this chapter (only edges where both quests are in chapter)
+        const chapterQuestIds = new Set(chapterQuests.map((q) => q.id))
+        const chapterDependencies = state.snapshot.dependencies.filter(
+          (d) => chapterQuestIds.has(d.fromQuestId) && chapterQuestIds.has(d.toQuestId)
+        )
+
+        // Calculate layout
+        const layoutResult = calculateLayout(chapterQuests, chapterDependencies)
+
+        // Apply new positions to quests
+        for (const quest of chapterQuests) {
+          const newPos = layoutResult.positions.get(quest.id)
+          if (newPos) {
+            quest.position = newPos
+          }
+        }
+
+        // Update metadata timestamp
+        state.snapshot.metadata.updatedAt = new Date().toISOString()
+        state.isDirty = true
+      })
+    },
+
+    setArranging: (arranging: boolean) => {
+      set((state) => {
+        state.isArranging = arranging
+      })
+    },
   }))
 )
 
@@ -406,6 +513,12 @@ export const useChapters = () =>
   useEditorStore((state) => state.snapshot?.chapters ?? EMPTY_CHAPTERS)
 
 /**
+ * Get all quests
+ */
+export const useQuests = () =>
+  useEditorStore((state) => state.snapshot?.quests ?? EMPTY_QUESTS)
+
+/**
  * Get selection state
  */
 export const useSelection = () => useEditorStore((state) => state.selection)
@@ -445,3 +558,9 @@ export const useCanUndo = () =>
  */
 export const useCanRedo = () =>
   useEditorStore((state) => state.history.redoStack.length > 0)
+
+/**
+ * Get whether auto-layout is currently running
+ */
+export const useIsArranging = () =>
+  useEditorStore((state) => state.isArranging)

@@ -1,5 +1,5 @@
 import type { Node, BuiltInNode } from '@xyflow/react'
-import type { QuestShape, IconReference } from '@mcquest/schema'
+import type { QuestShape, IconReference, Quest } from '@mcquest/schema'
 
 /**
  * Validation state for a quest node
@@ -81,3 +81,16 @@ export const QUEST_SHAPE_STYLES: Record<
 export const NODE_BASE_SIZE = 64
 export const NODE_MIN_SIZE = 48
 export const NODE_MAX_SIZE = 128
+
+/**
+ * CompactQuestNodeData - minimal data for compact nodes
+ *
+ * Used by CompactQuestNode for auto-layout visualization.
+ * Includes the full quest object plus UI state flags.
+ */
+export type CompactQuestNodeData = {
+  quest: Quest
+  isSelected: boolean
+  isOptional: boolean
+  onSelect?: (questId: string) => void
+}

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const SCHEMA_VERSION = '0.1.0'
+export const SCHEMA_VERSION = '0.2.0' // v0.2.0 adds SNBT metadata support
 
 // ============================================
 // Primitive Types
@@ -119,6 +119,15 @@ export const QuestSettingsSchema = z.object({
 
 export type QuestSettings = z.infer<typeof QuestSettingsSchema>
 
+export const QuestMetadataSchema = z.object({
+  /** Original FTB Quests hex ID (for round-trip reference) */
+  ftbQuestsId: z.string().optional(),
+  /** Preserve unknown SNBT fields for round-trip compatibility */
+  snbtMetadata: z.record(z.unknown()).optional(),
+})
+
+export type QuestMetadata = z.infer<typeof QuestMetadataSchema>
+
 export const QuestSchema = z.object({
   id: UuidSchema,
   chapterId: UuidSchema,
@@ -132,6 +141,7 @@ export const QuestSchema = z.object({
   tasks: z.array(TaskSchema).default([]),
   rewards: z.array(RewardSchema).default([]),
   settings: QuestSettingsSchema.default({}),
+  metadata: QuestMetadataSchema.optional(),
 })
 
 export type Quest = z.infer<typeof QuestSchema>
@@ -139,6 +149,29 @@ export type Quest = z.infer<typeof QuestSchema>
 // ============================================
 // Chapter Definition
 // ============================================
+
+export const ChapterImageSchema = z.object({
+  image: z.string(), // Texture reference
+  x: z.number(),
+  y: z.number(),
+  width: z.number(),
+  height: z.number(),
+  rotation: z.number().default(0),
+  alpha: z.number().min(0).max(1).default(1),
+})
+
+export type ChapterImage = z.infer<typeof ChapterImageSchema>
+
+export const ChapterMetadataSchema = z.object({
+  /** Original FTB Quests hex ID */
+  ftbQuestsId: z.string().optional(),
+  /** Background decoration images (FTB Quests feature) */
+  images: z.array(ChapterImageSchema).optional(),
+  /** Preserve unknown SNBT fields */
+  snbtMetadata: z.record(z.unknown()).optional(),
+})
+
+export type ChapterMetadata = z.infer<typeof ChapterMetadataSchema>
 
 export const ChapterSchema = z.object({
   id: UuidSchema,
@@ -148,6 +181,7 @@ export const ChapterSchema = z.object({
   icon: IconReferenceSchema.optional(),
   background: z.string().optional(), // Background image reference
   defaultQuestShape: QuestShapeSchema.optional(),
+  metadata: ChapterMetadataSchema.optional(),
 })
 
 export type Chapter = z.infer<typeof ChapterSchema>
@@ -202,6 +236,13 @@ export const ProjectMetadataSchema = z.object({
   targetFTBQuestsVersion: z.string().optional(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
+  /** Source of the project data */
+  importedFrom: z.enum(['snbt', 'native']).optional(),
+  /** Original format metadata */
+  originalFormat: z.object({
+    source: z.string(),
+    version: z.string().optional(),
+  }).optional(),
 })
 
 export type ProjectMetadata = z.infer<typeof ProjectMetadataSchema>

@@ -130,7 +130,7 @@ export function CreateProjectDialog({ children }: CreateProjectDialogProps) {
 
             <div className="grid gap-2">
               <Label htmlFor="name">
-                Name{' '}
+                Project name{' '}
                 <span className="text-destructive" aria-hidden="true">
                   *
                 </span>
@@ -154,7 +154,7 @@ export function CreateProjectDialog({ children }: CreateProjectDialogProps) {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">Project description</Label>
               <Textarea
                 id="description"
                 value={formData.description}

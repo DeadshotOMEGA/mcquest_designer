@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react'
 import Link from 'next/link'
+import { Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EditorCanvas } from './editor-canvas'
 import { AutosaveProvider } from './autosave-provider'
@@ -73,6 +74,12 @@ export function EditorPageClient({ project }: EditorPageClientProps) {
             <span className="text-xs text-muted-foreground">({project.role})</span>
           </div>
           <div className="flex items-center gap-2">
+            <Link href={`/dashboard/projects/${project.id}/import`}>
+              <Button variant="outline" size="sm" aria-label="Import questbook from SNBT files">
+                <Upload className="h-4 w-4" aria-hidden="true" />
+                <span className="ml-2">Import</span>
+              </Button>
+            </Link>
             <SyncIndicator />
             {/* Future: Undo/Redo buttons */}
           </div>

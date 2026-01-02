@@ -90,6 +90,11 @@ export interface EditorState {
    * Undo/redo history state
    */
   history: HistoryState
+
+  /**
+   * Whether auto-layout is currently running
+   */
+  isArranging: boolean
 }
 
 /**
@@ -145,11 +150,24 @@ export interface EditorActions {
   redo: () => void
 
   /**
+   * Add a new quest to the project
+   * @param quest - The quest to add
+   */
+  addQuest: (quest: Quest) => void
+
+  /**
    * Update a single quest by ID
    * @param questId - The quest to update
    * @param updates - Partial quest data to merge
    */
   updateQuest: (questId: string, updates: QuestUpdate) => void
+
+  /**
+   * Delete a quest by ID
+   * Also removes all dependencies involving this quest
+   * @param questId - The quest to delete
+   */
+  deleteQuest: (questId: string) => void
 
   /**
    * Update dependencies (add, remove, or modify)
@@ -213,6 +231,19 @@ export interface EditorActions {
    * Reset the store to initial state
    */
   reset: () => void
+
+  /**
+   * Apply auto-layout to the active chapter
+   * Records an undo point before applying layout changes
+   * Updates quest positions deterministically based on dependencies
+   */
+  applyAutoLayout: () => void
+
+  /**
+   * Set whether layout is being calculated
+   * @param arranging - Whether layout calculation is in progress
+   */
+  setArranging: (arranging: boolean) => void
 }
 
 /**
