@@ -1,0 +1,16 @@
+{
+  "active": false,
+  "project": "mcquest_designer",
+  "feature_slug": "playwright-setup",
+  "phase": "completed",
+  "category": "",
+  "progress": {
+    "understanding": {"completed": 8, "total": 8},
+    "exploration": {"completed": 8, "total": 8},
+    "design": {"completed": 9, "total": 9},
+    "review": {"completed": 7, "total": 7}
+  },
+  "risk_level": "MODERATE",
+  "agents_running": [],
+  "plan_path": "docs/plans/mcquest_designer-playwright-setup/plan.md"
+}
