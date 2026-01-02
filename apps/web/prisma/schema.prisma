@@ -9,88 +9,78 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model project_members {
+  project_id String
+  user_id    String
+  role       ProjectRole
+  created_at DateTime    @default(now())
+  updated_at DateTime
+  projects   projects    @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  users      users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@id([project_id, user_id])
+  @@index([project_id, role])
+  @@index([user_id])
+}
+
+model project_versions {
+  id         String   @id
+  project_id String
+  snapshot   Json
+  message    String?
+  created_by String?
+  created_at DateTime @default(now())
+  projects   projects @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@index([created_by])
+  @@index([project_id, created_at(sort: Desc)])
+}
+
+model projects {
+  id               String             @id
+  name             String
+  description      String?
+  latest_snapshot  Json
+  created_at       DateTime           @default(now())
+  updated_at       DateTime
+  project_members  project_members[]
+  project_versions project_versions[]
+  share_tokens     share_tokens[]
+
+  @@index([created_at])
+  @@index([updated_at])
+}
+
+model share_tokens {
+  id         String    @id
+  project_id String
+  token      String    @unique
+  name       String?
+  expires_at DateTime?
+  revoked_at DateTime?
+  created_by String
+  created_at DateTime  @default(now())
+  projects   projects  @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@index([project_id])
+  @@index([token])
+}
+
+model users {
+  id              String            @id
+  clerkId         String            @unique
+  email           String            @unique
+  name            String?
+  avatar_url      String?
+  created_at      DateTime          @default(now())
+  updated_at      DateTime
+  project_members project_members[]
+
+  @@index([clerkId])
+}
+
 enum ProjectRole {
   OWNER
   EDITOR
   VIEWER
-}
-
-model User {
-  id        String   @id @default(cuid())
-  clerkId   String   @unique
-  email     String   @unique
-  name      String?
-  avatarUrl String?  @map("avatar_url")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  memberships ProjectMember[]
-
-  @@index([clerkId])
-  @@map("users")
-}
-
-model Project {
-  id             String   @id @default(cuid())
-  name           String
-  description    String?
-  latestSnapshot Json     @map("latest_snapshot")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
-
-  members  ProjectMember[]
-  versions ProjectVersion[]
-  shares   ShareToken[]
-
-  @@index([createdAt])
-  @@index([updatedAt])
-  @@map("projects")
-}
-
-model ProjectMember {
-  projectId String      @map("project_id")
-  userId    String      @map("user_id")
-  role      ProjectRole
-  createdAt DateTime    @default(now()) @map("created_at")
-  updatedAt DateTime    @updatedAt @map("updated_at")
-
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@id([projectId, userId])
-  @@index([userId])
-  @@index([projectId, role])
-  @@map("project_members")
-}
-
-model ProjectVersion {
-  id        String   @id @default(cuid())
-  projectId String   @map("project_id")
-  snapshot  Json
-  message   String?
-  createdBy String?  @map("created_by")
-  createdAt DateTime @default(now()) @map("created_at")
-
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  @@index([projectId, createdAt(sort: Desc)])
-  @@index([createdBy])
-  @@map("project_versions")
-}
-
-model ShareToken {
-  id        String    @id @default(cuid())
-  projectId String    @map("project_id")
-  token     String    @unique
-  name      String?
-  expiresAt DateTime? @map("expires_at")
-  revokedAt DateTime? @map("revoked_at")
-  createdBy String    @map("created_by")
-  createdAt DateTime  @default(now()) @map("created_at")
-
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  @@index([projectId])
-  @@index([token])
-  @@map("share_tokens")
 }
