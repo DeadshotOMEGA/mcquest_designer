@@ -27,3 +27,30 @@ export { normalizeFTBQuests } from './ftb-adapter.js';
 
 // ID mapper
 export { createIDMapper, type IDMapper } from './id-mapper.js';
+
+// File router
+export {
+  routeFile,
+  isChapterFile,
+  isLangFile,
+  isRewardTableFile,
+  isGlobalConfigFile,
+  extractLocale,
+  extractChapterName,
+  extractRewardTableName,
+  type RoutedFile,
+} from './file-router.js';
+
+// Reference resolver
+export {
+  resolveReferences,
+  type ReferenceResolution,
+  type ReferenceResolutionInput,
+} from './reference-resolver.js';
+
+// Import orchestrator
+export {
+  orchestrateImport,
+  type ImportFile,
+  type ImportResult,
+} from './import-orchestrator.js';

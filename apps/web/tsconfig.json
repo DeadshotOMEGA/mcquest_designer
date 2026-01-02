@@ -16,7 +16,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@mcquest/schema": ["../../packages/schema/src"],
-      "@mcquest/export": ["../../packages/export/src"]
+      "@mcquest/export": ["../../packages/export/src"],
+      "@mcquest/snbt": ["../../packages/snbt/src"]
     },
     "allowJs": true
   },
