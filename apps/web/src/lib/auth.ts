@@ -7,7 +7,17 @@ import type { User } from '@clerk/nextjs/server'
  * CVE-2025-29927 Mitigation:
  * These functions MUST be called in Server Components and Route Handlers
  * to verify authentication, even when middleware is in place.
+ *
+ * Development Mode:
+ * Set DISABLE_AUTH=true to bypass authentication during development.
  */
+
+/**
+ * Check if authentication is disabled for development
+ */
+function isAuthDisabled(): boolean {
+  return process.env.DISABLE_AUTH === 'true'
+}
 
 /**
  * Check if Clerk is properly configured.
@@ -37,6 +47,10 @@ function isClerkConfigured(): boolean {
  * ```
  */
 export async function requireAuth(): Promise<string> {
+  if (isAuthDisabled()) {
+    return 'dev-user-id'
+  }
+
   if (!isClerkConfigured()) {
     throw new Error('Unauthorized: Authentication service not configured')
   }
@@ -63,6 +77,18 @@ export async function requireAuth(): Promise<string> {
  * ```
  */
 export async function requireUser(): Promise<User> {
+  if (isAuthDisabled()) {
+    // Return a mock user for development
+    return {
+      id: 'dev-user-id',
+      firstName: 'Dev',
+      lastName: 'User',
+      emailAddresses: [{ id: 'email-1', emailAddress: 'dev@example.com' }],
+      primaryEmailAddressId: 'email-1',
+      imageUrl: '',
+    } as User
+  }
+
   if (!isClerkConfigured()) {
     throw new Error('Unauthorized: Authentication service not configured')
   }
@@ -92,6 +118,10 @@ export async function requireUser(): Promise<User> {
  * ```
  */
 export async function getAuthOrNull(): Promise<string | null> {
+  if (isAuthDisabled()) {
+    return 'dev-user-id'
+  }
+
   if (!isClerkConfigured()) {
     return null
   }
@@ -141,8 +171,28 @@ export async function isAuthenticated(): Promise<boolean> {
  * ```
  */
 export async function getCurrentDbUser() {
-  const clerkUser = await requireUser()
   const { prisma } = await import('./db')
+
+  if (isAuthDisabled()) {
+    // Return or create a dev user
+    const devUser = await prisma.users.upsert({
+      where: { clerkId: 'dev-user-id' },
+      update: {
+        updated_at: new Date(),
+      },
+      create: {
+        id: 'dev-user-db-id',
+        clerkId: 'dev-user-id',
+        email: 'dev@example.com',
+        name: 'Dev User',
+        avatar_url: '',
+        updated_at: new Date(),
+      },
+    })
+    return devUser
+  }
+
+  const clerkUser = await requireUser()
 
   // Get primary email address
   const email = clerkUser.emailAddresses.find(

@@ -17,8 +17,16 @@ const isProtectedRoute = createRouteMatcher([
  * in Server Components and Route Handlers using auth() or currentUser()
  *
  * Middleware is the first line of defense, not the only one.
+ *
+ * Development Mode:
+ * Set DISABLE_AUTH=true to bypass authentication during development/testing.
  */
 export default clerkMiddleware(async (auth, request) => {
+  // Skip auth protection when DISABLE_AUTH is enabled
+  if (process.env.DISABLE_AUTH === 'true') {
+    return
+  }
+
   // Protect routes that require authentication
   if (isProtectedRoute(request)) {
     await auth.protect()
