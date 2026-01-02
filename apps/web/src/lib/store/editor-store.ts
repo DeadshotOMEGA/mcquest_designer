@@ -38,6 +38,28 @@ const initialState: EditorState = {
     redoStack: [],
   },
   isArranging: false,
+  treeUI: {
+    expandedChapterIds: new Set(),
+    selectedEntityId: null,
+    selectedEntityType: null,
+    toggleChapter: () => {},
+    selectEntity: () => {},
+    collapseAll: () => {},
+    expandAll: () => {},
+  },
+  previewUI: {
+    showPreview: false,
+    previewScope: 'project',
+    togglePreview: () => {},
+    setPreviewScope: () => {},
+  },
+  dirtyTracking: {
+    dirtyEntities: new Set(),
+    markDirty: () => {},
+    markClean: () => {},
+    clearAll: () => {},
+    hasDirtyEntities: () => false,
+  },
 }
 
 /**
@@ -416,6 +438,77 @@ export const useEditorStore = create<EditorStore>()(
       set(() => initialState)
     },
 
+    // Tree UI actions
+    toggleChapter: (chapterId: string) => {
+      set((state) => {
+        if (state.treeUI.expandedChapterIds.has(chapterId)) {
+          state.treeUI.expandedChapterIds.delete(chapterId)
+        } else {
+          state.treeUI.expandedChapterIds.add(chapterId)
+        }
+      })
+    },
+
+    selectEntity: (entityId: string, entityType: 'quest' | 'chapter') => {
+      set((state) => {
+        state.treeUI.selectedEntityId = entityId
+        state.treeUI.selectedEntityType = entityType
+      })
+    },
+
+    collapseAll: () => {
+      set((state) => {
+        state.treeUI.expandedChapterIds.clear()
+      })
+    },
+
+    expandAll: () => {
+      set((state) => {
+        if (!state.snapshot) return
+        // Expand all chapters
+        for (const chapter of state.snapshot.chapters) {
+          state.treeUI.expandedChapterIds.add(chapter.id)
+        }
+      })
+    },
+
+    // Preview UI actions
+    togglePreview: () => {
+      set((state) => {
+        state.previewUI.showPreview = !state.previewUI.showPreview
+      })
+    },
+
+    setPreviewScope: (scope: 'quest' | 'chapter' | 'project') => {
+      set((state) => {
+        state.previewUI.previewScope = scope
+      })
+    },
+
+    // Dirty tracking actions
+    markEntityDirty: (entityId: string) => {
+      set((state) => {
+        state.dirtyTracking.dirtyEntities.add(entityId)
+      })
+    },
+
+    markEntityClean: (entityId: string) => {
+      set((state) => {
+        state.dirtyTracking.dirtyEntities.delete(entityId)
+      })
+    },
+
+    clearDirtyEntities: () => {
+      set((state) => {
+        state.dirtyTracking.dirtyEntities.clear()
+      })
+    },
+
+    hasDirtyEntities: (): boolean => {
+      const state = useEditorStore.getState()
+      return state.dirtyTracking.dirtyEntities.size > 0
+    },
+
     applyAutoLayout: () => {
       set((state) => {
         if (!state.snapshot) return
@@ -480,87 +573,136 @@ export const useEditorStore = create<EditorStore>()(
 /**
  * Get the current snapshot
  */
-export const useSnapshot = () => useEditorStore((state) => state.snapshot)
+export const useSnapshot = () => useEditorStore((state: EditorState) => state.snapshot)
 
 /**
  * Get dirty state
  */
-export const useIsDirty = () => useEditorStore((state) => state.isDirty)
+export const useIsDirty = () => useEditorStore((state: EditorState) => state.isDirty)
 
 /**
  * Get sync state
  */
-export const useSyncState = () => useEditorStore((state) => state.syncState)
+export const useSyncState = () => useEditorStore((state: EditorState) => state.syncState)
 
 /**
  * Get a specific quest by ID
  */
 export const useQuest = (questId: string) =>
-  useEditorStore((state) => state.snapshot?.quests.find((q) => q.id === questId))
+  useEditorStore((state: EditorState) => state.snapshot?.quests.find((q: Quest) => q.id === questId))
 
 /**
  * Get all quests for a chapter
  */
 export const useChapterQuests = (chapterId: string) =>
-  useEditorStore((state) =>
-    state.snapshot?.quests.filter((q) => q.chapterId === chapterId) ?? EMPTY_QUESTS
+  useEditorStore((state: EditorState) =>
+    state.snapshot?.quests.filter((q: Quest) => q.chapterId === chapterId) ?? EMPTY_QUESTS
   )
 
 /**
  * Get all chapters
  */
 export const useChapters = () =>
-  useEditorStore((state) => state.snapshot?.chapters ?? EMPTY_CHAPTERS)
+  useEditorStore((state: EditorState) => state.snapshot?.chapters ?? EMPTY_CHAPTERS)
 
 /**
  * Get all quests
  */
 export const useQuests = () =>
-  useEditorStore((state) => state.snapshot?.quests ?? EMPTY_QUESTS)
+  useEditorStore((state: EditorState) => state.snapshot?.quests ?? EMPTY_QUESTS)
 
 /**
  * Get selection state
  */
-export const useSelection = () => useEditorStore((state) => state.selection)
+export const useSelection = () => useEditorStore((state: EditorState) => state.selection)
 
 /**
  * Get selected quest ID
  */
 export const useSelectedQuestId = () =>
-  useEditorStore((state) => state.selection.selectedQuestId)
+  useEditorStore((state: EditorState) => state.selection.selectedQuestId)
 
 /**
  * Get selected chapter ID
  */
 export const useSelectedChapterId = () =>
-  useEditorStore((state) => state.selection.selectedChapterId)
+  useEditorStore((state: EditorState) => state.selection.selectedChapterId)
 
 /**
  * Get the undo stack
  */
 export const useUndoStack = () =>
-  useEditorStore((state) => state.history.undoStack)
+  useEditorStore((state: EditorState) => state.history.undoStack)
 
 /**
  * Get the redo stack
  */
 export const useRedoStack = () =>
-  useEditorStore((state) => state.history.redoStack)
+  useEditorStore((state: EditorState) => state.history.redoStack)
 
 /**
  * Check if undo is available
  */
 export const useCanUndo = () =>
-  useEditorStore((state) => state.history.undoStack.length > 0)
+  useEditorStore((state: EditorState) => state.history.undoStack.length > 0)
 
 /**
  * Check if redo is available
  */
 export const useCanRedo = () =>
-  useEditorStore((state) => state.history.redoStack.length > 0)
+  useEditorStore((state: EditorState) => state.history.redoStack.length > 0)
 
 /**
  * Get whether auto-layout is currently running
  */
 export const useIsArranging = () =>
-  useEditorStore((state) => state.isArranging)
+  useEditorStore((state: EditorState) => state.isArranging)
+
+/**
+ * Get tree UI state
+ */
+export const useTreeUI = () => useEditorStore((state: EditorState) => state.treeUI)
+
+/**
+ * Get expanded chapter IDs
+ */
+export const useExpandedChapterIds = () =>
+  useEditorStore((state: EditorState) => state.treeUI.expandedChapterIds)
+
+/**
+ * Get selected entity in tree UI
+ */
+export const useSelectedEntity = () =>
+  useEditorStore((state: EditorState) => ({
+    selectedEntityId: state.treeUI.selectedEntityId,
+    selectedEntityType: state.treeUI.selectedEntityType,
+  }))
+
+/**
+ * Get preview UI state
+ */
+export const usePreviewUI = () => useEditorStore((state: EditorState) => state.previewUI)
+
+/**
+ * Get preview visibility
+ */
+export const useShowPreview = () =>
+  useEditorStore((state: EditorState) => state.previewUI.showPreview)
+
+/**
+ * Get preview scope
+ */
+export const usePreviewScope = () =>
+  useEditorStore((state: EditorState) => state.previewUI.previewScope)
+
+/**
+ * Get dirty tracking state
+ */
+export const useDirtyTracking = () =>
+  useEditorStore((state: EditorState) => state.dirtyTracking)
+
+/**
+ * Get dirty entities
+ */
+export const useDirtyEntities = () =>
+  useEditorStore((state: EditorState) => state.dirtyTracking.dirtyEntities)
