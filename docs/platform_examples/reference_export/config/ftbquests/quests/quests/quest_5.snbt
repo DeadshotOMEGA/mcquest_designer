@@ -1,1 +1,0 @@
-{id:5L,title:"Find Iron",subtitle:"",description:"Mine raw iron or iron ore.",x:0,y:0,shape:"square",icon:{id:"minecraft:raw_iron"},dependencies:[4L],tasks:[{id:"23f77d5a-5a49-43e7-8467-21992f2e9563",type:"item",item:"minecraft:raw_iron",count:8}],rewards:[{id:"3d0126c1-9ea8-4c48-add3-241a9b5938db",type:"xp",amount:100}]}
