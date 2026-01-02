@@ -55,6 +55,107 @@ export interface SelectionState {
 }
 
 /**
+ * Tree UI state for quest/chapter hierarchy visualization
+ *
+ * Manages the expanded/collapsed state of chapters and entity selection.
+ */
+export interface TreeUIState {
+  /**
+   * Set of expanded chapter IDs
+   */
+  expandedChapterIds: Set<string>
+
+  /**
+   * Currently selected entity ID (quest or chapter)
+   */
+  selectedEntityId: string | null
+
+  /**
+   * Type of selected entity
+   */
+  selectedEntityType: 'quest' | 'chapter' | null
+
+  /**
+   * Toggle expansion state of a chapter
+   */
+  toggleChapter: (id: string) => void
+
+  /**
+   * Select an entity (quest or chapter)
+   */
+  selectEntity: (id: string, type: 'quest' | 'chapter') => void
+
+  /**
+   * Collapse all chapters
+   */
+  collapseAll: () => void
+
+  /**
+   * Expand all chapters
+   */
+  expandAll: () => void
+}
+
+/**
+ * Preview UI state for quest/chapter preview panel
+ *
+ * Manages the visibility and scope of the preview panel.
+ */
+export interface PreviewUIState {
+  /**
+   * Whether the preview panel is visible
+   */
+  showPreview: boolean
+
+  /**
+   * Scope of the preview (what entity type is being previewed)
+   */
+  previewScope: 'quest' | 'chapter' | 'project'
+
+  /**
+   * Toggle preview panel visibility
+   */
+  togglePreview: () => void
+
+  /**
+   * Set the preview scope
+   */
+  setPreviewScope: (scope: 'quest' | 'chapter' | 'project') => void
+}
+
+/**
+ * Dirty tracking state for tracking unsaved changes per entity
+ *
+ * Manages which entities have been modified but not saved.
+ */
+export interface DirtyTrackingState {
+  /**
+   * Set of entity IDs that have unsaved changes
+   */
+  dirtyEntities: Set<string>
+
+  /**
+   * Mark an entity as having unsaved changes
+   */
+  markDirty: (entityId: string) => void
+
+  /**
+   * Mark an entity as clean (saved)
+   */
+  markClean: (entityId: string) => void
+
+  /**
+   * Clear all dirty entities
+   */
+  clearAll: () => void
+
+  /**
+   * Check if there are any dirty entities
+   */
+  hasDirtyEntities: () => boolean
+}
+
+/**
  * Editor store state
  *
  * Contains the working copy of the project snapshot and UI state.
@@ -95,6 +196,21 @@ export interface EditorState {
    * Whether auto-layout is currently running
    */
   isArranging: boolean
+
+  /**
+   * Tree UI state for quest/chapter hierarchy
+   */
+  treeUI: TreeUIState
+
+  /**
+   * Preview UI state
+   */
+  previewUI: PreviewUIState
+
+  /**
+   * Dirty tracking state for per-entity changes
+   */
+  dirtyTracking: DirtyTrackingState
 }
 
 /**
@@ -244,6 +360,63 @@ export interface EditorActions {
    * @param arranging - Whether layout calculation is in progress
    */
   setArranging: (arranging: boolean) => void
+
+  /**
+   * Toggle expansion state of a chapter in the tree UI
+   * @param chapterId - The chapter ID to toggle
+   */
+  toggleChapter: (chapterId: string) => void
+
+  /**
+   * Select an entity in the tree UI
+   * @param entityId - The entity ID to select
+   * @param entityType - The type of entity (quest or chapter)
+   */
+  selectEntity: (entityId: string, entityType: 'quest' | 'chapter') => void
+
+  /**
+   * Collapse all chapters in the tree UI
+   */
+  collapseAll: () => void
+
+  /**
+   * Expand all chapters in the tree UI
+   */
+  expandAll: () => void
+
+  /**
+   * Toggle the visibility of the preview panel
+   */
+  togglePreview: () => void
+
+  /**
+   * Set the scope of the preview panel
+   * @param scope - The scope type (quest, chapter, or project)
+   */
+  setPreviewScope: (scope: 'quest' | 'chapter' | 'project') => void
+
+  /**
+   * Mark an entity as having unsaved changes
+   * @param entityId - The entity ID to mark as dirty
+   */
+  markEntityDirty: (entityId: string) => void
+
+  /**
+   * Mark an entity as clean (saved)
+   * @param entityId - The entity ID to mark as clean
+   */
+  markEntityClean: (entityId: string) => void
+
+  /**
+   * Clear all dirty entities
+   */
+  clearDirtyEntities: () => void
+
+  /**
+   * Check if there are any dirty entities
+   * @returns true if any entities are dirty, false otherwise
+   */
+  hasDirtyEntities: () => boolean
 }
 
 /**

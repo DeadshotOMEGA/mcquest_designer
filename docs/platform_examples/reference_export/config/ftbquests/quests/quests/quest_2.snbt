@@ -1,1 +1,0 @@
-{id:2L,title:"Punch a Tree",subtitle:"",description:"Gather logs to begin crafting.",x:4,y:0,shape:"square",icon:{id:"minecraft:oak_log"},dependencies:[1L],tasks:[{id:"02e2cd58-63c4-4c73-82a4-99ad4721cd6a",type:"item",item:"minecraft:oak_log",count:16}],rewards:[{id:"a8dac709-49ad-4702-9fe0-2e6133f0a661",type:"xp",amount:50}]}

@@ -46,6 +46,7 @@ model projects {
   project_members  project_members[]
   project_versions project_versions[]
   share_tokens     share_tokens[]
+  import_jobs      import_jobs[]
 
   @@index([created_at])
   @@index([updated_at])
@@ -75,8 +76,30 @@ model users {
   created_at      DateTime          @default(now())
   updated_at      DateTime
   project_members project_members[]
+  import_jobs     import_jobs[]
 
   @@index([clerkId])
+}
+
+model import_jobs {
+  id          String   @id @default(cuid())
+  project_id  String
+  user_id     String
+  status      String   @default("pending") // 'pending' | 'processing' | 'completed' | 'failed'
+  progress    Int      @default(0) // 0-100
+  phase       String?  // current phase name
+  result      Json?    // ProjectSnapshot on success
+  error       String?  // error message on failure
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  projects    projects @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  users       users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([project_id])
+  @@index([user_id])
+  @@index([status])
+  @@index([created_at(sort: Desc)])
 }
 
 enum ProjectRole {

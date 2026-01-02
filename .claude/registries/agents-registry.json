@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_synced": "2025-12-30T23:54:58.820102",
+  "last_synced": "2026-01-02T00:57:20.325472",
   "shared": {
     "base_path": ".claude",
     "agents": {
@@ -15,14 +15,14 @@
           "design"
         ],
         "triggers": [
-          "design",
-          "implementation",
           "components",
-          "advisor"
+          "design",
+          "advisor",
+          "implementation"
         ],
         "parallel": true,
         "path": ".claude/agents/ui-components-advisor.md",
-        "mtime": 1767145280.3529305,
+        "mtime": 1767333142.8599887,
         "description": "shadcn/ui component library specialist for MCQuest Designer. Use PROACTIVELY when user needs UI components, asks which component to use, integrates component libraries, or needs component implementati"
       }
     }
