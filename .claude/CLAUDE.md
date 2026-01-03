@@ -64,6 +64,28 @@ ProjectSnapshot (JSONB) → Compiler → ExportModel → SNBT files → ZIP
 - Playwright (E2E)
 - Golden exports (compiler validation)
 
+## Context7 MCP Usage
+
+Use Context7 proactively when working with these project libraries:
+
+**Core Stack:**
+- **Next.js**: `/vercel/next.js` — App Router, Server Components, Route Handlers
+- **React Flow**: `/xyflow/xyflow` — Graph editor, node/edge APIs, custom components
+- **Prisma**: `/prisma/prisma` — Schema design, migrations, JSONB queries
+- **Zod**: `/colinhacks/zod` — Schema validation, type inference, discriminated unions
+
+**State & Data:**
+- **TanStack Query**: `/tanstack/query` — Server state, caching, mutations
+- **Zustand**: `/pmndrs/zustand` — Editor state, undo/redo patterns
+
+**Example queries:**
+```
+How do I implement custom edge types in React Flow? use library /xyflow/xyflow
+Best practices for Prisma JSONB queries with type safety? use library /prisma/prisma
+Zod discriminated unions with type inference? use library /colinhacks/zod
+Next.js 14 Route Handler streaming responses? use library /vercel/next.js
+```
+
 ## Invariants (Must Not Break)
 
 1. **Snapshot-first**: `ProjectSnapshot` is the only source of truth. SNBT is output only.
