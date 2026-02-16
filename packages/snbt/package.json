@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@mcquest/schema": "workspace:*",
-    "snbt-js": "^1.0.0",
+    "snbt-js": "^1.0.5",
     "uuid": "^13.0.0",
     "zod": "^3.24.1"
   },
